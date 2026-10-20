@@ -1,0 +1,18 @@
+[
+  {
+    "t": 0.0,
+    "clock": "1",
+    "kind": "momentum_swing",
+    "side": "H",
+    "note": "Home side dominate from the first whistle",
+    "importance": 0.6
+  },
+  {
+    "t": 4025.2,
+    "clock": "65",
+    "kind": "goal",
+    "side": "A",
+    "note": "Away side score from their only real chance",
+    "importance": 1.0
+  }
+]

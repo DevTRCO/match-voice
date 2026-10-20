@@ -1,0 +1,182 @@
+{
+  "id": "unlucky-7",
+  "seed": 7,
+  "arc": "unlucky",
+  "title": "Total dominance, no reward",
+  "competition": "Synthetic League",
+  "venue": "Tamsworth United Ground",
+  "teams": {
+    "H": {
+      "side": "H",
+      "name": "Tamsworth United",
+      "short": "TU",
+      "color": "#0ea5e9",
+      "formation": "4-2-3-1",
+      "players": [
+        {
+          "id": "H1",
+          "name": "Bastian Soriano",
+          "number": 1,
+          "pos": "GK",
+          "group": "GK"
+        },
+        {
+          "id": "H2",
+          "name": "Declan Delacroix",
+          "number": 2,
+          "pos": "RB",
+          "group": "DEF"
+        },
+        {
+          "id": "H3",
+          "name": "Idris Arnaud",
+          "number": 5,
+          "pos": "CB",
+          "group": "DEF"
+        },
+        {
+          "id": "H4",
+          "name": "Idris Mbeki",
+          "number": 4,
+          "pos": "CB",
+          "group": "DEF"
+        },
+        {
+          "id": "H5",
+          "name": "Oskar Brannigan",
+          "number": 3,
+          "pos": "LB",
+          "group": "DEF"
+        },
+        {
+          "id": "H6",
+          "name": "Gabriel Valdes",
+          "number": 7,
+          "pos": "DM",
+          "group": "MID"
+        },
+        {
+          "id": "H7",
+          "name": "Bastian Ostrander",
+          "number": 8,
+          "pos": "DM",
+          "group": "MID"
+        },
+        {
+          "id": "H8",
+          "name": "Gabriel Okafor",
+          "number": 6,
+          "pos": "RW",
+          "group": "MID"
+        },
+        {
+          "id": "H9",
+          "name": "Dmitri Merriweather",
+          "number": 11,
+          "pos": "AM",
+          "group": "MID"
+        },
+        {
+          "id": "H10",
+          "name": "Dario Whitlock",
+          "number": 9,
+          "pos": "LW",
+          "group": "MID"
+        },
+        {
+          "id": "H11",
+          "name": "Elias Rahimi",
+          "number": 10,
+          "pos": "ST",
+          "group": "FWD"
+        }
+      ]
+    },
+    "A": {
+      "side": "A",
+      "name": "Marlow Bay United",
+      "short": "MBU",
+      "color": "#e11d48",
+      "formation": "4-3-3",
+      "players": [
+        {
+          "id": "A1",
+          "name": "Tomas Trevino",
+          "number": 1,
+          "pos": "GK",
+          "group": "GK"
+        },
+        {
+          "id": "A2",
+          "name": "Marek Quinlan",
+          "number": 2,
+          "pos": "RB",
+          "group": "DEF"
+        },
+        {
+          "id": "A3",
+          "name": "Tomas Becker-Lyle",
+          "number": 5,
+          "pos": "CB",
+          "group": "DEF"
+        },
+        {
+          "id": "A4",
+          "name": "Elias Holloway",
+          "number": 4,
+          "pos": "CB",
+          "group": "DEF"
+        },
+        {
+          "id": "A5",
+          "name": "Pablo Rourke",
+          "number": 3,
+          "pos": "LB",
+          "group": "DEF"
+        },
+        {
+          "id": "A6",
+          "name": "Marek Abara",
+          "number": 7,
+          "pos": "CM",
+          "group": "MID"
+        },
+        {
+          "id": "A7",
+          "name": "Hugo Ulrich",
+          "number": 8,
+          "pos": "DM",
+          "group": "MID"
+        },
+        {
+          "id": "A8",
+          "name": "Leon Lindqvist",
+          "number": 6,
+          "pos": "CM",
+          "group": "MID"
+        },
+        {
+          "id": "A9",
+          "name": "Milan Wrenfield",
+          "number": 11,
+          "pos": "RW",
+          "group": "FWD"
+        },
+        {
+          "id": "A10",
+          "name": "Marek Lemaire",
+          "number": 9,
+          "pos": "ST",
+          "group": "FWD"
+        },
+        {
+          "id": "A11",
+          "name": "Anton Kowalczyk",
+          "number": 10,
+          "pos": "LW",
+          "group": "FWD"
+        }
+      ]
+    }
+  }
+}

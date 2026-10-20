@@ -1,0 +1,42 @@
+[
+  {
+    "t": 420.0,
+    "clock": "8",
+    "kind": "momentum_swing",
+    "side": "A",
+    "note": "Away side start brightly",
+    "importance": 0.6
+  },
+  {
+    "t": 790.6,
+    "clock": "14",
+    "kind": "goal",
+    "side": "A",
+    "note": "Away side score first on a counter",
+    "importance": 0.9
+  },
+  {
+    "t": 3240.0,
+    "clock": "52",
+    "kind": "momentum_swing",
+    "side": "H",
+    "note": "Home side take control and pin the visitors back",
+    "importance": 0.6
+  },
+  {
+    "t": 4392.6,
+    "clock": "71",
+    "kind": "goal",
+    "side": "H",
+    "note": "Home side equalise after sustained pressure",
+    "importance": 1.0
+  },
+  {
+    "t": 5511.7,
+    "clock": "89",
+    "kind": "goal",
+    "side": "H",
+    "note": "Home side win it late",
+    "importance": 1.0
+  }
+]

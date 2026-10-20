@@ -1,0 +1,21 @@
+[project]
+name = "match-voice"
+version = "0.1.0"
+description = "Real-time multilingual match commentary from synthetic football events"
+requires-python = ">=3.11"
+dependencies = [
+  "agent-framework>=1.22",
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "pydantic>=2.8",
+  "orjson>=3.10",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
