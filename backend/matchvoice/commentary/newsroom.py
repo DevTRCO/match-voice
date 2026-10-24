@@ -32,7 +32,10 @@ class WriteRequest:
     feedback: dict[str, str] = field(default_factory=dict)
     trail: list[dict] = field(default_factory=list)
     latency_s: float = 0.0
+    recent: dict[str, list[str]] = field(default_factory=dict)  # channel key -> the last lines it spoke, for continuity (never facts)
     failed_hard: str | None = None  # model unavailable: skip straight to the fallback
+    calls: int = 0  # answers that needed a real model call
+    hits: int = 0  # answers served from the disk cache
 
 
 @dataclass
@@ -57,6 +60,7 @@ class Published:
     sources: dict[str, str]  # "en/expert" -> analyst | template
     trail: list[dict]
     latency_s: float
+    cached: bool = False  # every analyst answer came from the disk cache, no model call was made for this moment
 
 
 def _log(req: WriteRequest, step: str, **detail) -> None:
@@ -70,13 +74,17 @@ class AnalystExecutor(Executor):
 
     async def _run(self, req: WriteRequest, ctx: WorkflowContext[Draft]) -> None:
         wanted = [k for k in KEYS if k not in req.accepted]
-        prompt = build_prompt(req.moment, req.snapshot, self.meta, wanted, req.feedback or None)
+        prompt = build_prompt(req.moment, req.snapshot, self.meta, wanted, req.feedback or None, req.recent or None)
+        t0 = time.monotonic()
         try:
             raw = await self.llm(prompt)
             lines = parse_lines(raw, wanted)
             req.latency_s += self.llm.last_latency_s
+            req.hits += self.llm.last_cached
+            req.calls += not self.llm.last_cached
+            # latency_s is what the model call took when it was made, wall_s is what this run waited
             _log(req, "analyst_wrote", lines=len(lines), cached=self.llm.last_cached,
-                 latency_s=round(self.llm.last_latency_s, 2))
+                 latency_s=round(self.llm.last_latency_s, 2), wall_s=round(time.monotonic() - t0, 2))
         except BudgetExceeded as exc:
             lines, req.failed_hard = {}, str(exc)
             _log(req, "analyst_unavailable", reason=str(exc))
@@ -145,7 +153,8 @@ class PublisherExecutor(Executor):
                 lines[key], sources[key] = fallback, "template"
         if reviewed.failing:
             _log(req, "fallback", keys=list(reviewed.failing))
-        await ctx.yield_output(Published(req.moment.id, lines, sources, req.trail, req.latency_s))
+        await ctx.yield_output(Published(req.moment.id, lines, sources, req.trail, req.latency_s,
+                                         cached=req.hits > 0 and req.calls == 0))
 
 
 def build_newsroom(llm: GuardedLLM, meta: MatchMeta):
@@ -160,6 +169,7 @@ def build_newsroom(llm: GuardedLLM, meta: MatchMeta):
     )
 
 
-async def write_moment(llm: GuardedLLM, meta: MatchMeta, moment: Moment, snapshot: dict) -> Published:
-    events = await build_newsroom(llm, meta).run(WriteRequest(moment, snapshot))
+async def write_moment(llm: GuardedLLM, meta: MatchMeta, moment: Moment, snapshot: dict,
+                       recent: dict[str, list[str]] | None = None) -> Published:
+    events = await build_newsroom(llm, meta).run(WriteRequest(moment, snapshot, recent=dict(recent or {})))
     return events.get_outputs()[0]

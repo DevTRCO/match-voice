@@ -7,7 +7,8 @@ from pathlib import Path
 from dotenv import dotenv_values
 
 ROOT = Path(__file__).resolve().parents[2]
-_ENV = dotenv_values(ROOT / ".env")
+# MATCHVOICE_NO_DOTENV=1 ignores the file, e.g. to test or run the public demo without any key
+_ENV = {} if os.environ.get("MATCHVOICE_NO_DOTENV") else dotenv_values(ROOT / ".env")
 
 
 def anthropic_api_key() -> str | None:
@@ -17,3 +18,9 @@ def anthropic_api_key() -> str | None:
         if value:
             return value.strip()
     return None
+
+
+def elevenlabs_api_key() -> str | None:
+    """ELEVENLABS_API_KEY from the environment or the .env file. Optional: without it the UI uses the browser voice."""
+    value = os.environ.get("ELEVENLABS_API_KEY") or _ENV.get("ELEVENLABS_API_KEY")
+    return value.strip() if value else None

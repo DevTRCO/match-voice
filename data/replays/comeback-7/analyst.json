@@ -5,32 +5,32 @@
       "en/beginner": [
         "Marlow Bay United are on top right now.",
         "Marlow Bay United are really pushing now, with 2 shots in the last five minutes.",
-        "Marlow Bay United are on top right now, with 2 shots in the first 5 minutes, but it is still 0-0."
+        "Marlow Bay United have been on top for the last 5 minutes, with 83% of the momentum and 2 shots, but it is still 0-0."
       ],
       "en/expert": [
         "Marlow Bay United are dominating: 83% of the threat.",
         "Marlow Bay United have taken control, 83% of the threat and 2 shots in the last five minutes.",
-        "Marlow Bay United hold 83% of the momentum with 2 shots and 0.06 xG, while Tamsworth are still without a shot."
+        "Marlow Bay United own 83% of the momentum over the last 5 minutes, with 2 shots and 0.06 xG, while the game stays 0-0 and they sit at 42% to win."
       ],
       "de/beginner": [
         "Marlow Bay United ist gerade klar im Vorteil.",
         "Marlow Bay United drückt jetzt richtig, mit 2 Schüssen in den letzten fünf Minuten.",
-        "Marlow Bay United drückt gerade auf das Tor, 2 Schüsse in den ersten 5 Minuten, aber es steht noch 0:0."
+        "Marlow Bay United hat in den letzten 5 Minuten das Spiel bestimmt, mit 83 Prozent Momentum und 2 Schüssen, doch es steht noch 0-0."
       ],
       "de/expert": [
         "Marlow Bay United dominiert: 83% der Gefahr.",
         "Marlow Bay United hat die Kontrolle übernommen, 83% der Gefahr und 2 Schüsse in den letzten fünf Minuten.",
-        "Marlow Bay United hält 83 Prozent des Momentums, 2 Schüsse, 0,06 xG, Siegchance 42 Prozent, Tamsworth noch ohne Abschluss."
+        "Marlow Bay United hält über die letzten 5 Minuten 83 Prozent des Momentums, mit 2 Schüssen und 0,06 xG, bei weiterhin 0-0 und 42 Prozent Siegchance."
       ],
       "fr/beginner": [
         "Marlow Bay United domine en ce moment.",
         "Marlow Bay United met vraiment la pression, avec 2 tirs en cinq minutes.",
-        "Marlow Bay United domine en ce moment, avec 2 tirs dans les 5 premières minutes, mais le score reste 0-0."
+        "Marlow Bay United domine depuis 5 minutes, avec 83 % de l'élan du match et 2 tirs, mais le score reste 0-0."
       ],
       "fr/expert": [
         "Marlow Bay United domine : 83% du danger.",
         "Marlow Bay United a pris le contrôle, 83% du danger et 2 tirs sur les cinq dernières minutes.",
-        "Marlow Bay United détient 83 % du momentum, avec 2 tirs et 0,06 xG, et 42 % de chances de victoire, Tamsworth n'a encore aucun tir."
+        "Marlow Bay United détient 83 % de l'élan sur les 5 dernières minutes, avec 2 tirs et 0,06 xG, alors que le score reste 0-0 et que ses chances de victoire atteignent 42 %."
       ]
     },
     "sources": {
@@ -46,21 +46,23 @@
         "step": "analyst_wrote",
         "moment": 9,
         "attempt": 0,
-        "at": 1792495917.944,
+        "at": 1792497653.493,
         "lines": 6,
         "cached": false,
-        "latency_s": 5.44
+        "latency_s": 6.02
       },
       {
         "step": "verified",
         "moment": 9,
         "attempt": 0,
-        "at": 1792495917.946,
+        "at": 1792497653.495,
         "accepted": 6,
         "failing": 0
       }
     ],
-    "latency_s": 5.43655790000048
+    "latency_s": 6.019935042015277,
+    "kind": "momentum",
+    "t": 240.4
   },
   {
     "moment_id": 33,
@@ -68,32 +70,32 @@
       "en/beginner": [
         "That goal changes the game for Marlow Bay United.",
         "That goal changes the game: Marlow Bay United now have a 84% chance to win.",
-        "Lemaire puts Marlow Bay United ahead in the 14th minute with the opening goal, and their chance of winning jumps from 61% to 84%."
+        "Lemaire puts Marlow Bay United ahead in the 14th minute, 0-1. Their chance of winning jumps from 61 to 84 percent."
       ],
       "en/expert": [
         "Marlow Bay United's win probability moves from 61% to 84%.",
         "Look at the swing: Marlow Bay United's win probability goes from 61% to 84% with that goal.",
-        "Lemaire's finish, worth 0.25 xG, gives Marlow Bay United the 0-1 lead in the 14th minute and lifts their win probability from 61% to 84%."
+        "Lemaire's 14th-minute opener (0-1) came from a 0.25 xG chance, lifting Marlow Bay's win probability from 61 to 84 percent."
       ],
       "de/beginner": [
         "Dieses Tor verändert das Spiel für Marlow Bay United.",
         "Dieses Tor verändert das Spiel: Marlow Bay United hat jetzt eine Siegchance von 84%.",
-        "Lemaire trifft in der 14. Minute zum 0:1 für Marlow Bay United, und die Siegchance der Gäste steigt von 61 auf 84 Prozent."
+        "Lemaire bringt Marlow Bay United in der 14. Minute mit 0-1 in Führung. Die Siegchance der Gäste steigt von 61 auf 84 Prozent."
       ],
       "de/expert": [
         "Die Siegwahrscheinlichkeit von Marlow Bay United steigt von 61% auf 84%.",
         "Der Ausschlag: Die Siegwahrscheinlichkeit von Marlow Bay United springt mit dem Tor von 61% auf 84%.",
-        "Lemaire trifft in der 14. Minute zum 0:1, sein Abschluss mit 0,25 xG hebt die Siegwahrscheinlichkeit von Marlow Bay United von 61 auf 84 Prozent."
+        "Lemaires Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent."
       ],
       "fr/beginner": [
         "Ce but change la donne pour Marlow Bay United.",
         "Ce but change la donne : Marlow Bay United a maintenant 84% de chances de gagner.",
-        "Lemaire ouvre le score à la 14e minute pour Marlow Bay United, et leurs chances de victoire passent de 61 % à 84 %."
+        "Lemaire ouvre le score pour Marlow Bay United à la 14e minute, 0-1. Leurs chances de victoire passent de 61 à 84 pour cent."
       ],
       "fr/expert": [
         "La probabilité de victoire de Marlow Bay United passe de 61% à 84%.",
         "Regardez le basculement : la probabilité de victoire de Marlow Bay United passe de 61% à 84% avec ce but.",
-        "Lemaire ouvre le score à la 14e minute avec un xG de 0,25, faisant passer la probabilité de victoire de Marlow Bay United de 61 % à 84 %."
+        "But de Lemaire à la 14e minute (0-1), avec un xG de 0,25, qui fait passer la probabilité de victoire de Marlow Bay de 61 à 84 %."
       ]
     },
     "sources": {
@@ -109,21 +111,23 @@
         "step": "analyst_wrote",
         "moment": 33,
         "attempt": 0,
-        "at": 1792495924.576,
+        "at": 1792497659.307,
         "lines": 6,
         "cached": false,
-        "latency_s": 6.63
+        "latency_s": 5.81
       },
       {
         "step": "verified",
         "moment": 33,
         "attempt": 0,
-        "at": 1792495924.577,
+        "at": 1792497659.311,
         "accepted": 6,
         "failing": 0
       }
     ],
-    "latency_s": 6.627235199994175
+    "latency_s": 5.809208874939941,
+    "kind": "goal_analysis",
+    "t": 790.6
   },
   {
     "moment_id": 34,
@@ -131,32 +135,32 @@
       "en/beginner": [
         "Marlow Bay United are on top right now.",
         "Marlow Bay United are really pushing now, with 2 shots in the last five minutes.",
-        "Marlow Bay have controlled the last five minutes, firing two shots, and lead 0-1 in the 14th minute."
+        "Marlow Bay United have taken control, with 84 percent of the momentum over the last 5 minutes and 2 shots. The score is 0-1 in their favour."
       ],
       "en/expert": [
         "Marlow Bay United are dominating: 84% of the threat.",
         "Marlow Bay United have taken control, 84% of the threat and 2 shots in the last five minutes.",
-        "Marlow Bay hold an 84% momentum share over the last five minutes: two shots, 0.42 xG to Tamsworth's 0.02, and an 84% win probability."
+        "Marlow Bay own 84 percent of momentum over 5 minutes; their 0.42 xG against Tamsworth's 0.02 backs up the 0-1 lead."
       ],
       "de/beginner": [
         "Marlow Bay United ist gerade klar im Vorteil.",
         "Marlow Bay United drückt jetzt richtig, mit 2 Schüssen in den letzten fünf Minuten.",
-        "Marlow Bay bestimmt das Spiel: zwei Schüsse in den letzten fünf Minuten und die Führung 0:1 in der 14. Minute."
+        "Marlow Bay United hat die Oberhand: 84 Prozent des Spielschwungs in den letzten 5 Minuten und 2 Schüsse. Der Stand 0-1 spricht für die Gäste."
       ],
       "de/expert": [
         "Marlow Bay United dominiert: 84% der Gefahr.",
         "Marlow Bay United hat die Kontrolle übernommen, 84% der Gefahr und 2 Schüsse in den letzten fünf Minuten.",
-        "Marlow Bay hält 84 % Momentum-Anteil über die letzten fünf Minuten, mit 0,42 xG gegen 0,02 für Tamsworth und 84 % Siegchance."
+        "Marlow Bay dominiert mit 84 Prozent Momentum über 5 Minuten, 0,42 xG gegen 0,02 und 84 Prozent Siegchance. Stand: 0-1."
       ],
       "fr/beginner": [
         "Marlow Bay United domine en ce moment.",
         "Marlow Bay United met vraiment la pression, avec 2 tirs en cinq minutes.",
-        "Marlow Bay contrôle le jeu depuis cinq minutes, avec deux tirs, et mène 0-1 à la 14e minute."
+        "Marlow Bay United a pris le contrôle, avec 84 % de l'élan, c'est-à-dire la domination du jeu, sur les 5 dernières minutes et 2 tirs. Le score 0-1 leur est favorable."
       ],
       "fr/expert": [
         "Marlow Bay United domine : 84% du danger.",
         "Marlow Bay United a pris le contrôle, 84% du danger et 2 tirs sur les cinq dernières minutes.",
-        "Marlow Bay détient 84 % de l'élan sur les cinq dernières minutes : deux tirs, 0,42 xG contre 0,02 pour Tamsworth, et 84 % de probabilité de victoire."
+        "Marlow Bay détient 84 % de l'élan sur 5 minutes, avec 0,42 xG contre 0,02 pour Tamsworth, et 84 % de probabilité de victoire."
       ]
     },
     "sources": {
@@ -172,21 +176,23 @@
         "step": "analyst_wrote",
         "moment": 34,
         "attempt": 0,
-        "at": 1792495931.123,
+        "at": 1792497665.875,
         "lines": 6,
         "cached": false,
-        "latency_s": 6.54
+        "latency_s": 6.56
       },
       {
         "step": "verified",
         "moment": 34,
         "attempt": 0,
-        "at": 1792495931.125,
+        "at": 1792497665.879,
         "accepted": 6,
         "failing": 0
       }
     ],
-    "latency_s": 6.543184199996176
+    "latency_s": 6.559252125094645,
+    "kind": "momentum",
+    "t": 790.6
   },
   {
     "moment_id": 91,
@@ -194,32 +200,32 @@
       "en/beginner": [
         "Tamsworth United are on top right now.",
         "Tamsworth United are really pushing now, with 1 shot in the last five minutes.",
-        "Tamsworth United have controlled the ball for the last 5 minutes, with 85% of the recent play, but they have only one shot to show for it."
+        "Tamsworth United have had 85% of the momentum, meaning they've been on top, over the last 5 minutes, yet still trail 0-1."
       ],
       "en/expert": [
         "Tamsworth United are dominating: 85% of the threat.",
         "Tamsworth United have taken control, 85% of the threat and 1 shot in the last five minutes.",
-        "Tamsworth hold 85% of recent momentum over 5 minutes but have only one shot, while Marlow Bay lead 1.22 to 0.23 on xG and sit at 87% win probability."
+        "Tamsworth hold 85% of momentum over 5 minutes on just 1 shot, but Marlow Bay lead 0-1 with 1.22 xG to 0.23 and an 87% win probability."
       ],
       "de/beginner": [
         "Tamsworth United ist gerade klar im Vorteil.",
         "Tamsworth United drückt jetzt richtig, mit 1 Schuss in den letzten fünf Minuten.",
-        "Tamsworth United drückt seit 5 Minuten und hat 85 Prozent des Spielverlaufs bestimmt, aber nur einen Torschuss abgegeben."
+        "Tamsworth United bestimmt die letzten 5 Minuten klar, mit 85% des Spielschwungs, liegt aber trotzdem 0-1 zurück."
       ],
       "de/expert": [
         "Tamsworth United dominiert: 85% der Gefahr.",
         "Tamsworth United hat die Kontrolle übernommen, 85% der Gefahr und 1 Schuss in den letzten fünf Minuten.",
-        "Tamsworth kontrolliert die letzten 5 Minuten mit 85 Prozent Anteil, bleibt aber bei einem Abschluss; Marlow Bay führt beim xG 1,22 zu 0,23 und hat 87 Prozent Siegchance."
+        "Tamsworth kommt in den letzten 5 Minuten auf 85% Momentum-Anteil bei nur 1 Schuss, während Marlow Bay mit 1,22 zu 0,23 xG und 87% Siegwahrscheinlichkeit führt."
       ],
       "fr/beginner": [
         "Tamsworth United domine en ce moment.",
         "Tamsworth United met vraiment la pression, avec 1 tir en cinq minutes.",
-        "Tamsworth United domine le jeu depuis 5 minutes avec 85 % des actions, mais n'a tenté qu'un seul tir."
+        "Tamsworth United domine les 5 dernières minutes avec 85% de l'élan, c'est-à-dire la maîtrise du jeu, mais reste mené 0-1."
       ],
       "fr/expert": [
         "Tamsworth United domine : 85% du danger.",
         "Tamsworth United a pris le contrôle, 85% du danger et 1 tir sur les cinq dernières minutes.",
-        "Tamsworth détient 85 % de l'élan sur les 5 dernières minutes avec une seule frappe, tandis que Marlow Bay mène 1,22 à 0,23 en xG et garde 87 % de probabilité de victoire."
+        "Tamsworth affiche 85% d'élan sur 5 minutes pour un seul tir, alors que Marlow Bay mène 0-1 avec 1,22 xG contre 0,23 et 87% de chances de victoire."
       ]
     },
     "sources": {
@@ -235,21 +241,23 @@
         "step": "analyst_wrote",
         "moment": 91,
         "attempt": 0,
-        "at": 1792495937.253,
+        "at": 1792497673.014,
         "lines": 6,
         "cached": false,
-        "latency_s": 6.13
+        "latency_s": 7.13
       },
       {
         "step": "verified",
         "moment": 91,
         "attempt": 0,
-        "at": 1792495937.255,
+        "at": 1792497673.015,
         "accepted": 6,
         "failing": 0
       }
     ],
-    "latency_s": 6.126181600004202
+    "latency_s": 7.131458749994636,
+    "kind": "momentum",
+    "t": 2744.9
   },
   {
     "moment_id": 130,
@@ -257,32 +265,32 @@
       "en/beginner": [
         "What a save by Trevino!",
         "Trevino makes a huge save, that was a very good chance.",
-        "Trevino dives to keep out Rahimi at 65 minutes, a chance that should very nearly have been a goal."
+        "Trevino makes a huge save at 65 minutes to deny Rahimi, a chance that looked almost certain to be a goal. Tamsworth United trail 0-1."
       ],
       "en/expert": [
         "Trevino denies a 0.88 expected-goals chance.",
         "That is a big save from Trevino, the chance was worth 0.88 expected goals.",
-        "Trevino denied Rahimi in the 65th minute, a chance worth 0.88 xG, and Marlow Bay United still lead Tamsworth United 0-1."
+        "Trevino's save from Rahimi at 65 minutes stopped a 0.88 xG chance. Marlow Bay United hold a 67% win probability at 0-1."
       ],
       "de/beginner": [
         "Was für eine Parade von Trevino!",
         "Trevino hält überragend, das war eine richtig gute Chance.",
-        "Trevino hält stark gegen Rahimi in der 65. Minute, eine Chance, die fast ein Tor geworden wäre."
+        "Trevino hält in der 65. Minute stark gegen Rahimi, eine Chance, die fast sicher ein Tor gewesen wäre. Tamsworth United liegt weiter 0-1 zurück."
       ],
       "de/expert": [
         "Trevino entschärft eine Chance mit 0,88 erwarteten Toren.",
         "Eine starke Parade von Trevino, die Chance hatte 0,88 erwartete Tore.",
-        "Trevino hielt Rahimis Abschluss in der 65. Minute, eine Chance mit 0,88 xG, und Marlow Bay United führt gegen Tamsworth United 0:1."
+        "Trevino pariert Rahimi in der 65. Minute, eine Chance mit 0,88 xG. Marlow Bay United hat bei 0-1 eine Siegwahrscheinlichkeit von 67 Prozent."
       ],
       "fr/beginner": [
         "Quel arrêt de Trevino !",
         "Trevino réalise un arrêt énorme, c'était une très belle occasion.",
-        "Trevino réalise un arrêt énorme face à Rahimi à la 65e minute, une occasion qui aurait presque donné un but."
+        "Trevino réalise un arrêt énorme face à Rahimi à la 65e minute, une occasion presque sûre de but. Tamsworth United reste mené 0-1."
       ],
       "fr/expert": [
         "Trevino détourne une occasion à 0,88 buts attendus.",
         "Un arrêt important de Trevino, l'occasion valait 0,88 buts attendus.",
-        "Trevino repousse la frappe de Rahimi à la 65e minute, une occasion évaluée à 0,88 xG, et Marlow Bay United mène 0-1 contre Tamsworth United."
+        "Arrêt de Trevino sur Rahimi à la 65e minute, face à une occasion de 0,88 xG. Marlow Bay United garde 67 % de probabilité de victoire à 0-1."
       ]
     },
     "sources": {
@@ -298,76 +306,23 @@
         "step": "analyst_wrote",
         "moment": 130,
         "attempt": 0,
-        "at": 1792495942.919,
+        "at": 1792497680.339,
         "lines": 6,
         "cached": false,
-        "latency_s": 5.66
-      },
-      {
-        "step": "rejected",
-        "moment": 130,
-        "attempt": 0,
-        "at": 1792495942.92,
-        "key": "en/expert",
-        "text": "Trevino denies Rahimi from a 0.88 xG chance at 65 minutes, a huge stop with Marlow Bay 1-0 up and a 67% win probability.",
-        "why": "score_mismatch: 1-0 is not a real scoreline of this moment"
-      },
-      {
-        "step": "rejected",
-        "moment": 130,
-        "attempt": 0,
-        "at": 1792495942.92,
-        "key": "de/expert",
-        "text": "Trevino pariert Rahimis Abschluss mit 0,88 xG in der 65. Minute, Marlow Bay führt 1:0 und hat 67 Prozent Siegchance.",
-        "why": "score_mismatch: 1:0 is not a real scoreline of this moment"
-      },
-      {
-        "step": "rejected",
-        "moment": 130,
-        "attempt": 0,
-        "at": 1792495942.92,
-        "key": "fr/expert",
-        "text": "Trevino repousse la frappe de Rahimi, une occasion à 0,88 xG à la 65e minute, Marlow Bay mène 1-0 avec 67 % de chances de victoire.",
-        "why": "score_mismatch: 1-0 is not a real scoreline of this moment"
+        "latency_s": 7.32
       },
       {
         "step": "verified",
         "moment": 130,
         "attempt": 0,
-        "at": 1792495942.92,
-        "accepted": 3,
-        "failing": 3
-      },
-      {
-        "step": "retry",
-        "moment": 130,
-        "attempt": 1,
-        "at": 1792495942.92,
-        "failing": [
-          "en/expert",
-          "de/expert",
-          "fr/expert"
-        ]
-      },
-      {
-        "step": "analyst_wrote",
-        "moment": 130,
-        "attempt": 1,
-        "at": 1792495947.682,
-        "lines": 3,
-        "cached": false,
-        "latency_s": 4.76
-      },
-      {
-        "step": "verified",
-        "moment": 130,
-        "attempt": 1,
-        "at": 1792495947.683,
+        "at": 1792497680.341,
         "accepted": 6,
         "failing": 0
       }
     ],
-    "latency_s": 10.422395200002939
+    "latency_s": 7.3213315000757575,
+    "kind": "big_save_analysis",
+    "t": 4024.4
   },
   {
     "moment_id": 138,
@@ -375,32 +330,32 @@
       "en/beginner": [
         "What a save by Trevino!",
         "Trevino makes a huge save, that was a very good chance.",
-        "Trevino made a huge save at minute 68 to stop Merriweather, a shot that would often have gone in."
+        "Goalkeeper Trevino makes a big save to deny Merriweather in the 68th minute, and Marlow Bay United still lead 0-1."
       ],
       "en/expert": [
         "Trevino denies a 0.56 expected-goals chance.",
         "That is a big save from Trevino, the chance was worth 0.56 expected goals.",
-        "Trevino denied Merriweather at 68' from a 0.56 xG chance; Marlow Bay hold 62% win probability despite Tamsworth United's 2.11 xG against 1.22."
+        "Trevino denies Merriweather in the 68th minute, a chance worth 0.56 xG; Marlow Bay lead 0-1 with a 62% win probability."
       ],
       "de/beginner": [
         "Was für eine Parade von Trevino!",
         "Trevino hält überragend, das war eine richtig gute Chance.",
-        "Trevino hält in der 68. Minute stark gegen Merriweather, ein Schuss, der oft im Tor gelandet wäre."
+        "In der 68. Minute hält Torwart Trevino stark gegen Merriweather, und Marlow Bay United führt weiterhin mit 0-1."
       ],
       "de/expert": [
         "Trevino entschärft eine Chance mit 0,56 erwarteten Toren.",
         "Eine starke Parade von Trevino, die Chance hatte 0,56 erwartete Tore.",
-        "Trevino parierte Merriweathers Abschluss in der 68. Minute, eine Chance mit 0,56 xG; Marlow Bay behält mit 62 Prozent Siegwahrscheinlichkeit klar die Oberhand."
+        "Trevino pariert Merriweathers Abschluss in der 68. Minute, eine Chance mit 0,56 xG; Marlow Bay führt 0-1 mit 62 % Siegwahrscheinlichkeit."
       ],
       "fr/beginner": [
         "Quel arrêt de Trevino !",
         "Trevino réalise un arrêt énorme, c'était une très belle occasion.",
-        "À la 68e minute, Trevino réalise un arrêt décisif face à Merriweather, une frappe qui aurait souvent fini dans le filet."
+        "À la 68e minute, le gardien Trevino réalise un arrêt décisif face à Merriweather, et Marlow Bay United mène toujours 0-1."
       ],
       "fr/expert": [
         "Trevino détourne une occasion à 0,56 buts attendus.",
         "Un arrêt important de Trevino, l'occasion valait 0,56 buts attendus.",
-        "Arrêt de Trevino sur Merriweather à la 68e, occasion à 0,56 xG ; Marlow Bay garde 62 % de probabilité de victoire malgré un xG de 2,11 pour Tamsworth United contre 1,22."
+        "Trevino repousse la frappe de Merriweather à la 68e minute, une occasion à 0,56 xG ; Marlow Bay mène 0-1 avec 62 % de probabilité de victoire."
       ]
     },
     "sources": {
@@ -416,76 +371,23 @@
         "step": "analyst_wrote",
         "moment": 138,
         "attempt": 0,
-        "at": 1792495954.961,
+        "at": 1792497685.656,
         "lines": 6,
         "cached": false,
-        "latency_s": 7.28
-      },
-      {
-        "step": "rejected",
-        "moment": 138,
-        "attempt": 0,
-        "at": 1792495954.962,
-        "key": "en/beginner",
-        "text": "In the 68th minute Trevino made a big save to deny Merriweather, a chance that would usually go in about 56 times out of 100.",
-        "why": "number_unsupported: 100 is not in the facts"
-      },
-      {
-        "step": "rejected",
-        "moment": 138,
-        "attempt": 0,
-        "at": 1792495954.962,
-        "key": "de/beginner",
-        "text": "Trevino parierte in der 68. Minute den Schuss von Merriweather. Eine solche Chance endet etwa 56 Mal von 100 im Tor.",
-        "why": "number_unsupported: 100 is not in the facts"
-      },
-      {
-        "step": "rejected",
-        "moment": 138,
-        "attempt": 0,
-        "at": 1792495954.963,
-        "key": "fr/beginner",
-        "text": "À la 68e minute, Trevino a réalisé un grand arrêt face à Merriweather. Cette occasion aurait eu environ 56 chances sur 100 de finir au but.",
-        "why": "number_unsupported: 100 is not in the facts"
+        "latency_s": 5.31
       },
       {
         "step": "verified",
         "moment": 138,
         "attempt": 0,
-        "at": 1792495954.963,
-        "accepted": 3,
-        "failing": 3
-      },
-      {
-        "step": "retry",
-        "moment": 138,
-        "attempt": 1,
-        "at": 1792495954.963,
-        "failing": [
-          "en/beginner",
-          "de/beginner",
-          "fr/beginner"
-        ]
-      },
-      {
-        "step": "analyst_wrote",
-        "moment": 138,
-        "attempt": 1,
-        "at": 1792495958.551,
-        "lines": 3,
-        "cached": false,
-        "latency_s": 3.59
-      },
-      {
-        "step": "verified",
-        "moment": 138,
-        "attempt": 1,
-        "at": 1792495958.552,
+        "at": 1792497685.659,
         "accepted": 6,
         "failing": 0
       }
     ],
-    "latency_s": 10.862681200014777
+    "latency_s": 5.310811082948931,
+    "kind": "big_save_analysis",
+    "t": 4247.9
   },
   {
     "moment_id": 149,
@@ -493,32 +395,32 @@
       "en/beginner": [
         "That goal changes the game for Tamsworth United.",
         "That goal changes the game: Tamsworth United now have a 42% chance to win.",
-        "Rahimi scores in the 71st minute to level it at 1-1 for Tamsworth United, lifting their chance of winning from 14 to 42 percent."
+        "Rahimi equalises for Tamsworth United in the 71st minute, making it 1-1, and their chance of winning jumps from 14 to 42 percent."
       ],
       "en/expert": [
         "Tamsworth United's win probability moves from 14% to 42%.",
         "Look at the swing: Tamsworth United's win probability goes from 14% to 42% with that goal.",
-        "Rahimi's equaliser in the 71st minute (xG 0.45) lifts Tamsworth's win probability from 14 to 42 percent, and they lead the xG count 2.71 to 1.22."
+        "Rahimi's equaliser at 71' carried an xG of 0.45, lifting Tamsworth's win probability from 14% to 42%; match xG stands at 2.71 to 1.22."
       ],
       "de/beginner": [
         "Dieses Tor verändert das Spiel für Tamsworth United.",
         "Dieses Tor verändert das Spiel: Tamsworth United hat jetzt eine Siegchance von 42%.",
-        "Rahimi gleicht in der 71. Minute zum 1:1 für Tamsworth United aus und erhöht die Siegchance von 14 auf 42 Prozent."
+        "Rahimi gleicht in der 71. Minute für Tamsworth United zum 1-1 aus, und die Siegchance steigt von 14 auf 42 Prozent."
       ],
       "de/expert": [
         "Die Siegwahrscheinlichkeit von Tamsworth United steigt von 14% auf 42%.",
         "Der Ausschlag: Die Siegwahrscheinlichkeit von Tamsworth United springt mit dem Tor von 14% auf 42%.",
-        "Rahimis Ausgleich in der 71. Minute (xG 0,45) hebt Tamsworths Siegwahrscheinlichkeit von 14 auf 42 Prozent, beim xG führen sie 2,71 zu 1,22."
+        "Rahimi gleicht in der 71. Minute aus (xG 0,45), Tamsworths Siegwahrscheinlichkeit springt von 14 auf 42 Prozent; xG-Summe 2,71 zu 1,22."
       ],
       "fr/beginner": [
         "Ce but change la donne pour Tamsworth United.",
         "Ce but change la donne : Tamsworth United a maintenant 42% de chances de gagner.",
-        "Rahimi égalise à la 71e minute pour Tamsworth United, score de 1-1, et fait passer leur chance de gagner de 14 à 42 pour cent."
+        "Rahimi égalise pour Tamsworth United à la 71e minute, 1-1, et leurs chances de victoire passent de 14 à 42 pour cent."
       ],
       "fr/expert": [
         "La probabilité de victoire de Tamsworth United passe de 14% à 42%.",
         "Regardez le basculement : la probabilité de victoire de Tamsworth United passe de 14% à 42% avec ce but.",
-        "L'égalisation de Rahimi à la 71e minute (xG 0,45) fait grimper la probabilité de victoire de Tamsworth de 14 à 42 pour cent, ils dominent l'xG 2,71 à 1,22."
+        "Égalisation de Rahimi à la 71e (xG 0,45) : la probabilité de victoire de Tamsworth grimpe de 14 à 42 %, pour un xG cumulé de 2,71 contre 1,22."
       ]
     },
     "sources": {
@@ -534,21 +436,23 @@
         "step": "analyst_wrote",
         "moment": 149,
         "attempt": 0,
-        "at": 1792495963.621,
+        "at": 1792497691.847,
         "lines": 6,
         "cached": false,
-        "latency_s": 5.07
+        "latency_s": 6.18
       },
       {
         "step": "verified",
         "moment": 149,
         "attempt": 0,
-        "at": 1792495963.623,
+        "at": 1792497691.85,
         "accepted": 6,
         "failing": 0
       }
     ],
-    "latency_s": 5.066124999997555
+    "latency_s": 6.184771875035949,
+    "kind": "goal_analysis",
+    "t": 4392.6
   },
   {
     "moment_id": 180,
@@ -556,32 +460,32 @@
       "en/beginner": [
         "That goal changes the game for Tamsworth United.",
         "That goal changes the game: Tamsworth United now have a 94% chance to win.",
-        "Rahimi scores in the 89th minute to put Tamsworth United 2-1 ahead, a late turnaround that makes a win now very likely."
+        "Rahimi scores in the 89th minute to give Tamsworth United a 2-1 lead, and their chance of winning jumps to 94 percent."
       ],
       "en/expert": [
         "Tamsworth United's win probability moves from 16% to 94%.",
         "Look at the swing: Tamsworth United's win probability goes from 16% to 94% with that goal.",
-        "Rahimi's 89th-minute finish from a 0.41 xG chance flips the game, lifting Tamsworth's win probability from 16% to 94%."
+        "Rahimi's 89th-minute finish, worth 0.41 xG, lifts Tamsworth United from 16 to 94 percent win probability at 2-1."
       ],
       "de/beginner": [
         "Dieses Tor verändert das Spiel für Tamsworth United.",
         "Dieses Tor verändert das Spiel: Tamsworth United hat jetzt eine Siegchance von 94%.",
-        "Rahimi trifft in der 89. Minute zum 2:1 für Tamsworth United, ein später Umschwung, der den Sieg jetzt sehr wahrscheinlich macht."
+        "Rahimi trifft in der 89. Minute zum 2-1 für Tamsworth United, und die Siegchance springt auf 94 Prozent."
       ],
       "de/expert": [
         "Die Siegwahrscheinlichkeit von Tamsworth United steigt von 16% auf 94%.",
         "Der Ausschlag: Die Siegwahrscheinlichkeit von Tamsworth United springt mit dem Tor von 16% auf 94%.",
-        "Rahimi trifft in der 89. Minute aus einer Chance mit 0,41 xG zum 2:1 und hebt Tamsworths Siegchance von 16 auf 94 Prozent."
+        "Rahimi erzielt in der 89. Minute das 2-1 mit 0,41 xG, die Siegwahrscheinlichkeit für Tamsworth United steigt von 16 auf 94 Prozent."
       ],
       "fr/beginner": [
         "Ce but change la donne pour Tamsworth United.",
         "Ce but change la donne : Tamsworth United a maintenant 94% de chances de gagner.",
-        "Rahimi marque à la 89e minute et donne l'avantage 2-1 à Tamsworth United, un renversement tardif qui rend la victoire très probable."
+        "Rahimi marque à la 89e minute et donne l'avantage 2-1 à Tamsworth United, leurs chances de victoire grimpent à 94 %."
       ],
       "fr/expert": [
         "La probabilité de victoire de Tamsworth United passe de 16% à 94%.",
         "Regardez le basculement : la probabilité de victoire de Tamsworth United passe de 16% à 94% avec ce but.",
-        "But de Rahimi à la 89e minute sur une occasion à 0,41 xG, qui fait passer Tamsworth de 16 % à 94 % de chances de victoire."
+        "But de Rahimi à la 89e minute, valant 0,41 xG : Tamsworth United passe de 16 % à 94 % de probabilité de victoire, 2-1."
       ]
     },
     "sources": {
@@ -597,20 +501,22 @@
         "step": "analyst_wrote",
         "moment": 180,
         "attempt": 0,
-        "at": 1792495963.632,
+        "at": 1792497696.938,
         "lines": 6,
-        "cached": true,
-        "latency_s": 5.29
+        "cached": false,
+        "latency_s": 5.08
       },
       {
         "step": "verified",
         "moment": 180,
         "attempt": 0,
-        "at": 1792495963.634,
+        "at": 1792497696.94,
         "accepted": 6,
         "failing": 0
       }
     ],
-    "latency_s": 5.29
+    "latency_s": 5.082632125006057,
+    "kind": "goal_analysis",
+    "t": 5511.7
   }
 ]

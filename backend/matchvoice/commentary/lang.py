@@ -4,8 +4,8 @@ from __future__ import annotations
 LANGS = ("en", "de", "fr")
 STYLES = ("beginner", "expert")
 
-# Characters spoken per second at a broadcast pace. Rough values, to be calibrated against the TTS voices.
-CPS = {"en": 15.0, "de": 14.0, "fr": 15.5}
+# Characters spoken per second at a broadcast pace. Measured with Chrome local voices (about 12 to 13 at rate 1); ui/src/speech.ts plans with the same figures.
+CPS = {"en": 12.5, "de": 12.0, "fr": 13.0}
 PAUSE_S = 0.3
 
 

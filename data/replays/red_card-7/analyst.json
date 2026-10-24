@@ -1,0 +1,587 @@
+[
+  {
+    "moment_id": 9,
+    "lines": {
+      "en/beginner": [
+        "Marlow Bay United are on top right now.",
+        "Marlow Bay United are really pushing now, with 2 shots in the last five minutes.",
+        "Marlow Bay United have been on top for the last 5 minutes, with 83% of the momentum and 2 shots, but it is still 0-0."
+      ],
+      "en/expert": [
+        "Marlow Bay United are dominating: 83% of the threat.",
+        "Marlow Bay United have taken control, 83% of the threat and 2 shots in the last five minutes.",
+        "Marlow Bay United own 83% of the momentum over the last 5 minutes, with 2 shots and 0.06 xG, while the game stays 0-0 and they sit at 42% to win."
+      ],
+      "de/beginner": [
+        "Marlow Bay United ist gerade klar im Vorteil.",
+        "Marlow Bay United drückt jetzt richtig, mit 2 Schüssen in den letzten fünf Minuten.",
+        "Marlow Bay United hat in den letzten 5 Minuten das Spiel bestimmt, mit 83 Prozent Momentum und 2 Schüssen, doch es steht noch 0-0."
+      ],
+      "de/expert": [
+        "Marlow Bay United dominiert: 83% der Gefahr.",
+        "Marlow Bay United hat die Kontrolle übernommen, 83% der Gefahr und 2 Schüsse in den letzten fünf Minuten.",
+        "Marlow Bay United hält über die letzten 5 Minuten 83 Prozent des Momentums, mit 2 Schüssen und 0,06 xG, bei weiterhin 0-0 und 42 Prozent Siegchance."
+      ],
+      "fr/beginner": [
+        "Marlow Bay United domine en ce moment.",
+        "Marlow Bay United met vraiment la pression, avec 2 tirs en cinq minutes.",
+        "Marlow Bay United domine depuis 5 minutes, avec 83 % de l'élan du match et 2 tirs, mais le score reste 0-0."
+      ],
+      "fr/expert": [
+        "Marlow Bay United domine : 83% du danger.",
+        "Marlow Bay United a pris le contrôle, 83% du danger et 2 tirs sur les cinq dernières minutes.",
+        "Marlow Bay United détient 83 % de l'élan sur les 5 dernières minutes, avec 2 tirs et 0,06 xG, alors que le score reste 0-0 et que ses chances de victoire atteignent 42 %."
+      ]
+    },
+    "sources": {
+      "en/beginner": "analyst",
+      "en/expert": "analyst",
+      "de/beginner": "analyst",
+      "de/expert": "analyst",
+      "fr/beginner": "analyst",
+      "fr/expert": "analyst"
+    },
+    "trail": [
+      {
+        "step": "analyst_wrote",
+        "moment": 9,
+        "attempt": 0,
+        "at": 1792497698.094,
+        "lines": 6,
+        "cached": true,
+        "latency_s": 6.02
+      },
+      {
+        "step": "verified",
+        "moment": 9,
+        "attempt": 0,
+        "at": 1792497698.095,
+        "accepted": 6,
+        "failing": 0
+      }
+    ],
+    "latency_s": 6.02,
+    "kind": "momentum",
+    "t": 240.4
+  },
+  {
+    "moment_id": 19,
+    "lines": {
+      "en/beginner": [
+        "Tamsworth United are on top right now.",
+        "Tamsworth United are really pushing now, with 2 shots in the last five minutes.",
+        "Tamsworth United have taken control, with 91% of the momentum and 2 shots in the last 5 minutes, but it is still 0-0 at minute 9."
+      ],
+      "en/expert": [
+        "Tamsworth United are dominating: 91% of the threat.",
+        "Tamsworth United have taken control, 91% of the threat and 2 shots in the last five minutes.",
+        "Tamsworth United hold 91% of the momentum over 5 minutes with 2 shots, though xG is only 0.08 to 0.06. Still 0-0 at 9."
+      ],
+      "de/beginner": [
+        "Tamsworth United ist gerade klar im Vorteil.",
+        "Tamsworth United drückt jetzt richtig, mit 2 Schüssen in den letzten fünf Minuten.",
+        "Tamsworth United hat die Kontrolle: 91 Prozent des Schwungs und 2 Schüsse in 5 Minuten, aber es steht noch 0-0 in der 9. Minute."
+      ],
+      "de/expert": [
+        "Tamsworth United dominiert: 91% der Gefahr.",
+        "Tamsworth United hat die Kontrolle übernommen, 91% der Gefahr und 2 Schüsse in den letzten fünf Minuten.",
+        "Tamsworth United dominiert mit 91 Prozent Momentum über 5 Minuten und 2 Schüssen, xG nur 0,08 zu 0,06. Weiter 0-0 in der 9. Minute."
+      ],
+      "fr/beginner": [
+        "Tamsworth United domine en ce moment.",
+        "Tamsworth United met vraiment la pression, avec 2 tirs en cinq minutes.",
+        "Tamsworth United a pris le contrôle : 91 % de l'élan et 2 tirs en 5 minutes, mais le score reste 0-0 à la 9e minute."
+      ],
+      "fr/expert": [
+        "Tamsworth United domine : 91% du danger.",
+        "Tamsworth United a pris le contrôle, 91% du danger et 2 tirs sur les cinq dernières minutes.",
+        "Tamsworth United domine avec 91 % de l'élan sur 5 minutes et 2 tirs, xG 0,08 contre 0,06. Toujours 0-0 à la 9e minute."
+      ]
+    },
+    "sources": {
+      "en/beginner": "analyst",
+      "en/expert": "analyst",
+      "de/beginner": "analyst",
+      "de/expert": "analyst",
+      "fr/beginner": "analyst",
+      "fr/expert": "analyst"
+    },
+    "trail": [
+      {
+        "step": "analyst_wrote",
+        "moment": 19,
+        "attempt": 0,
+        "at": 1792497703.808,
+        "lines": 6,
+        "cached": false,
+        "latency_s": 5.71
+      },
+      {
+        "step": "verified",
+        "moment": 19,
+        "attempt": 0,
+        "at": 1792497703.81,
+        "accepted": 6,
+        "failing": 0
+      }
+    ],
+    "latency_s": 5.711952541954815,
+    "kind": "momentum",
+    "t": 482.9
+  },
+  {
+    "moment_id": 48,
+    "lines": {
+      "en/beginner": [
+        "Marlow Bay United are on top right now.",
+        "Marlow Bay United are really pushing now, with 1 shot in the last five minutes.",
+        "Marlow Bay United have had the upper hand for the last 5 minutes, with 84% of the momentum, meaning sustained pressure on the defence, but it is still 0-0."
+      ],
+      "en/expert": [
+        "Marlow Bay United are dominating: 84% of the threat.",
+        "Marlow Bay United have taken control, 84% of the threat and 1 shot in the last five minutes.",
+        "Marlow Bay United hold an 84% momentum share over the last 5 minutes on just 1 shot, with the score still 0-0 and their xG at 0.09."
+      ],
+      "de/beginner": [
+        "Marlow Bay United ist gerade klar im Vorteil.",
+        "Marlow Bay United drückt jetzt richtig, mit 1 Schuss in den letzten fünf Minuten.",
+        "Marlow Bay United hat in den letzten 5 Minuten das Spiel bestimmt, mit 84 % Spielanteil, also anhaltendem Druck auf die Abwehr, doch es steht weiterhin 0-0."
+      ],
+      "de/expert": [
+        "Marlow Bay United dominiert: 84% der Gefahr.",
+        "Marlow Bay United hat die Kontrolle übernommen, 84% der Gefahr und 1 Schuss in den letzten fünf Minuten.",
+        "Marlow Bay United dominiert die letzten 5 Minuten mit 84 % Momentum-Anteil bei nur einem Abschluss, der Spielstand bleibt 0-0 bei einem xG von 0,09."
+      ],
+      "fr/beginner": [
+        "Marlow Bay United domine en ce moment.",
+        "Marlow Bay United met vraiment la pression, avec 1 tir en cinq minutes.",
+        "Marlow Bay United domine le jeu depuis 5 minutes, avec 84 % de la dynamique, c'est-à-dire une forte pression sur la défense, mais le score reste 0-0."
+      ],
+      "fr/expert": [
+        "Marlow Bay United domine : 84% du danger.",
+        "Marlow Bay United a pris le contrôle, 84% du danger et 1 tir sur les cinq dernières minutes.",
+        "Marlow Bay United détient 84 % de l'élan sur les 5 dernières minutes avec un seul tir, alors que le score reste 0-0 et que son xG est de 0,09."
+      ]
+    },
+    "sources": {
+      "en/beginner": "analyst",
+      "en/expert": "analyst",
+      "de/beginner": "analyst",
+      "de/expert": "analyst",
+      "fr/beginner": "analyst",
+      "fr/expert": "analyst"
+    },
+    "trail": [
+      {
+        "step": "analyst_wrote",
+        "moment": 48,
+        "attempt": 0,
+        "at": 1792497709.818,
+        "lines": 6,
+        "cached": false,
+        "latency_s": 6.01
+      },
+      {
+        "step": "verified",
+        "moment": 48,
+        "attempt": 0,
+        "at": 1792497709.821,
+        "accepted": 6,
+        "failing": 0
+      }
+    ],
+    "latency_s": 6.005758709041402,
+    "kind": "momentum",
+    "t": 1687.6
+  },
+  {
+    "moment_id": 50,
+    "lines": {
+      "en/beginner": [
+        "Wrenfield should have scored there.",
+        "A big chance missed by Wrenfield, that one will hurt.",
+        "Wrenfield had a big chance in the 29th minute, a really good shooting opportunity, but it's still 0-0."
+      ],
+      "en/expert": [
+        "Wrenfield misses a 0.69 expected-goals chance.",
+        "That is a big miss from Wrenfield, the chance was worth 0.69 expected goals.",
+        "Wrenfield's big chance in the 29th minute carries 0.69 xG; at 0-0, Marlow Bay total 0.78 xG to Tamsworth's 0.08, and sit at 62% to win."
+      ],
+      "de/beginner": [
+        "Da muss Wrenfield treffen.",
+        "Eine große Chance vergeben von Wrenfield, das tut weh.",
+        "In der 29. Minute hatte Wrenfield eine große Torchance, also eine sehr gute Gelegenheit zum Tor, doch es steht weiterhin 0-0."
+      ],
+      "de/expert": [
+        "Wrenfield vergibt eine Chance mit 0,69 erwarteten Toren.",
+        "Das ist eine dicke Chance, die Wrenfield liegen lässt, sie hatte 0,69 erwartete Tore.",
+        "Wrenfields Großchance in der 29. Minute liegt bei 0.69 xG; beim 0-0 kommt Marlow Bay auf 0.78 xG, Tamsworth nur auf 0.08."
+      ],
+      "fr/beginner": [
+        "Wrenfield aurait dû marquer.",
+        "Une grosse occasion manquée par Wrenfield, ça va faire mal.",
+        "À la 29e minute, Wrenfield a eu une grosse occasion, c'est-à-dire une très belle chance de marquer, mais le score reste 0-0."
+      ],
+      "fr/expert": [
+        "Wrenfield rate une occasion à 0,69 buts attendus.",
+        "Une grosse occasion manquée par Wrenfield, elle valait 0,69 buts attendus.",
+        "L'occasion de Wrenfield à la 29e minute vaut 0.69 xG ; à 0-0, Marlow Bay totalise 0.78 xG contre 0.08 pour Tamsworth."
+      ]
+    },
+    "sources": {
+      "en/beginner": "analyst",
+      "en/expert": "analyst",
+      "de/beginner": "analyst",
+      "de/expert": "analyst",
+      "fr/beginner": "analyst",
+      "fr/expert": "analyst"
+    },
+    "trail": [
+      {
+        "step": "analyst_wrote",
+        "moment": 50,
+        "attempt": 0,
+        "at": 1792497715.926,
+        "lines": 6,
+        "cached": false,
+        "latency_s": 6.1
+      },
+      {
+        "step": "verified",
+        "moment": 50,
+        "attempt": 0,
+        "at": 1792497715.928,
+        "accepted": 6,
+        "failing": 0
+      }
+    ],
+    "latency_s": 6.101533000008203,
+    "kind": "big_chance_analysis",
+    "t": 1696.5
+  },
+  {
+    "moment_id": 100,
+    "lines": {
+      "en/beginner": [
+        "That goal changes the game for Marlow Bay United.",
+        "That goal changes the game: Marlow Bay United now have a 92% chance to win.",
+        "Lemaire puts Marlow Bay ahead in the 52nd minute, 0-1, and their chances of winning jump from 60 to 92 percent."
+      ],
+      "en/expert": [
+        "Marlow Bay United's win probability moves from 60% to 92%.",
+        "Look at the swing: Marlow Bay United's win probability goes from 60% to 92% with that goal.",
+        "Lemaire's 52nd-minute finish, worth 0.42 xG, lifts Marlow Bay's win probability from 60 to 92 percent; Marlow Bay lead 0-1, with 1.47 xG to Tamsworth's 0.21."
+      ],
+      "de/beginner": [
+        "Dieses Tor verändert das Spiel für Marlow Bay United.",
+        "Dieses Tor verändert das Spiel: Marlow Bay United hat jetzt eine Siegchance von 92%.",
+        "Lemaire trifft in der 52. Minute zum 0-1 für Marlow Bay, und deren Siegchance steigt von 60 auf 92 Prozent."
+      ],
+      "de/expert": [
+        "Die Siegwahrscheinlichkeit von Marlow Bay United steigt von 60% auf 92%.",
+        "Der Ausschlag: Die Siegwahrscheinlichkeit von Marlow Bay United springt mit dem Tor von 60% auf 92%.",
+        "Lemaire vollendet in der 52. Minute mit 0,42 xG zum 0-1; Marlow Bays Siegwahrscheinlichkeit steigt von 60 auf 92 Prozent, Tamsworth bleibt bei 0,21 xG."
+      ],
+      "fr/beginner": [
+        "Ce but change la donne pour Marlow Bay United.",
+        "Ce but change la donne : Marlow Bay United a maintenant 92% de chances de gagner.",
+        "Lemaire marque à la 52e minute et donne l'avantage à Marlow Bay, 0-1, leurs chances de victoire passent de 60 à 92 pour cent."
+      ],
+      "fr/expert": [
+        "La probabilité de victoire de Marlow Bay United passe de 60% à 92%.",
+        "Regardez le basculement : la probabilité de victoire de Marlow Bay United passe de 60% à 92% avec ce but.",
+        "But de Lemaire à la 52e minute, 0,42 xG, qui fait passer Marlow Bay de 60 à 92 % de probabilité de victoire; score 0-1, xG total 1,47 contre 0,21."
+      ]
+    },
+    "sources": {
+      "en/beginner": "analyst",
+      "en/expert": "analyst",
+      "de/beginner": "analyst",
+      "de/expert": "analyst",
+      "fr/beginner": "analyst",
+      "fr/expert": "analyst"
+    },
+    "trail": [
+      {
+        "step": "analyst_wrote",
+        "moment": 100,
+        "attempt": 0,
+        "at": 1792497723.268,
+        "lines": 6,
+        "cached": false,
+        "latency_s": 7.34
+      },
+      {
+        "step": "verified",
+        "moment": 100,
+        "attempt": 0,
+        "at": 1792497723.27,
+        "accepted": 6,
+        "failing": 0
+      }
+    ],
+    "latency_s": 7.337087000021711,
+    "kind": "goal_analysis",
+    "t": 3250.2
+  },
+  {
+    "moment_id": 106,
+    "lines": {
+      "en/beginner": [
+        "Marlow Bay United are on top right now.",
+        "Marlow Bay United are really pushing now, with 1 shot in the last five minutes.",
+        "Marlow Bay United have controlled the last 5 minutes, with 91% of the momentum (the run of play), and lead 0-1."
+      ],
+      "en/expert": [
+        "Marlow Bay United are dominating: 91% of the threat.",
+        "Marlow Bay United have taken control, 91% of the threat and 1 shot in the last five minutes.",
+        "Marlow Bay United hold 91% momentum over five minutes from one shot, with xG 1.47 to Tamsworth's 0.21 and a 92% win probability. Score 0-1."
+      ],
+      "de/beginner": [
+        "Marlow Bay United ist gerade klar im Vorteil.",
+        "Marlow Bay United drückt jetzt richtig, mit 1 Schuss in den letzten fünf Minuten.",
+        "Marlow Bay United beherrscht die letzten 5 Minuten: 91 % des Spielschwungs (Momentum) liegen bei den Gästen. Der Stand ist 0-1."
+      ],
+      "de/expert": [
+        "Marlow Bay United dominiert: 91% der Gefahr.",
+        "Marlow Bay United hat die Kontrolle übernommen, 91% der Gefahr und 1 Schuss in den letzten fünf Minuten.",
+        "Marlow Bay United hat 91 % des Momentums über fünf Minuten bei nur einem Schuss; xG 1,47 zu 0,21 und 92 % Siegwahrscheinlichkeit. Stand 0-1."
+      ],
+      "fr/beginner": [
+        "Marlow Bay United domine en ce moment.",
+        "Marlow Bay United met vraiment la pression, avec 1 tir en cinq minutes.",
+        "Marlow Bay United domine les 5 dernières minutes, avec 91 % de l'élan du jeu (le momentum), et mène 0-1."
+      ],
+      "fr/expert": [
+        "Marlow Bay United domine : 91% du danger.",
+        "Marlow Bay United a pris le contrôle, 91% du danger et 1 tir sur les cinq dernières minutes.",
+        "Marlow Bay United détient 91 % du momentum sur cinq minutes avec un seul tir ; xG 1,47 contre 0,21 et 92 % de chances de victoire. Score 0-1."
+      ]
+    },
+    "sources": {
+      "en/beginner": "analyst",
+      "en/expert": "analyst",
+      "de/beginner": "analyst",
+      "de/expert": "analyst",
+      "fr/beginner": "analyst",
+      "fr/expert": "analyst"
+    },
+    "trail": [
+      {
+        "step": "analyst_wrote",
+        "moment": 106,
+        "attempt": 0,
+        "at": 1792497729.617,
+        "lines": 6,
+        "cached": false,
+        "latency_s": 6.34
+      },
+      {
+        "step": "verified",
+        "moment": 106,
+        "attempt": 0,
+        "at": 1792497729.619,
+        "accepted": 6,
+        "failing": 0
+      }
+    ],
+    "latency_s": 6.343105250038207,
+    "kind": "momentum",
+    "t": 3429.6
+  },
+  {
+    "moment_id": 153,
+    "lines": {
+      "en/beginner": [
+        "That goal changes the game for Tamsworth United.",
+        "That goal changes the game: Tamsworth United now have a 8% chance to win.",
+        "Whitlock equalises for Tamsworth United in the 78th minute, 1-1. The shot's expected goals value of 0.35 measures how good a chance it was."
+      ],
+      "en/expert": [
+        "Tamsworth United's win probability moves from 0% to 8%.",
+        "Look at the swing: Tamsworth United's win probability goes from 0% to 8% with that goal.",
+        "Whitlock's 78th-minute equaliser, a 0.35 xG effort, lifts Tamsworth United's win probability from 0% to 8%; Marlow Bay sit on 37%, draw 56%."
+      ],
+      "de/beginner": [
+        "Dieses Tor verändert das Spiel für Tamsworth United.",
+        "Dieses Tor verändert das Spiel: Tamsworth United hat jetzt eine Siegchance von 8%.",
+        "Whitlock gleicht in der 78. Minute zum 1:1 für Tamsworth United aus. Der Wert 0,35 xG (erwartete Tore) zeigt, wie gute Chance es war."
+      ],
+      "de/expert": [
+        "Die Siegwahrscheinlichkeit von Tamsworth United steigt von 0% auf 8%.",
+        "Der Ausschlag: Die Siegwahrscheinlichkeit von Tamsworth United springt mit dem Tor von 0% auf 8%.",
+        "Whitlock trifft in der 78. Minute zum 1:1 mit 0,35 xG; Tamsworths Siegchance steigt von 0 auf 8 Prozent, Marlow Bay liegt bei 37 Prozent."
+      ],
+      "fr/beginner": [
+        "Ce but change la donne pour Tamsworth United.",
+        "Ce but change la donne : Tamsworth United a maintenant 8% de chances de gagner.",
+        "Whitlock égalise pour Tamsworth United à la 78e minute, 1-1. Sa frappe vaut 0,35 xG, les buts attendus, soit la qualité de l'occasion."
+      ],
+      "fr/expert": [
+        "La probabilité de victoire de Tamsworth United passe de 0% à 8%.",
+        "Regardez le basculement : la probabilité de victoire de Tamsworth United passe de 0% à 8% avec ce but.",
+        "Égalisation de Whitlock à la 78e sur une frappe à 0,35 xG : Tamsworth United passe de 0 % à 8 % de victoire, Marlow Bay reste à 37 %."
+      ]
+    },
+    "sources": {
+      "en/beginner": "analyst",
+      "en/expert": "analyst",
+      "de/beginner": "analyst",
+      "de/expert": "analyst",
+      "fr/beginner": "analyst",
+      "fr/expert": "analyst"
+    },
+    "trail": [
+      {
+        "step": "analyst_wrote",
+        "moment": 153,
+        "attempt": 0,
+        "at": 1792497737.99,
+        "lines": 6,
+        "cached": false,
+        "latency_s": 8.37
+      },
+      {
+        "step": "verified",
+        "moment": 153,
+        "attempt": 0,
+        "at": 1792497737.992,
+        "accepted": 6,
+        "failing": 0
+      }
+    ],
+    "latency_s": 8.367472999962047,
+    "kind": "goal_analysis",
+    "t": 4811.4
+  },
+  {
+    "moment_id": 154,
+    "lines": {
+      "en/beginner": [
+        "Tamsworth United are on top right now.",
+        "Tamsworth United are really pushing now, with 1 shot in the last five minutes.",
+        "Tamsworth United have controlled the last 5 minutes, with 76 percent of the momentum, though they managed just 1 shot. It's 1-1 at minute 78."
+      ],
+      "en/expert": [
+        "Tamsworth United are dominating: 76% of the threat.",
+        "Tamsworth United have taken control, 76% of the threat and 1 shot in the last five minutes.",
+        "Tamsworth hold a 76% momentum share over 5 minutes on just 1 shot. Their xG sits at 0.56 against Marlow Bay's 2.44, and it's 1-1 at 78."
+      ],
+      "de/beginner": [
+        "Tamsworth United ist gerade klar im Vorteil.",
+        "Tamsworth United drückt jetzt richtig, mit 1 Schuss in den letzten fünf Minuten.",
+        "Tamsworth United hat in den letzten 5 Minuten 76 Prozent des Momentums, also der Spielkontrolle, aber nur 1 Schuss. Es steht 1-1 in der 78. Minute."
+      ],
+      "de/expert": [
+        "Tamsworth United dominiert: 76% der Gefahr.",
+        "Tamsworth United hat die Kontrolle übernommen, 76% der Gefahr und 1 Schuss in den letzten fünf Minuten.",
+        "Tamsworth kommt in den letzten 5 Minuten auf 76 Prozent Momentum bei nur 1 Schuss. Die xG stehen 0,56 zu 2,44, Stand 1-1 in der 78. Minute."
+      ],
+      "fr/beginner": [
+        "Tamsworth United domine en ce moment.",
+        "Tamsworth United met vraiment la pression, avec 1 tir en cinq minutes.",
+        "Tamsworth United domine les 5 dernières minutes avec 76 % de la dynamique du jeu, mais n'a tiré qu'une fois. Le score reste 1-1 à la 78e minute."
+      ],
+      "fr/expert": [
+        "Tamsworth United domine : 76% du danger.",
+        "Tamsworth United a pris le contrôle, 76% du danger et 1 tir sur les cinq dernières minutes.",
+        "Tamsworth affiche 76 % de momentum sur 5 minutes pour un seul tir, avec un xG de 0,56 contre 2,44 pour Marlow Bay. Le score reste 1-1 à la 78e."
+      ]
+    },
+    "sources": {
+      "en/beginner": "analyst",
+      "en/expert": "analyst",
+      "de/beginner": "analyst",
+      "de/expert": "analyst",
+      "fr/beginner": "analyst",
+      "fr/expert": "analyst"
+    },
+    "trail": [
+      {
+        "step": "analyst_wrote",
+        "moment": 154,
+        "attempt": 0,
+        "at": 1792497744.24,
+        "lines": 6,
+        "cached": false,
+        "latency_s": 6.24
+      },
+      {
+        "step": "verified",
+        "moment": 154,
+        "attempt": 0,
+        "at": 1792497744.243,
+        "accepted": 6,
+        "failing": 0
+      }
+    ],
+    "latency_s": 6.244484292110428,
+    "kind": "momentum",
+    "t": 4811.4
+  },
+  {
+    "moment_id": 163,
+    "lines": {
+      "en/beginner": [
+        "Marlow Bay United are on top right now.",
+        "Marlow Bay United are really pushing now, with 1 shot in the last five minutes.",
+        "Marlow Bay United have taken over the run of play, with 85% of the action in the last 5 minutes, and it is still 1-1 at minute 83."
+      ],
+      "en/expert": [
+        "Marlow Bay United are dominating: 85% of the threat.",
+        "Marlow Bay United have taken control, 85% of the threat and 1 shot in the last five minutes.",
+        "Marlow Bay United own 85% of the momentum over the last 5 minutes, with xG 2.63 to 0.56 across the match, and it stands 1-1."
+      ],
+      "de/beginner": [
+        "Marlow Bay United ist gerade klar im Vorteil.",
+        "Marlow Bay United drückt jetzt richtig, mit 1 Schuss in den letzten fünf Minuten.",
+        "Marlow Bay United hat das Spiel jetzt klar im Griff: In den letzten 5 Minuten lief 85 Prozent des Geschehens über sie, beim Stand 1-1."
+      ],
+      "de/expert": [
+        "Marlow Bay United dominiert: 85% der Gefahr.",
+        "Marlow Bay United hat die Kontrolle übernommen, 85% der Gefahr und 1 Schuss in den letzten fünf Minuten.",
+        "Marlow Bay United dominiert das Momentum mit 85 Prozent in den letzten 5 Minuten, xG 2,63 zu 0,56 über das Spiel, Stand 1-1."
+      ],
+      "fr/beginner": [
+        "Marlow Bay United domine en ce moment.",
+        "Marlow Bay United met vraiment la pression, avec 1 tir en cinq minutes.",
+        "Marlow Bay United a pris le contrôle du jeu : 85 % de l'élan sur les 5 dernières minutes, à la 83e, et le score reste 1-1."
+      ],
+      "fr/expert": [
+        "Marlow Bay United domine : 85% du danger.",
+        "Marlow Bay United a pris le contrôle, 85% du danger et 1 tir sur les cinq dernières minutes.",
+        "Marlow Bay United domine le momentum avec 85 % sur 5 minutes, un xG de 2,63 contre 0,56 sur le match, pour un score de 1-1."
+      ]
+    },
+    "sources": {
+      "en/beginner": "analyst",
+      "en/expert": "analyst",
+      "de/beginner": "analyst",
+      "de/expert": "analyst",
+      "fr/beginner": "analyst",
+      "fr/expert": "analyst"
+    },
+    "trail": [
+      {
+        "step": "analyst_wrote",
+        "moment": 163,
+        "attempt": 0,
+        "at": 1792497750.007,
+        "lines": 6,
+        "cached": false,
+        "latency_s": 5.76
+      },
+      {
+        "step": "verified",
+        "moment": 163,
+        "attempt": 0,
+        "at": 1792497750.009,
+        "accepted": 6,
+        "failing": 0
+      }
+    ],
+    "latency_s": 5.759392832987942,
+    "kind": "momentum",
+    "t": 5129.3
+  }
+]

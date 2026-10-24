@@ -15,7 +15,7 @@ import orjson
 from ..config import ROOT, anthropic_api_key
 from ..facts.engine import FactEngine
 from ..sim.engine import Sim
-from .analyst import CallBudget, GuardedLLM, claude_llm
+from .analyst import KEYS, RECENT_LINES, CallBudget, GuardedLLM, claude_llm
 from .moments import MomentBuilder
 from .newsroom import write_moment
 
@@ -34,17 +34,21 @@ async def main_async(arc: str, seed: int, max_calls: int) -> None:
                 todo.append((m, eng.snapshot()))
     budget = CallBudget(max_calls)
     llm = GuardedLLM(claude_llm(MODEL, anthropic_api_key()), budget, MODEL)
-    published = []
+    published, records = [], []
+    said: dict[str, list[str]] = {k: [] for k in KEYS}  # a recording has no director: the lines published so far stand in for what was spoken
     for m, snap in todo:
-        pub = await write_moment(llm, meta, m, snap)
+        pub = await write_moment(llm, meta, m, snap, {k: v[-RECENT_LINES:] for k, v in said.items()})
+        for k in KEYS:
+            said[k].append(pub.lines[k][-1])
         published.append(pub)
+        records.append({**asdict(pub), "kind": m.kind, "t": m.t})  # kind and t let the replay check its ids
         src = sorted(set(pub.sources.values()))
         steps = [t["step"] for t in pub.trail]
         print(f"{m.clock:>5}' {m.kind:<18} sources={src} rejected={steps.count('rejected')} "
               f"retries={steps.count('retry')} latency={pub.latency_s:.1f}s calls_used={budget.used}/{max_calls}", flush=True)
     out = ROOT / "data" / "replays" / meta.id
     out.mkdir(parents=True, exist_ok=True)
-    (out / "analyst.json").write_bytes(orjson.dumps([asdict(p) for p in published], option=orjson.OPT_INDENT_2))
+    (out / "analyst.json").write_bytes(orjson.dumps(records, option=orjson.OPT_INDENT_2))
     n = sum(len(p.sources) for p in published)
     ok = sum(1 for p in published for s in p.sources.values() if s == "analyst")
     print(f"{ok}/{n} lines written by the analyst, rest template fallback; model calls this run: {budget.used}")
