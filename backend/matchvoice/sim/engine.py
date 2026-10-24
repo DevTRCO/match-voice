@@ -11,10 +11,12 @@ import random
 from dataclasses import dataclass, field
 
 from ..schema import (
-    PITCH_L, PITCH_W, Event, EventType, MatchMeta, Player, Side, TeamMeta, TruthItem,
+    PITCH_L, PITCH_W, Event, EventType, MatchMeta, Side, TeamMeta, TruthItem,
 )
 from .arcs import ARCS, Arc
 from .names import CLUB_COLORS, CLUB_PREFIX, CLUB_SUFFIX, GIVEN, SURNAME
+from .profile import build_team
+from .tactics import build_tactics, posture_schedule
 
 GOAL_Y = PITCH_W / 2
 FORMATIONS: dict[str, list[tuple[str, str, float, float]]] = {
@@ -139,7 +141,7 @@ class Sim:
         for w in self.arc.windows:
             self.truth.append(TruthItem(
                 t=self._minute_t(w.start), clock=str(w.start), kind="momentum_swing", side=w.side,
-                note=w.note, importance=0.6))  # type: ignore[arg-type]
+                note=w.note, importance=0.6, end=self._minute_t(w.end + 1)))  # type: ignore[arg-type]
         self.forced: Side | None = None
         self.forced_beat = None
         self.forced_since = 0.0
@@ -498,11 +500,14 @@ class Sim:
             self.step()
         self.emit(EventType.PERIOD_END, self.poss, None, self.bx, self.by, outcome="full_time")
         self.truth.sort(key=lambda x: x.t)
+        # profiles and tactics draw from their own streams and read the finished match, so the skeleton above is untouched
+        profiles = {s: build_team(self.seed, t.players, [(p.name, p.number) for p in t.players]) for s, t in self.teams.items()}
+        postures = posture_schedule(self.events, self._minute_t)
         meta = MatchMeta(
             id=f"{self.arc.name}-{self.seed}", seed=self.seed, arc=self.arc.name, title=self.arc.title,
             competition="Synthetic League", venue=f"{self.teams['H'].name} Ground",
             teams={s: TeamMeta(
-                side=s, name=t.name, short=t.short, color=t.color, formation=t.formation,
-                players=[Player(id=p.id, name=p.name, number=p.number, pos=p.pos, group=p.group) for p in t.players],
+                side=s, name=t.name, short=t.short, color=t.color, formation=t.formation, players=profiles[s],
+                tactics=build_tactics(self.seed, s, t.formation, t.press, t.tempo, profiles[s]), postures=postures[s],
             ) for s, t in self.teams.items()})
         return meta, self.events, self.truth

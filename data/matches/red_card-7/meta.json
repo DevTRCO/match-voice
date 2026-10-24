@@ -18,77 +18,410 @@
           "name": "Bastian Soriano",
           "number": 1,
           "pos": "GK",
-          "group": "GK"
+          "group": "GK",
+          "attrs": {
+            "pace": 56,
+            "passing": 35,
+            "finishing": 34,
+            "acceleration": 38,
+            "dribbling": 21,
+            "vision": 39,
+            "defending": 16,
+            "aerial": 70,
+            "stamina": 67,
+            "keeping": 74
+          },
+          "foot": "R",
+          "weak_foot": 3,
+          "height_cm": 192,
+          "age": 26,
+          "top_speed": 8.48,
+          "work_rate": "medium",
+          "role": "shot_stopper",
+          "traits": [],
+          "season": {
+            "apps": 15,
+            "goals": 0,
+            "assists": 0,
+            "clean_sheets": 4
+          },
+          "captain": false
         },
         {
           "id": "H2",
           "name": "Declan Delacroix",
           "number": 2,
           "pos": "RB",
-          "group": "DEF"
+          "group": "DEF",
+          "attrs": {
+            "pace": 70,
+            "passing": 58,
+            "finishing": 51,
+            "acceleration": 74,
+            "dribbling": 44,
+            "vision": 50,
+            "defending": 67,
+            "aerial": 45,
+            "stamina": 71
+          },
+          "foot": "R",
+          "weak_foot": 3,
+          "height_cm": 177,
+          "age": 35,
+          "top_speed": 8.95,
+          "work_rate": "medium",
+          "role": "attacking_fullback",
+          "traits": [],
+          "season": {
+            "apps": 15,
+            "goals": 0,
+            "assists": 1,
+            "clean_sheets": 1
+          },
+          "captain": true
         },
         {
           "id": "H3",
           "name": "Idris Arnaud",
           "number": 5,
           "pos": "CB",
-          "group": "DEF"
+          "group": "DEF",
+          "attrs": {
+            "pace": 44,
+            "passing": 37,
+            "finishing": 40,
+            "acceleration": 43,
+            "dribbling": 48,
+            "vision": 29,
+            "defending": 58,
+            "aerial": 45,
+            "stamina": 52
+          },
+          "foot": "R",
+          "weak_foot": 4,
+          "height_cm": 187,
+          "age": 32,
+          "top_speed": 8.07,
+          "work_rate": "low",
+          "role": "centre_back",
+          "traits": [],
+          "season": {
+            "apps": 25,
+            "goals": 0,
+            "assists": 0,
+            "clean_sheets": 5
+          },
+          "captain": false
         },
         {
           "id": "H4",
           "name": "Idris Mbeki",
           "number": 4,
           "pos": "CB",
-          "group": "DEF"
+          "group": "DEF",
+          "attrs": {
+            "pace": 53,
+            "passing": 47,
+            "finishing": 47,
+            "acceleration": 45,
+            "dribbling": 62,
+            "vision": 53,
+            "defending": 77,
+            "aerial": 78,
+            "stamina": 59
+          },
+          "foot": "R",
+          "weak_foot": 4,
+          "height_cm": 189,
+          "age": 29,
+          "top_speed": 8.38,
+          "work_rate": "low",
+          "role": "stopper",
+          "traits": [
+            "aerial_threat",
+            "tough_tackler"
+          ],
+          "season": {
+            "apps": 29,
+            "goals": 1,
+            "assists": 1,
+            "clean_sheets": 10
+          },
+          "captain": false
         },
         {
           "id": "H5",
           "name": "Oskar Brannigan",
           "number": 3,
           "pos": "LB",
-          "group": "DEF"
+          "group": "DEF",
+          "attrs": {
+            "pace": 42,
+            "passing": 51,
+            "finishing": 48,
+            "acceleration": 47,
+            "dribbling": 51,
+            "vision": 65,
+            "defending": 74,
+            "aerial": 47,
+            "stamina": 56
+          },
+          "foot": "L",
+          "weak_foot": 3,
+          "height_cm": 178,
+          "age": 21,
+          "top_speed": 8.01,
+          "work_rate": "low",
+          "role": "defensive_fullback",
+          "traits": [],
+          "season": {
+            "apps": 19,
+            "goals": 0,
+            "assists": 1,
+            "clean_sheets": 6
+          },
+          "captain": false
         },
         {
           "id": "H6",
           "name": "Gabriel Valdes",
           "number": 7,
           "pos": "DM",
-          "group": "MID"
+          "group": "MID",
+          "attrs": {
+            "pace": 48,
+            "passing": 65,
+            "finishing": 41,
+            "acceleration": 45,
+            "dribbling": 59,
+            "vision": 77,
+            "defending": 59,
+            "aerial": 56,
+            "stamina": 70
+          },
+          "foot": "R",
+          "weak_foot": 3,
+          "height_cm": 184,
+          "age": 29,
+          "top_speed": 8.21,
+          "work_rate": "medium",
+          "role": "deep_playmaker",
+          "traits": [
+            "set_piece_taker"
+          ],
+          "season": {
+            "apps": 24,
+            "goals": 1,
+            "assists": 5
+          },
+          "captain": false
         },
         {
           "id": "H7",
           "name": "Bastian Ostrander",
           "number": 8,
           "pos": "DM",
-          "group": "MID"
+          "group": "MID",
+          "attrs": {
+            "pace": 70,
+            "passing": 55,
+            "finishing": 52,
+            "acceleration": 74,
+            "dribbling": 83,
+            "vision": 50,
+            "defending": 61,
+            "aerial": 55,
+            "stamina": 74
+          },
+          "foot": "R",
+          "weak_foot": 4,
+          "height_cm": 183,
+          "age": 21,
+          "top_speed": 8.95,
+          "work_rate": "medium",
+          "role": "deep_playmaker",
+          "traits": [
+            "dribbler"
+          ],
+          "season": {
+            "apps": 17,
+            "goals": 1,
+            "assists": 3
+          },
+          "captain": false
         },
         {
           "id": "H8",
           "name": "Gabriel Okafor",
           "number": 6,
           "pos": "RW",
-          "group": "MID"
+          "group": "MID",
+          "attrs": {
+            "pace": 45,
+            "passing": 67,
+            "finishing": 46,
+            "acceleration": 43,
+            "dribbling": 51,
+            "vision": 74,
+            "defending": 61,
+            "aerial": 42,
+            "stamina": 66
+          },
+          "foot": "R",
+          "weak_foot": 2,
+          "height_cm": 173,
+          "age": 35,
+          "top_speed": 8.11,
+          "work_rate": "medium",
+          "role": "winger",
+          "traits": [],
+          "season": {
+            "apps": 23,
+            "goals": 1,
+            "assists": 10
+          },
+          "captain": false
         },
         {
           "id": "H9",
           "name": "Dmitri Merriweather",
           "number": 11,
           "pos": "AM",
-          "group": "MID"
+          "group": "MID",
+          "attrs": {
+            "pace": 65,
+            "passing": 62,
+            "finishing": 44,
+            "acceleration": 72,
+            "dribbling": 60,
+            "vision": 78,
+            "defending": 58,
+            "aerial": 41,
+            "stamina": 84
+          },
+          "foot": "both",
+          "weak_foot": 5,
+          "height_cm": 174,
+          "age": 24,
+          "top_speed": 8.78,
+          "work_rate": "high",
+          "role": "advanced_playmaker",
+          "traits": [
+            "two_footed",
+            "engine"
+          ],
+          "season": {
+            "apps": 31,
+            "goals": 2,
+            "assists": 7
+          },
+          "captain": false
         },
         {
           "id": "H10",
           "name": "Dario Whitlock",
           "number": 9,
           "pos": "LW",
-          "group": "MID"
+          "group": "MID",
+          "attrs": {
+            "pace": 74,
+            "passing": 56,
+            "finishing": 62,
+            "acceleration": 68,
+            "dribbling": 49,
+            "vision": 67,
+            "defending": 53,
+            "aerial": 50,
+            "stamina": 78
+          },
+          "foot": "L",
+          "weak_foot": 2,
+          "height_cm": 172,
+          "age": 28,
+          "top_speed": 9.09,
+          "work_rate": "high",
+          "role": "winger",
+          "traits": [],
+          "season": {
+            "apps": 22,
+            "goals": 4,
+            "assists": 7
+          },
+          "captain": false
         },
         {
           "id": "H11",
           "name": "Elias Rahimi",
           "number": 10,
           "pos": "ST",
-          "group": "FWD"
+          "group": "FWD",
+          "attrs": {
+            "pace": 39,
+            "passing": 58,
+            "finishing": 60,
+            "acceleration": 34,
+            "dribbling": 69,
+            "vision": 65,
+            "defending": 36,
+            "aerial": 63,
+            "stamina": 81
+          },
+          "foot": "R",
+          "weak_foot": 4,
+          "height_cm": 180,
+          "age": 29,
+          "top_speed": 7.9,
+          "work_rate": "high",
+          "role": "pressing_forward",
+          "traits": [],
+          "season": {
+            "apps": 22,
+            "goals": 7,
+            "assists": 3
+          },
+          "captain": false
+        }
+      ],
+      "tactics": {
+        "formation": "4-2-3-1",
+        "shape_in": "2-4-4",
+        "shape_out": "4-4-1-1",
+        "line_height": 33.0,
+        "block": "mid",
+        "press": {
+          "height": "mid",
+          "intensity": 0.52,
+          "triggers": [
+            "pass_to_fullback",
+            "poor_touch",
+            "receiver_facing_own_goal"
+          ]
+        },
+        "build_up": "direct",
+        "width": 56.0,
+        "tempo": 0.54,
+        "tempo_class": "measured",
+        "counter": false,
+        "corner_delivery": "inswing"
+      },
+      "postures": [
+        {
+          "side": "H",
+          "t_trigger": 2221.0,
+          "t": 2287.5,
+          "reason": "red_card",
+          "posture": "base",
+          "ten_men": true,
+          "on_pitch": 10
+        },
+        {
+          "side": "H",
+          "t_trigger": 3780.0,
+          "t": 3787.8,
+          "reason": "checkpoint",
+          "posture": "chase",
+          "ten_men": true,
+          "on_pitch": 10
         }
       ]
     },
@@ -104,77 +437,414 @@
           "name": "Tomas Trevino",
           "number": 1,
           "pos": "GK",
-          "group": "GK"
+          "group": "GK",
+          "attrs": {
+            "pace": 60,
+            "passing": 37,
+            "finishing": 39,
+            "acceleration": 53,
+            "dribbling": 17,
+            "vision": 39,
+            "defending": 18,
+            "aerial": 64,
+            "stamina": 57,
+            "keeping": 69
+          },
+          "foot": "R",
+          "weak_foot": 3,
+          "height_cm": 186,
+          "age": 26,
+          "top_speed": 8.62,
+          "work_rate": "low",
+          "role": "shot_stopper",
+          "traits": [],
+          "season": {
+            "apps": 22,
+            "goals": 0,
+            "assists": 0,
+            "clean_sheets": 8
+          },
+          "captain": false
         },
         {
           "id": "A2",
           "name": "Marek Quinlan",
           "number": 2,
           "pos": "RB",
-          "group": "DEF"
+          "group": "DEF",
+          "attrs": {
+            "pace": 55,
+            "passing": 48,
+            "finishing": 32,
+            "acceleration": 56,
+            "dribbling": 53,
+            "vision": 50,
+            "defending": 77,
+            "aerial": 29,
+            "stamina": 71
+          },
+          "foot": "L",
+          "weak_foot": 3,
+          "height_cm": 168,
+          "age": 22,
+          "top_speed": 8.45,
+          "work_rate": "medium",
+          "role": "defensive_fullback",
+          "traits": [
+            "tough_tackler"
+          ],
+          "season": {
+            "apps": 31,
+            "goals": 0,
+            "assists": 0,
+            "clean_sheets": 10
+          },
+          "captain": false
         },
         {
           "id": "A3",
           "name": "Tomas Becker-Lyle",
           "number": 5,
           "pos": "CB",
-          "group": "DEF"
+          "group": "DEF",
+          "attrs": {
+            "pace": 54,
+            "passing": 60,
+            "finishing": 54,
+            "acceleration": 69,
+            "dribbling": 38,
+            "vision": 62,
+            "defending": 88,
+            "aerial": 61,
+            "stamina": 65
+          },
+          "foot": "L",
+          "weak_foot": 2,
+          "height_cm": 195,
+          "age": 18,
+          "top_speed": 8.41,
+          "work_rate": "medium",
+          "role": "centre_back",
+          "traits": [
+            "tough_tackler"
+          ],
+          "season": {
+            "apps": 20,
+            "goals": 1,
+            "assists": 0,
+            "clean_sheets": 8
+          },
+          "captain": false
         },
         {
           "id": "A4",
           "name": "Elias Holloway",
           "number": 4,
           "pos": "CB",
-          "group": "DEF"
+          "group": "DEF",
+          "attrs": {
+            "pace": 46,
+            "passing": 52,
+            "finishing": 37,
+            "acceleration": 61,
+            "dribbling": 63,
+            "vision": 59,
+            "defending": 72,
+            "aerial": 64,
+            "stamina": 75
+          },
+          "foot": "L",
+          "weak_foot": 3,
+          "height_cm": 184,
+          "age": 24,
+          "top_speed": 8.14,
+          "work_rate": "medium",
+          "role": "centre_back",
+          "traits": [],
+          "season": {
+            "apps": 21,
+            "goals": 1,
+            "assists": 0,
+            "clean_sheets": 8
+          },
+          "captain": false
         },
         {
           "id": "A5",
           "name": "Pablo Rourke",
           "number": 3,
           "pos": "LB",
-          "group": "DEF"
+          "group": "DEF",
+          "attrs": {
+            "pace": 39,
+            "passing": 52,
+            "finishing": 30,
+            "acceleration": 40,
+            "dribbling": 52,
+            "vision": 53,
+            "defending": 66,
+            "aerial": 33,
+            "stamina": 74
+          },
+          "foot": "both",
+          "weak_foot": 5,
+          "height_cm": 176,
+          "age": 25,
+          "top_speed": 7.9,
+          "work_rate": "medium",
+          "role": "defensive_fullback",
+          "traits": [
+            "two_footed"
+          ],
+          "season": {
+            "apps": 32,
+            "goals": 1,
+            "assists": 0,
+            "clean_sheets": 10
+          },
+          "captain": false
         },
         {
           "id": "A6",
           "name": "Marek Abara",
           "number": 7,
           "pos": "CM",
-          "group": "MID"
+          "group": "MID",
+          "attrs": {
+            "pace": 46,
+            "passing": 76,
+            "finishing": 46,
+            "acceleration": 41,
+            "dribbling": 56,
+            "vision": 82,
+            "defending": 68,
+            "aerial": 26,
+            "stamina": 72
+          },
+          "foot": "R",
+          "weak_foot": 3,
+          "height_cm": 176,
+          "age": 18,
+          "top_speed": 8.14,
+          "work_rate": "medium",
+          "role": "playmaker",
+          "traits": [
+            "set_piece_taker",
+            "visionary"
+          ],
+          "season": {
+            "apps": 16,
+            "goals": 2,
+            "assists": 4
+          },
+          "captain": false
         },
         {
           "id": "A7",
           "name": "Hugo Ulrich",
           "number": 8,
           "pos": "DM",
-          "group": "MID"
+          "group": "MID",
+          "attrs": {
+            "pace": 34,
+            "passing": 57,
+            "finishing": 71,
+            "acceleration": 28,
+            "dribbling": 64,
+            "vision": 63,
+            "defending": 52,
+            "aerial": 51,
+            "stamina": 76
+          },
+          "foot": "R",
+          "weak_foot": 2,
+          "height_cm": 170,
+          "age": 25,
+          "top_speed": 7.74,
+          "work_rate": "high",
+          "role": "deep_playmaker",
+          "traits": [
+            "long_range"
+          ],
+          "season": {
+            "apps": 25,
+            "goals": 4,
+            "assists": 6
+          },
+          "captain": false
         },
         {
           "id": "A8",
           "name": "Leon Lindqvist",
           "number": 6,
           "pos": "CM",
-          "group": "MID"
+          "group": "MID",
+          "attrs": {
+            "pace": 66,
+            "passing": 71,
+            "finishing": 60,
+            "acceleration": 64,
+            "dribbling": 55,
+            "vision": 76,
+            "defending": 50,
+            "aerial": 35,
+            "stamina": 78
+          },
+          "foot": "R",
+          "weak_foot": 4,
+          "height_cm": 177,
+          "age": 29,
+          "top_speed": 8.82,
+          "work_rate": "high",
+          "role": "playmaker",
+          "traits": [],
+          "season": {
+            "apps": 25,
+            "goals": 2,
+            "assists": 4
+          },
+          "captain": true
         },
         {
           "id": "A9",
           "name": "Milan Wrenfield",
           "number": 11,
           "pos": "RW",
-          "group": "FWD"
+          "group": "FWD",
+          "attrs": {
+            "pace": 53,
+            "passing": 72,
+            "finishing": 42,
+            "acceleration": 48,
+            "dribbling": 65,
+            "vision": 66,
+            "defending": 39,
+            "aerial": 42,
+            "stamina": 73
+          },
+          "foot": "R",
+          "weak_foot": 2,
+          "height_cm": 177,
+          "age": 19,
+          "top_speed": 8.38,
+          "work_rate": "medium",
+          "role": "winger",
+          "traits": [],
+          "season": {
+            "apps": 22,
+            "goals": 7,
+            "assists": 5
+          },
+          "captain": false
         },
         {
           "id": "A10",
           "name": "Marek Lemaire",
           "number": 9,
           "pos": "ST",
-          "group": "FWD"
+          "group": "FWD",
+          "attrs": {
+            "pace": 35,
+            "passing": 73,
+            "finishing": 79,
+            "acceleration": 34,
+            "dribbling": 85,
+            "vision": 68,
+            "defending": 46,
+            "aerial": 44,
+            "stamina": 68
+          },
+          "foot": "L",
+          "weak_foot": 3,
+          "height_cm": 177,
+          "age": 31,
+          "top_speed": 7.77,
+          "work_rate": "medium",
+          "role": "poacher",
+          "traits": [
+            "press_resistant",
+            "dribbler"
+          ],
+          "season": {
+            "apps": 22,
+            "goals": 18,
+            "assists": 4
+          },
+          "captain": false
         },
         {
           "id": "A11",
           "name": "Anton Kowalczyk",
           "number": 10,
           "pos": "LW",
-          "group": "FWD"
+          "group": "FWD",
+          "attrs": {
+            "pace": 39,
+            "passing": 66,
+            "finishing": 67,
+            "acceleration": 64,
+            "dribbling": 62,
+            "vision": 72,
+            "defending": 37,
+            "aerial": 45,
+            "stamina": 75
+          },
+          "foot": "L",
+          "weak_foot": 4,
+          "height_cm": 176,
+          "age": 32,
+          "top_speed": 7.9,
+          "work_rate": "medium",
+          "role": "winger",
+          "traits": [],
+          "season": {
+            "apps": 34,
+            "goals": 16,
+            "assists": 6
+          },
+          "captain": false
+        }
+      ],
+      "tactics": {
+        "formation": "4-3-3",
+        "shape_in": "2-3-5",
+        "shape_out": "4-5-1",
+        "line_height": 32.6,
+        "block": "mid",
+        "press": {
+          "height": "mid",
+          "intensity": 0.5,
+          "triggers": [
+            "back_pass",
+            "poor_touch",
+            "receiver_facing_own_goal"
+          ]
+        },
+        "build_up": "direct",
+        "width": 54.0,
+        "tempo": 0.52,
+        "tempo_class": "measured",
+        "counter": false,
+        "corner_delivery": "inswing"
+      },
+      "postures": [
+        {
+          "side": "A",
+          "t_trigger": 4680.0,
+          "t": 4779.4,
+          "reason": "checkpoint",
+          "posture": "protect",
+          "ten_men": false,
+          "on_pitch": 11
+        },
+        {
+          "side": "A",
+          "t_trigger": 4811.4,
+          "t": 4854.4,
+          "reason": "goal",
+          "posture": "base",
+          "ten_men": false,
+          "on_pitch": 11
         }
       ]
     }

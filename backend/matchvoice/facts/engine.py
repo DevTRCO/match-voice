@@ -162,6 +162,10 @@ class FactEngine:
         per_min = len(self._turnovers) / 3.0
         return "chaotic" if per_min >= 3.5 else "controlled" if per_min <= 1.5 else "balanced"
 
+    def win_probs(self) -> tuple[float, float, float]:
+        """(home, draw, away) win probability for the match as ingested so far."""
+        return self._probs()
+
     def snapshot(self) -> dict:
         total = max(1.0, self.team["H"].poss_s + self.team["A"].poss_s)
         stats = {}

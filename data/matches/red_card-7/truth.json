@@ -5,7 +5,8 @@
     "kind": "momentum_swing",
     "side": "A",
     "note": "Away side press the advantage",
-    "importance": 0.6
+    "importance": 0.6,
+    "end": 3900.0
   },
   {
     "t": 2221.0,
@@ -13,7 +14,8 @@
     "kind": "red_card",
     "side": "H",
     "note": "Home defender sent off",
-    "importance": 0.95
+    "importance": 0.95,
+    "end": null
   },
   {
     "t": 3250.2,
@@ -21,7 +23,8 @@
     "kind": "goal",
     "side": "A",
     "note": "Away side punish the extra man",
-    "importance": 0.9
+    "importance": 0.9,
+    "end": null
   },
   {
     "t": 4320.0,
@@ -29,7 +32,8 @@
     "kind": "momentum_swing",
     "side": "H",
     "note": "Home side throw everything forward",
-    "importance": 0.6
+    "importance": 0.6,
+    "end": 5580.0
   },
   {
     "t": 4811.4,
@@ -37,6 +41,7 @@
     "kind": "goal",
     "side": "H",
     "note": "Ten-man home side equalise",
-    "importance": 1.0
+    "importance": 1.0,
+    "end": null
   }
 ]

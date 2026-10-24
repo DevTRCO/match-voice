@@ -5,7 +5,8 @@
     "kind": "momentum_swing",
     "side": "H",
     "note": "Home side dominate from the first whistle",
-    "importance": 0.6
+    "importance": 0.6,
+    "end": 5580.0
   },
   {
     "t": 4025.2,
@@ -13,6 +14,7 @@
     "kind": "goal",
     "side": "A",
     "note": "Away side score from their only real chance",
-    "importance": 1.0
+    "importance": 1.0,
+    "end": null
   }
 ]

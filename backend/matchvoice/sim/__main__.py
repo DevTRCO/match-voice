@@ -16,7 +16,7 @@ def write_match(arc: str, seed: int, out_root: Path) -> Path:
     meta, events, truth = Sim(arc, seed).run()
     out = out_root / meta.id
     out.mkdir(parents=True, exist_ok=True)
-    (out / "meta.json").write_bytes(orjson.dumps(meta.model_dump(), option=orjson.OPT_INDENT_2))
+    (out / "meta.json").write_bytes(orjson.dumps(meta.model_dump(mode="json", exclude_none=True), option=orjson.OPT_INDENT_2))
     (out / "events.jsonl").write_bytes(
         b"\n".join(orjson.dumps(e.model_dump(exclude_none=True)) for e in events) + b"\n")
     (out / "truth.json").write_bytes(
