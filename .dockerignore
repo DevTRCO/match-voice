@@ -1,0 +1,14 @@
+.git
+.venv
+.env
+.env.*
+!.env.example
+**/__pycache__
+.pytest_cache
+*.egg-info
+ui/node_modules
+ui/dist
+ui/dist-static
+data/eval
+docs/img
+data/cache/tts

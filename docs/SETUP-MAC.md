@@ -14,7 +14,7 @@ cd match-voice
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
-python -m pytest -q             # expect 41 passed
+python -m pytest -q             # expect 186 passed
 ```
 
 ## 3. API key (by hand, never through chat or git)

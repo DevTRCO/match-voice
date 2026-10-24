@@ -6,6 +6,10 @@ web/dist/
 .env
 .env.*
 !.env.example
-data/cache/
+data/cache/*
+!data/cache/analyst/
 *.egg-info/
 .pytest_cache/
+ui/dist/
+ui/dist-static/
+data/corpus/

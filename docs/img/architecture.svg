@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d" font-family="Helvetica, Arial, sans-serif">
+  <title id="t">match-voice architecture</title>
+  <desc id="d">Five stages: Ingest, Interpret, Explain, Render, Personalize. Events flow through the fact engine and moment detector. Play-by-play uses templates. Analysis goes through an Analyst and Verifier loop to a Publisher, with a template fallback. A director schedules one voice per channel, the overlay protocol carries it to the UI, and the MCP server reads the same pipeline.</desc>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#8b98ad"/>
+    </marker>
+    <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f5b942"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="640" fill="#0b1018"/>
+
+  <!-- stage headers -->
+  <g font-size="13" font-weight="700" letter-spacing="1.5" fill="#8b98ad">
+    <text x="30" y="34">1  INGEST</text>
+    <text x="250" y="34">2  INTERPRET</text>
+    <text x="500" y="34">3  EXPLAIN</text>
+    <text x="810" y="34">4  RENDER</text>
+    <text x="1000" y="34">5  PERSONALIZE</text>
+  </g>
+  <g stroke="#1e2938" stroke-width="1">
+    <line x1="230" y1="46" x2="230" y2="610"/>
+    <line x1="480" y1="46" x2="480" y2="610"/>
+    <line x1="790" y1="46" x2="790" y2="610"/>
+    <line x1="980" y1="46" x2="980" y2="610"/>
+  </g>
+
+  <!-- 1 ingest -->
+  <g>
+    <rect x="30" y="70" width="170" height="110" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="115" y="98" text-anchor="middle" font-size="15" font-weight="700" fill="#e8edf5">Match generator</text>
+    <text x="115" y="120" text-anchor="middle" font-size="12" fill="#a9b6c9">sim/, three story arcs</text>
+    <text x="115" y="140" text-anchor="middle" font-size="12" fill="#a9b6c9">about 2,000 events a match</text>
+    <text x="115" y="160" text-anchor="middle" font-size="12" fill="#a9b6c9">plus truth.json</text>
+    <rect x="30" y="220" width="170" height="64" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="115" y="248" text-anchor="middle" font-size="14" font-weight="700" fill="#e8edf5">data/matches</text>
+    <text x="115" y="268" text-anchor="middle" font-size="12" fill="#a9b6c9">events.jsonl, meta.json</text>
+  </g>
+
+  <!-- 2 interpret -->
+  <g>
+    <rect x="250" y="70" width="200" height="110" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="350" y="98" text-anchor="middle" font-size="15" font-weight="700" fill="#e8edf5">Fact engine</text>
+    <text x="350" y="120" text-anchor="middle" font-size="12" fill="#a9b6c9">facts/, live state</text>
+    <text x="350" y="140" text-anchor="middle" font-size="12" fill="#a9b6c9">possession, xG, momentum,</text>
+    <text x="350" y="160" text-anchor="middle" font-size="12" fill="#a9b6c9">win probability, event ids</text>
+    <rect x="250" y="220" width="200" height="110" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="350" y="248" text-anchor="middle" font-size="15" font-weight="700" fill="#e8edf5">Moment detector</text>
+    <text x="350" y="270" text-anchor="middle" font-size="12" fill="#a9b6c9">commentary/moments.py</text>
+    <text x="350" y="290" text-anchor="middle" font-size="12" fill="#a9b6c9">21 kinds: 16 play-by-play,</text>
+    <text x="350" y="310" text-anchor="middle" font-size="12" fill="#a9b6c9">5 analysis</text>
+  </g>
+
+  <!-- 3 explain -->
+  <g>
+    <rect x="500" y="70" width="270" height="76" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="635" y="98" text-anchor="middle" font-size="15" font-weight="700" fill="#e8edf5">Fast path: templates</text>
+    <text x="635" y="120" text-anchor="middle" font-size="12" fill="#a9b6c9">252 wordings, 21 kinds x 3 languages</text>
+    <text x="635" y="138" text-anchor="middle" font-size="12" fill="#a9b6c9">x 2 styles, no model, milliseconds</text>
+
+    <rect x="500" y="176" width="270" height="296" rx="12" fill="#101826" stroke="#f5b942" stroke-dasharray="5 4"/>
+    <text x="635" y="200" text-anchor="middle" font-size="13" font-weight="700" fill="#f5b942">Newsroom: Microsoft Agent Framework</text>
+    <rect x="520" y="218" width="230" height="60" rx="9" fill="#131b28" stroke="#f5b942"/>
+    <text x="635" y="244" text-anchor="middle" font-size="14" font-weight="700" fill="#e8edf5">Analyst</text>
+    <text x="635" y="264" text-anchor="middle" font-size="12" fill="#a9b6c9">Claude Haiku, 6 lines a moment</text>
+    <rect x="520" y="308" width="230" height="60" rx="9" fill="#131b28" stroke="#4ade80"/>
+    <text x="635" y="334" text-anchor="middle" font-size="14" font-weight="700" fill="#e8edf5">Verifier</text>
+    <text x="635" y="354" text-anchor="middle" font-size="12" fill="#a9b6c9">no model: numbers, score, players</text>
+    <rect x="520" y="398" width="230" height="60" rx="9" fill="#131b28" stroke="#b78bff"/>
+    <text x="635" y="424" text-anchor="middle" font-size="14" font-weight="700" fill="#e8edf5">Publisher</text>
+    <text x="635" y="444" text-anchor="middle" font-size="12" fill="#a9b6c9">pass, or template fallback</text>
+    <line x1="635" y1="278" x2="635" y2="306" stroke="#f5b942" stroke-width="2" marker-end="url(#arrA)"/>
+    <line x1="635" y1="368" x2="635" y2="396" stroke="#8b98ad" stroke-width="2" marker-end="url(#arr)"/>
+    <path d="M520 338 H506 V248 H518" fill="none" stroke="#f5b942" stroke-width="2" marker-end="url(#arrA)"/>
+    <text x="512" y="296" font-size="11" fill="#f5b942" transform="rotate(-90 512 296)" text-anchor="middle">retry once</text>
+
+    <rect x="500" y="494" width="270" height="100" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="635" y="520" text-anchor="middle" font-size="14" font-weight="700" fill="#e8edf5">Model guard</text>
+    <text x="635" y="544" text-anchor="middle" font-size="12" fill="#a9b6c9">GuardedLLM: disk cache and a</text>
+    <text x="635" y="563" text-anchor="middle" font-size="12" fill="#a9b6c9">hard call budget. Replay reads</text>
+    <text x="635" y="581" text-anchor="middle" font-size="12" fill="#a9b6c9">recorded lines, no key needed</text>
+  </g>
+
+  <!-- 4 render -->
+  <g>
+    <rect x="810" y="70" width="150" height="150" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="885" y="98" text-anchor="middle" font-size="15" font-weight="700" fill="#e8edf5">Director</text>
+    <text x="885" y="120" text-anchor="middle" font-size="12" fill="#a9b6c9">one per channel (6)</text>
+    <text x="885" y="140" text-anchor="middle" font-size="12" fill="#a9b6c9">speech-time budget,</text>
+    <text x="885" y="158" text-anchor="middle" font-size="12" fill="#a9b6c9">silence, goals and red cards</text>
+    <text x="885" y="176" text-anchor="middle" font-size="12" fill="#a9b6c9">for goals and cards,</text>
+    <text x="885" y="194" text-anchor="middle" font-size="12" fill="#a9b6c9">fitting wording</text>
+    <rect x="810" y="250" width="150" height="130" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="885" y="278" text-anchor="middle" font-size="15" font-weight="700" fill="#e8edf5">Runner</text>
+    <text x="885" y="300" text-anchor="middle" font-size="12" fill="#a9b6c9">live or replay, one</text>
+    <text x="885" y="318" text-anchor="middle" font-size="12" fill="#a9b6c9">pipeline, paced or</text>
+    <text x="885" y="336" text-anchor="middle" font-size="12" fill="#a9b6c9">unpaced, timestamped</text>
+    <text x="885" y="354" text-anchor="middle" font-size="12" fill="#a9b6c9">agent log</text>
+    <rect x="810" y="410" width="150" height="100" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="885" y="438" text-anchor="middle" font-size="15" font-weight="700" fill="#e8edf5">Overlay protocol</text>
+    <text x="885" y="460" text-anchor="middle" font-size="12" fill="#a9b6c9">v1, compact JSON frames</text>
+    <text x="885" y="478" text-anchor="middle" font-size="12" fill="#a9b6c9">WebSocket, SSE,</text>
+    <text x="885" y="496" text-anchor="middle" font-size="12" fill="#a9b6c9">replay.json</text>
+  </g>
+
+  <!-- 5 personalize -->
+  <g>
+    <rect x="1000" y="70" width="170" height="130" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="1085" y="98" text-anchor="middle" font-size="15" font-weight="700" fill="#e8edf5">Channel</text>
+    <text x="1085" y="120" text-anchor="middle" font-size="12" fill="#a9b6c9">en, de, fr</text>
+    <text x="1085" y="138" text-anchor="middle" font-size="12" fill="#a9b6c9">x beginner, expert</text>
+    <text x="1085" y="162" text-anchor="middle" font-size="12" fill="#a9b6c9">switch any time,</text>
+    <text x="1085" y="180" text-anchor="middle" font-size="12" fill="#a9b6c9">all six run side by side</text>
+    <rect x="1000" y="230" width="170" height="150" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="1085" y="258" text-anchor="middle" font-size="15" font-weight="700" fill="#e8edf5">Single-screen UI</text>
+    <text x="1085" y="280" text-anchor="middle" font-size="12" fill="#a9b6c9">React, canvas pitch,</text>
+    <text x="1085" y="298" text-anchor="middle" font-size="12" fill="#a9b6c9">uPlot chart, captions,</text>
+    <text x="1085" y="316" text-anchor="middle" font-size="12" fill="#a9b6c9">browser speech, modals</text>
+    <text x="1085" y="340" text-anchor="middle" font-size="12" fill="#a9b6c9">static build needs</text>
+    <text x="1085" y="358" text-anchor="middle" font-size="12" fill="#a9b6c9">no server</text>
+    <rect x="1000" y="410" width="170" height="100" rx="10" fill="#131b28" stroke="#2b3a52"/>
+    <text x="1085" y="438" text-anchor="middle" font-size="15" font-weight="700" fill="#e8edf5">MCP server</text>
+    <text x="1085" y="460" text-anchor="middle" font-size="12" fill="#a9b6c9">7 tools over stdio,</text>
+    <text x="1085" y="478" text-anchor="middle" font-size="12" fill="#a9b6c9">same facts, verifier</text>
+    <text x="1085" y="496" text-anchor="middle" font-size="12" fill="#a9b6c9">and recorded lines</text>
+  </g>
+
+  <!-- flow arrows -->
+  <g stroke="#8b98ad" stroke-width="2" fill="none" marker-end="url(#arr)">
+    <line x1="115" y1="180" x2="115" y2="218"/>
+    <path d="M200 252 H224 V125 H248"/>
+    <line x1="350" y1="180" x2="350" y2="218"/>
+    <path d="M450 275 H474 V108 H498"/>
+    <path d="M450 275 H474 V320 H498" stroke="#f5b942"/>
+    <path d="M770 108 H790 V145 H808"/>
+    <path d="M770 428 H790 V160 H808"/>
+    <line x1="885" y1="220" x2="885" y2="248"/>
+    <line x1="885" y1="380" x2="885" y2="408"/>
+    <path d="M960 460 H998"/>
+    <path d="M960 460 H980 V305 H998"/>
+  </g>
+  <path d="M960 460 H980 V135 H998" stroke="#8b98ad" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+
+  <text x="600" y="626" text-anchor="middle" font-size="12" fill="#6f7d93">All teams, players and matches are fictional. Numbers on this diagram are counted from the code.</text>
+</svg>
