@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LogModal, LogsColumn } from "./components/Logs";
 import type { LogKind } from "./components/Logs";
+import { ProofModal } from "./components/Proof";
 import { Stage } from "./components/Stage";
 import { TopBar } from "./components/TopBar";
-import { PlayerContext } from "./hooks";
+import { startCrowd, updateCrowd } from "./crowd";
+import { PlayerContext, useFrame } from "./hooks";
+import { EV, T } from "./protocol";
+import { isSpeaking } from "./speech";
 import { Player } from "./player";
 import type { Lang, Style } from "./player";
 
@@ -28,8 +32,9 @@ export default function App() {
 
 function Shell({ player }: { player: Player }) {
   const [modal, setModal] = useState<{ kind: LogKind; from: HTMLElement | null } | null>(null);
+  const [proof, setProof] = useState(false);
   const modalOpen = useRef(false);
-  modalOpen.current = modal !== null;
+  modalOpen.current = modal !== null || proof;
 
   useEffect(() => {
     const q = new URLSearchParams(location.search);
@@ -54,12 +59,34 @@ function Shell({ player }: { player: Player }) {
     return () => removeEventListener("keydown", onKey);
   });
 
+  // the stadium: on from the first click, then fed every frame with what the board shows
+  useEffect(() => {
+    const go = (): void => startCrowd();
+    addEventListener("pointerdown", go);
+    addEventListener("keydown", go);
+    return () => { removeEventListener("pointerdown", go); removeEventListener("keydown", go); };
+  }, []);
+  const shot = useRef({ at: 0, seen: 0 });
+  useFrame(() => {
+    const { sim } = player;
+    const last = sim.recent[sim.recent.length - 1];
+    for (let i = sim.recent.length - 1; i >= 0; i--) {
+      const r = sim.recent[i];
+      if (r.at <= shot.current.seen) break;
+      if (r.row[EV.type] === T.shot) { shot.current.at = r.at; break; }
+    }
+    if (last) shot.current.seen = last.at;
+    updateCrowd({ muted: player.muted, speaking: isSpeaking(), playing: player.phase === "playing", ballX: last ? last.row[EV.ex] ?? last.row[EV.x] : null,
+      shotAt: shot.current.at, goalAt: sim.flash?.kind === "goal" ? sim.flash.at : 0 });
+  });
+
   const open = (kind: LogKind, from: HTMLElement): void => setModal({ kind, from });
 
   return (
     <div className="app">
       <TopBar onMute={toggleMute} onOpen={open} />
-      <main className="main"><Stage /><LogsColumn onOpen={open} /></main>
+      <main className="main"><Stage onProof={() => setProof(true)} /><LogsColumn onOpen={open} /></main>
+      {proof && <ProofModal onClose={() => setProof(false)} />}
       {modal && <LogModal kind={modal.kind} returnTo={modal.from} onClose={() => setModal(null)} />}
     </div>
   );

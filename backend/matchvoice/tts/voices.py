@@ -6,7 +6,8 @@ from dataclasses import dataclass
 MODEL = "eleven_flash_v2_5"
 # Credits billed per character, per model. Flash is documented at 0.5; the first real call is checked against the
 # subscription counter (docs/PROTOCOL.md, "Spoken lines"), and GuardedTTS also records the cost the API reports.
-CREDITS_PER_CHAR: dict[str, float] = {MODEL: 0.5}
+CREDITS_PER_CHAR: dict[str, float] = {MODEL: 0.5, "eleven_v3": 1.0}  # v3: expressive, audio tags, not low latency; 1.0 is an assumption to check on the counter
+HYPE_MODEL = "eleven_v3"  # recorded peak lines (a goal) are made with this model; live stays on Flash
 OUTPUT_FORMAT = "mp3_44100_64"
 MAX_CHARS = 220  # a commentary line is at most 150 characters (analyst.MAX_CHARS); anything longer is refused
 

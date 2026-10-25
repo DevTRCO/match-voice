@@ -400,6 +400,19 @@ Measured x1: windows 16.1 segments per minute (gate 16, thin), matches 17.2 segm
 
 Baked voice for the recorded run (2026-10-22, the user asked for ElevenLabs instead of the browser voice in Step 1): `backend/scripts/bake_insert_audio.py` made one mp3 per spoken line of `ui/public/insert/replay.json` (24 files, 812 KB, `ui/public/insert/audio/<ch>-<m>.mp3`; 736 credits of 33,800, 0 model calls). Voices: Charlie (English play-by-play), Daniel (English colour, all of German and French), energy per line from `delivery.py` (goal peak, analyst calm, rest rising). `speech.ts` has a `baked` option: Step 1 plays the file with no server and no key, a failure falls back to the browser voice and never switches the live voice off; Step 2 (live) still uses the browser voice. Checked in headless Chrome on the static build: the four en/expert lines fetched (200), played and ended, no exceptions. Re-run the script (`--go`) whenever the insert's `say` texts change: files are keyed by channel and moment id only, a stale file would speak the old text. Not heard by a human yet; de and fr voices (Daniel) are borrowed and unchecked.
 
+Demo rework (2026-10-24/25, Windows PC, handed back to the Mac): the UI got six voice cards, a verifier proof modal ("Try to break it", `pipeline/proof.py`),
+a dark palette, a stadium crowd bed (`ui/src/crowd.ts`, `ui/public/audio`, from a freesound community recording, low-passed so the chants read as distant;
+chants naming real clubs must not be audible in the video), hype shaping for eleven_v3 (`delivery.hype_for_tts`), a dossier of club and player stories for quiet
+spells (`sim/dossier.py`, `story_note` in `fast.py`), and a 30 s two-part story insert (`ui/public/insert/story.json`: comeback story at 68', cut, build-up and the
+71' equaliser; `export-story-insert`; en/expert baked in `ui/public/insert/story-audio`, 475 ElevenLabs credits). 704 tests green, 1 xfail.
+Open: the goal analysis in the story insert is a template fallback (needs 1 Haiku call, not approved yet); only en/expert has baked audio.
+UI direction agreed with the user, NOT built yet: `ui/public/mock3.html` (served at /mock3.html, uses the insert's real data and audio) is the target:
+a "Choose your commentator" picker (flags, language and level filters, search, inactive languages marked Soon), a stream-style player (DAZN/Prime score bug,
+LIVE badge, subtitles, win probability as a data graphic, commentator name plate), and "How does it know?" with three columns (What arrives, What it understands,
+What you hear). mock.html and mock2.html are earlier steps. Remove the mocks from ui/public before submission.
+Open decisions for the user: generated faces (gpt-image-2.5-flare, about 13 calls; needs an OPENAI_API_KEY in .env, added by the user), and whether the
+commentators need female or native de/fr voices before the faces are made.
+
 Next, in order:
 6. Record the video from docs/VIDEO.md.
 

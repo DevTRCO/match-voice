@@ -43,7 +43,7 @@ VOICE_SETTINGS: dict[Energy, dict[str, float]] = {
     "rising": {"stability": 0.45, "similarity_boost": 0.80, "style": 0.25, "speed": 1.04},
     "peak": {"stability": 0.30, "similarity_boost": 0.75, "style": 0.55, "speed": 1.12},
 }
-STYLE_MODELS: set[str] = set()  # models that get `style`; Flash is low-latency and `style` adds latency, so it is left out until a listening test says otherwise
+STYLE_MODELS: set[str] = {"eleven_v3"}  # models that get `style`; Flash is low-latency and `style` adds latency, so it is left out until a listening test says otherwise
 
 
 def voice_settings(energy: Energy, model: str) -> dict[str, float | bool]:
@@ -200,6 +200,30 @@ def shape_for_tts(text: str, lang: str) -> str:
     t = re.sub(r"\.\s+\.", ".", t).strip(" ,")
     if t and t[-1] not in ".!?":
         t += "."
+    return t
+
+
+# ---------- hype: how a peak line is shouted ----------
+# Applied after shape_for_tts, only to the text sent to the speech engine; the caption keeps the written line.
+# eleven_v3 reads audio tags in square brackets ([excited], [shouting]); other models would read them aloud, so they get none.
+TAG_MODELS = {"eleven_v3"}
+_SHOUT = {"en": ("GOAL", "GOOOAL"), "de": ("TOR", "TOOOR"), "fr": ("BUT", "BUUUT")}
+_TAGS: dict[Energy, str] = {"calm": "", "rising": "[excited] ", "peak": "[shouting] "}
+
+
+def hype_for_tts(text: str, lang: str, energy: Energy, model: str) -> str:
+    """A peak line is called, not read: the shout word is stretched ("GOOOAL!"), it stands alone as its own exclamation,
+    and the line ends on an exclamation mark. With a tag model the energy also goes in as an audio tag."""
+    t = text
+    if energy == "peak":
+        word, long = _SHOUT[lang]
+        m = re.match(rf"{word}(?![A-Za-z])\s*[!.,]?\s*", t)
+        if m:
+            rest = t[m.end():]
+            t = f"{long}! " + rest[:1].upper() + rest[1:]
+        t = re.sub(r"[.]$", "!", t)
+    if model in TAG_MODELS:
+        t = _TAGS[energy] + t
     return t
 
 

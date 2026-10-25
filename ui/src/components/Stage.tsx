@@ -4,9 +4,10 @@ import { setAttr, setText, useFrame, usePlayer, useTopic } from "../hooks";
 import { PitchView } from "../pitch";
 import { choose } from "../caption";
 import type { DemoInsert, Say, Team } from "../protocol";
-import { EvidenceBox } from "./Evidence";
+import { Trace } from "./Trace";
 import { LiveIcon, PlayIcon, ReplayIcon } from "./Icons";
 import { Settings } from "./TopBar";
+import { Voices } from "./Voices";
 
 const LONG_CAPTION = 96; // characters: past this the caption is set smaller so three lines fit the block that holds two
 const FADE_MIN_S = 4; // a finished line recedes this long after its speech slot, longer for a long sentence (reading time)
@@ -29,7 +30,7 @@ function statusOf(player: ReturnType<typeof usePlayer>): string {
 }
 
 /** Scoreboard, pitch, the one caption line, why it was said, and the run's status. Everything that moves is written by the frame loop. */
-export function Stage() {
+export function Stage({ onProof }: { onProof: () => void }) {
   const player = usePlayer();
   const { sim } = player;
   useTopic("meta");
@@ -40,6 +41,7 @@ export function Stage() {
   const reg = (name: string) => (el: HTMLElement | null) => { hud.current[name] = el; };
   const state = useRef<{ shown: Say | null; key: string; meta: number }>({ shown: null, key: "", meta: -1 });
   const lastScore = useRef("");
+  const cut = useRef({ t: 0, at: -1e9, text: "" });
 
   useEffect(() => {
     if (!canvas.current) return;
@@ -50,6 +52,7 @@ export function Stage() {
 
   useFrame((now) => {
     if (!sim.hello) return;
+    const teams0 = sim.hello.match.teams;
     view.current?.draw(now);
     const h = hud.current;
     const st = state.current;
@@ -94,6 +97,30 @@ export function Stage() {
     const mode = talking ? "talking" : old ? "old" : "quiet";
     if (h.caption && h.caption.dataset.mode !== mode) h.caption.dataset.mode = mode;
     setText(h.status, statusOf(player));
+    const wp = sim.wp; // the win probability: three segments that slide when a goal moves it
+    if (h.wp) h.wp.dataset.on = wp ? "1" : "0";
+    if (wp && teams0) {
+      const [ph, pd, pa] = wp.map((x) => Math.round(x / 10));
+      h.wbh?.style.setProperty("flex-grow", String(wp[0]));
+      h.wbd?.style.setProperty("flex-grow", String(wp[1]));
+      h.wba?.style.setProperty("flex-grow", String(wp[2]));
+      setText(h.wph, `${teams0[0].short} ${ph}%`);
+      setText(h.wpa, `${pa}% ${teams0[1].short}`);
+      setText(h.wpd, `win probability · draw ${pd}%`);
+    }
+    const c = cut.current; // the story insert jumps ahead: say so, like a broadcast cut
+    if (sim.framed && c.t && sim.t - c.t > 20 && player.phase === "playing") {
+      const mins = Math.round((sim.t - c.t) / 60);
+      c.at = now; c.text = `${mins <= 1 ? "A minute" : `${mins} minutes`} later  ·  ${sim.clock}'`;
+    }
+    c.t = sim.framed ? sim.t : 0;
+    const cutOn = now - c.at < 2600;
+    if (h.cut && (h.cut.dataset.on === "1") !== cutOn) h.cut.dataset.on = cutOn ? "1" : "0";
+    if (cutOn) setText(h.cutsub, c.text);
+    const f = sim.flash;
+    const on = !!f && f.kind === "goal" && now - f.at < 3400 && player.phase === "playing";
+    if (h.goal && (h.goal.dataset.on === "1") !== on) h.goal.dataset.on = on ? "1" : "0";
+    if (on && f) setText(h.goalsub, `${f.clock}'  ·  ${sim.score[0]}\u2013${sim.score[1]}`);
   });
 
   const teams = sim.hello?.match.teams;
@@ -118,9 +145,18 @@ export function Stage() {
         </div>
       </div>
 
+      <div className="wpbar" ref={reg("wp")} style={teams ? { ["--h" as string]: teams[0].color, ["--a" as string]: teams[1].color } : undefined} aria-label="Win probability">
+        <span className="wl" ref={reg("wph")} />
+        <div className="wtrack"><i className="wh" ref={reg("wbh")} /><i className="wd" ref={reg("wbd")} /><i className="wa" ref={reg("wba")} /></div>
+        <span className="wl r" ref={reg("wpa")} />
+        <small ref={reg("wpd")} />
+      </div>
+
       <div className="pitchslot">
         <div className="pitchwrap" data-idle={phase === "ready" || phase === "over" || undefined} data-phase={phase}>
           <canvas ref={canvas} className="pitch" aria-hidden="true" />
+          <div className="goalbanner" ref={reg("goal")} aria-hidden="true"><b>GOAL</b><span ref={reg("goalsub")} /></div>
+          <div className="cutcard" ref={reg("cut")} aria-hidden="true"><span ref={reg("cutsub")} /></div>
           {phase === "ready" && (
             <div className="cta">
               <Settings />
@@ -137,6 +173,7 @@ export function Stage() {
                 <div className="btns">
                   {canLive && <button className="start" onClick={() => void player.goLive()} autoFocus><LiveIcon /><span>{player.step === 2 ? "Go live again" : "Go live"}</span></button>}
                   <button className={canLive ? "start ghost" : "start"} onClick={() => void player.playRecorded()} autoFocus={!canLive}><ReplayIcon size={20} /><span>Replay recorded</span></button>
+                  {player.step === 1 && <button className="start ghost" onClick={onProof}><span>Try to break it</span></button>}
                 </div>
               </div>
             </div>
@@ -151,14 +188,11 @@ export function Stage() {
         </div>
       </div>
 
-      <div className="caption" ref={reg("caption")} data-mode="quiet" aria-live="polite" onClick={() => sim.select(null)}>
-        <p className="text" ref={reg("text")} />
-        <div className="src" ref={reg("src")} data-src="template"><i aria-hidden="true" /><span ref={reg("srcName")} /></div>
-      </div>
-      {phase === "ready" && <div className="intro"><p className="text">{scene(teams, player.demo)}</p></div>}
-      <EvidenceBox reserve />
+      <Voices onProof={onProof} />
+      <Trace />
       <div className="foot">
         <p className="status" ref={reg("status")} />
+        {phase === "ready" && <p className="status">{scene(teams, player.demo)}</p>}
         {blocked && <p className="status warn" role="status">{blocked}</p>}
       </div>
     </section>
@@ -179,6 +213,6 @@ function scene(teams: Team[] | undefined, d: DemoInsert | null): string {
   const added = d.clock.includes("+");
   const when = added ? `Added time, ${d.clock}'.` : `${ordinal(parseInt(d.clock, 10))} minute.`;
   const state = h === a ? `Level at ${h}-${a}.` : `${(h < a ? teams[0] : teams[1]).name} trail ${h}-${a}.`;
-  const len = Math.round(d.until - d.start);
+  const len = Math.round(d.length ?? d.until - d.start);
   return `${state} ${when} ${len} seconds of commentary.`;
 }

@@ -132,3 +132,12 @@ def test_delivery_on_sends_shaped_text_and_energy_settings_and_bills_what_is_sen
     assert len(fake.calls) == 2 and fake.settings[1]["stability"] == VOICE_SETTINGS["calm"]["stability"]  # another energy is another take
     asyncio.run(t.speak("It's 1-1.", "en"))
     assert fake.settings[2] is None  # no energy, no settings
+
+
+def test_hype_stretches_the_goal_call_and_tags_only_for_a_tag_model():
+    from matchvoice.commentary.delivery import hype_for_tts
+    assert hype_for_tts("GOAL! Fontaine buries it, and it's one-all!", "en", "peak", "eleven_v3") == "[shouting] GOOOAL! Fontaine buries it, and it's one-all!"
+    assert hype_for_tts("TOR! Fontaine macht ihn rein.", "de", "peak", "eleven_flash_v2_5") == "TOOOR! Fontaine macht ihn rein!"
+    assert hype_for_tts("BUT ! Fontaine ne tremble pas.", "fr", "peak", "eleven_flash_v2_5").startswith("BUUUT! Fontaine")
+    assert hype_for_tts("Goalkeeper Rourke is up.", "en", "peak", "eleven_flash_v2_5") == "Goalkeeper Rourke is up!"  # not a shout word
+    assert hype_for_tts("Calm line.", "en", "calm", "eleven_v3") == "Calm line."

@@ -108,7 +108,7 @@ export class Player {
   }
 
   /** Seconds of the recorded moment, from the data. */
-  get recordedLen(): number | null { return this.demo ? Math.round(this.demo.until - this.demo.start) : null; }
+  get recordedLen(): number | null { return this.demo ? Math.round(this.demo.length ?? this.demo.until - this.demo.start) : null; }
   /** Seconds of the live window, from the server's last answer. */
   get liveLen(): number | null { return this.guided ? Math.round(this.guided.window_s) : null; }
 

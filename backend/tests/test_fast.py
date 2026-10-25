@@ -36,7 +36,7 @@ FAST_FIRES = {"touch", "pass_kind", "carry", "duel", "restart", "setpiece_setup"
 WAITS_FOR_TRACKING = set(FAST) - FAST_FIRES
 GENDERED = {"en": r"\b(he|she|his|her|him|hers)\b", "de": r"\b(er|sie|ihm|sein|seine|ihr)\b", "fr": r"\b(il|elle|lui|ils|elles)\b"}
 FRAGMENT_WORDS = {"en": 6, "de": 7, "fr": 7}
-ONE_WORDING = ("press_note", "phase_note", "shape_note")  # a context kind with nothing grounded to add to its one sentence has one wording
+ONE_WORDING = ("press_note", "phase_note", "shape_note", "story_note")  # a story_note has one sentence per facet; the beginner gets its own  # a context kind with nothing grounded to add to its one sentence has one wording
 META_LEADS = re.compile(r"^(worth (noting|a mention)|good to know|look at|notice how|watch this|bemerkenswert|auffällig|gut zu (wissen|sehen)|à noter|"
                         r"bon à savoir|regardez)\b", re.I)
 
@@ -463,7 +463,7 @@ def test_every_fast_and_context_kind_has_a_full_bank_and_the_word_tables_agree()
             assert set(T[kind][lang]) == set(STYLES)
             for style in STYLES:
                 assert len(T[kind][lang][style]) >= (1 if kind in ONE_WORDING else 2), (kind, lang, style)
-    assert len(FAST) == 12 and len(CONTEXT) == 7
+    assert len(FAST) == 12 and len(CONTEXT) == 8  # story_note: the dossier (sim/dossier.py)
     for table, langs in WORDS.items():
         assert set(langs) == set(LANGS), table
         assert len({frozenset(v) for v in langs.values()}) == 1, table  # the same codes in every language

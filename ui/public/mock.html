@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>match-voice mock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0c10; --panel:#13151b; --panel2:#181b22; --line:#ffffff14; --line2:#ffffff22;
+  --text:#f2f0ea; --mute:#9a9890; --dim:#64635d; --signal:#3ddc84; --warn:#ff6b62;
+  --home:#8b5cf6; --away:#f59e0b; --key:#7fb4ff; --str:#e6c98a; --num:#9fe0b8;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:"Schibsted Grotesk",system-ui,sans-serif}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+.app{height:100vh;display:grid;grid-template-rows:auto auto 1fr auto;padding:14px 22px 12px;gap:10px}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:18px}
+.brand{font-weight:800;letter-spacing:-.03em;font-size:20px}
+.brand b{color:var(--signal)}
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{padding:6px 14px;border-radius:999px;font-size:13px;font-weight:600;color:var(--mute);transition:.2s}
+.seg button[aria-pressed=true]{background:var(--text);color:var(--bg)}
+.mode{margin:0 auto}
+.mode button{padding:7px 18px;font-size:14px}
+.mode button[aria-pressed=true]{background:var(--signal);color:#06210f}
+.right{display:flex;gap:10px;align-items:center}
+.sound{font-size:13px;color:var(--mute);padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+
+/* board */
+.board{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;max-width:760px;width:100%;margin:0 auto}
+.team{font-weight:800;font-size:22px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.team.h{justify-content:flex-end}
+.team i{width:22px;height:4px;border-radius:2px;display:block}
+.score{display:flex;align-items:center;gap:12px;font-weight:800;font-size:40px;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.score .d{color:var(--dim);font-size:28px}
+.score .n{display:inline-block;transition:transform .35s cubic-bezier(.2,1.6,.4,1),color .3s}
+.score .n.pop{transform:scale(1.35);color:var(--signal)}
+.clock{grid-column:1/-1;justify-self:center;font-size:12px;font-weight:600;color:var(--mute);background:var(--panel);border:1px solid var(--line);padding:2px 10px;border-radius:999px;margin-top:-6px}
+.wp{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.wp .bar{display:flex;height:6px;border-radius:3px;overflow:hidden;gap:2px}
+.wp .bar span{transition:flex-grow 1.2s cubic-bezier(.2,.8,.2,1)}
+.wp small{grid-column:1/-1;text-align:center;color:var(--dim);font-weight:500;margin-top:-4px}
+.wp .lh{color:#b9a3ff}.wp .la{color:#ffc35a}
+
+/* body: three columns, the outer two collapse in fan view */
+.body{display:grid;grid-template-columns:0fr 1fr 0fr;gap:0;min-height:0;transition:grid-template-columns .7s cubic-bezier(.6,0,.2,1),gap .7s}
+.how .body{grid-template-columns:1fr 1.15fr 1fr;gap:28px}
+.col{min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.side{opacity:0;transition:opacity .35s}
+.how .side{opacity:1;transition-delay:.45s}
+.colhead{display:flex;align-items:baseline;gap:10px;padding:2px 2px 10px;white-space:nowrap}
+.colhead .no{font-weight:800;color:var(--bg);background:var(--signal);width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;flex:none;transform:translateY(3px)}
+.colhead h2{font-size:15px;font-weight:800;letter-spacing:-.01em}
+.colhead p{font-size:12px;color:var(--mute)}
+.mid .colhead{display:none}
+.how .mid .colhead{display:flex}
+
+/* pitch */
+.pitchwrap{flex:1 1 0;min-height:0;min-width:0;position:relative;transition:flex-basis .7s,flex-grow .7s}
+.how .pitchwrap{flex:0 0 40%}
+canvas#pitch{position:absolute;inset:0;width:100%;height:100%;border-radius:14px;display:block}
+.pitchbox{position:absolute;top:0;left:50%;transform:translateX(-50%)}
+.cut{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.cut span{background:#0b0c10e6;border:1px solid var(--line2);padding:10px 18px;border-radius:999px;font-weight:700;font-size:15px;opacity:0;transform:scale(.96);transition:.35s}
+.cut span.on{opacity:1;transform:none}
+.goalflash{position:absolute;inset:0;border-radius:14px;pointer-events:none;box-shadow:inset 0 0 0 3px var(--signal),0 0 60px #3ddc8466;opacity:0;transition:opacity .6s}
+.goalflash.on{opacity:1}
+
+/* fan caption */
+.fan{flex:none;padding:14px 4px 0;display:grid;gap:8px;justify-items:center;text-align:center;transition:opacity .3s}
+.how .fan{display:none}
+.fan .who{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--mute);font-weight:600;min-height:22px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:600;color:var(--mute);white-space:nowrap}
+.chip.ok{color:var(--signal);border-color:#3ddc8455}
+.chip.story{color:#ffd58a;border-color:#ffd58a44}
+.say{font-weight:800;letter-spacing:-.025em;line-height:1.12;font-size:clamp(24px,3.1vw,44px);max-width:22ch;min-height:2.3em;text-wrap:balance}
+.say.goal{color:var(--signal)}
+.say .w{display:inline-block;opacity:0;transform:translateY(.25em);animation:in .35s forwards}
+@keyframes in{to{opacity:1;transform:none}}
+
+/* raw stream */
+.stream{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;overflow:hidden;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11.5px;line-height:1.45;mask-image:linear-gradient(#000 70%,transparent)}
+.row{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;animation:drop .4s cubic-bezier(.2,.9,.2,1);transition:border-color 1.2s,background 1.2s;flex:none}
+.row.hot{border-color:#3ddc8499;background:#3ddc840d;transition:none}
+.row .t{color:var(--dim);font-size:10.5px;display:flex;justify-content:space-between;margin-bottom:2px}
+.row .k{color:var(--key)}.row .s{color:var(--str)}.row .n{color:var(--num)}
+.row.gap{background:transparent;border-style:dashed;color:var(--mute);font-family:"Schibsted Grotesk";font-size:13px;text-align:center;padding:12px}
+.row.gap b{color:var(--text);font-variant-numeric:tabular-nums}
+.row.div{background:transparent;border:0;text-align:center;color:var(--dim);font-family:"Schibsted Grotesk";font-size:12px;padding:2px}
+@keyframes drop{from{opacity:0;transform:translateY(-10px)}}
+
+/* intelligence cards */
+.cards{display:none}
+.how .cards{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;overflow:hidden;padding-top:12px;mask-image:linear-gradient(#000 75%,transparent)}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;animation:drop .4s cubic-bezier(.2,.9,.2,1);transition:border-color 1.2s;flex:none}
+.card.hot{border-color:#3ddc8499;transition:none}
+.card .tag{grid-row:1/3;align-self:center;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);width:74px}
+.card h3{font-size:14px;font-weight:700}
+.card p{font-size:12.5px;color:var(--mute)}
+.card.big{border-color:#3ddc8466;background:linear-gradient(90deg,#3ddc8418,transparent)}
+.card.big h3{color:var(--signal);font-size:16px}
+
+/* voice column */
+.mine{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;gap:10px;transition:border-color 1.2s}
+.mine.hot{border-color:#3ddc8499;transition:none}
+.mine .say{font-size:clamp(20px,2vw,30px);max-width:none;min-height:2.3em;text-align:left}
+.mine .meta{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+.others{margin-top:14px;display:grid;gap:6px}
+.others h4{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:2px}
+.other{display:grid;grid-template-columns:88px 1fr;gap:10px;font-size:13px;padding:7px 10px;border-radius:9px;background:#ffffff06;border:1px solid transparent;cursor:pointer}
+.other:hover{border-color:var(--line2)}
+.other b{font-size:11px;color:var(--mute);font-weight:700;letter-spacing:.03em;padding-top:2px}
+.other span{color:#d8d6cf}
+
+/* flow overlay */
+svg#flow{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:5}
+
+/* foot */
+.foot{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--mute)}
+.prog{flex:1;height:3px;background:var(--panel2);border-radius:2px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--signal)}
+.play{border:1px solid var(--line2);border-radius:999px;padding:6px 14px;font-weight:700;color:var(--text);font-size:13px}
+.mocknote{color:var(--dim)}
+
+/* start overlay */
+.start{position:fixed;inset:0;display:grid;place-items:center;background:#0b0c10d9;z-index:10;backdrop-filter:blur(4px)}
+.start div{text-align:center;display:grid;gap:14px;justify-items:center}
+.start h1{font-size:34px;letter-spacing:-.03em;font-weight:800}
+.start p{color:var(--mute);max-width:46ch}
+.start button{background:var(--signal);color:#06210f;font-weight:800;padding:12px 26px;border-radius:999px;font-size:16px}
+.start.off{display:none}
+.endcta{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:var(--signal);color:#06210f;font-weight:800;padding:9px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.4s}
+.endcta.on{opacity:1;pointer-events:auto}
+.how .endcta{display:none}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="top">
+    <div class="brand">match<b>voice</b></div>
+    <div class="seg mode" role="group" aria-label="View">
+      <button id="vFan" aria-pressed="true">Fan view</button>
+      <button id="vHow" aria-pressed="false">See how</button>
+    </div>
+    <div class="right">
+      <div class="seg" id="langs"><button data-l="en" aria-pressed="true">EN</button><button data-l="de" aria-pressed="false">DE</button><button data-l="fr" aria-pressed="false">FR</button></div>
+      <div class="seg" id="lvls"><button data-s="beginner" aria-pressed="false">Beginner</button><button data-s="expert" aria-pressed="true">Expert</button></div>
+      <button class="sound" id="snd">Sound on</button>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="team h">Wexmoor Athletic <i style="background:var(--home)"></i></div>
+    <div class="score"><span class="n" id="sh">0</span><span class="d">–</span><span class="n" id="sa">1</span></div>
+    <div class="team"><i style="background:var(--away)"></i> Tamsworth Wanderers</div>
+    <div class="clock" id="clock">68'</div>
+    <div class="wp">
+      <span class="lh" id="wph">WA 9%</span>
+      <div class="bar"><span id="bh" style="background:var(--home);flex-grow:9"></span><span id="bd" style="background:#3a3c44;flex-grow:24"></span><span id="ba" style="background:var(--away);flex-grow:67"></span></div>
+      <span class="la" id="wpa">67% TW</span>
+      <small id="wpd">win probability · draw 24%</small>
+    </div>
+  </div>
+
+  <div class="body" id="body">
+    <section class="col side" id="colRaw">
+      <div class="colhead"><span class="no">1</span><h2>Raw data in</h2><p>the match feed, as it arrives</p></div>
+      <div class="stream" id="stream"></div>
+    </section>
+
+    <section class="col mid">
+      <div class="colhead"><span class="no">2</span><h2>Intelligence</h2><p>what match-voice understands and decides</p></div>
+      <div class="pitchwrap" id="pitchwrap"><div class="pitchbox" id="pitchbox">
+        <canvas id="pitch"></canvas>
+        <div class="goalflash" id="gflash"></div>
+        <div class="cut"><span id="cut">2 minutes later · 70'</span></div>
+        <button class="endcta" id="endcta">See how it was made ›</button>
+      </div></div>
+      <div class="fan">
+        <div class="who" id="fwho"></div>
+        <div class="say" id="fsay"></div>
+      </div>
+      <div class="cards side" id="cards"></div>
+    </section>
+
+    <section class="col side" id="colVoice">
+      <div class="colhead"><span class="no">3</span><h2>Your voice</h2><p>one fan, their language, their level</p></div>
+      <div class="mine" id="mine">
+        <div class="meta" id="mwho"></div>
+        <div class="say" id="msay"></div>
+        <div class="meta" id="mmeta"></div>
+      </div>
+      <div class="others"><h4>Same moment, other fans</h4><div id="others" style="display:grid;gap:6px"></div></div>
+    </section>
+  </div>
+
+  <div class="foot">
+    <button class="play" id="replay">Replay</button>
+    <div class="prog"><i id="prog"></i></div>
+    <span id="tt">0.0 / 30 s</span>
+    <span class="mocknote">Mock · real data from the recorded clip · voice: English expert only</span>
+  </div>
+</div>
+<svg id="flow"></svg>
+<div class="start" id="start"><div>
+  <h1>Wexmoor trail 0-1. 68th minute.</h1>
+  <p>30 seconds of one match, heard by six different fans.</p>
+  <button id="go">Play the 30 seconds</button>
+</div></div>
+
+<script>
+const LEN = 30;
+const CH = ["en/beginner","en/expert","de/beginner","de/expert","fr/beginner","fr/expert"];
+const NAME = {en:"English",de:"Deutsch",fr:"Français"};
+let lang = "en", lvl = "expert";
+const ch = () => `${lang}/${lvl}`;
+
+// spoken lines (real, from ui/public/insert/story.json), w = wall seconds into the clip
+const LINES = [
+ {w:3.6, m:3339167, kind:"story", src:"Template · club file", lat:"111 ms", l:[
+  "Do not write Wexmoor off yet, they have come from behind to take points three times this season.",
+  "Wexmoor have already come from behind to take points three times this season.",
+  "Wexmoor sollte man nicht abschreiben, die Mannschaft hat schon drei Mal nach Rückstand gepunktet.",
+  "Wexmoor hat in dieser Saison schon drei Mal nach Rückstand gepunktet.",
+  "Attention à Wexmoor, qui a déjà pris des points trois fois cette saison après avoir été mené.",
+  "Wexmoor a déjà pris des points après avoir été mené trois fois cette saison."]},
+ {w:12.91, m:1189316, src:"Template", lat:"13 ms", l:["Ibsen cuts it out.","Ibsen cuts it out.","Abgefangen von Ibsen.","Abgefangen von Ibsen.","Intercepté par Ibsen.","Intercepté par Ibsen."]},
+ {w:14.71, m:1189569, src:"Template", lat:"1.8 s", l:["To Rasmussen.","To Rasmussen.","Auf Rasmussen.","Auf Rasmussen.","Vers Rasmussen.","Vers Rasmussen."]},
+ {w:16.7, m:1189576, src:"Template", lat:"40 ms", l:["Chested down.","Chested down.","Brustannahme.","Brustannahme.","Amorti de la poitrine.","Amorti de la poitrine."]},
+ {w:19.81, m:1189697, src:"Template", lat:"12 ms", l:["Long ball for Tavares.","Long ball for Tavares.","Lang geschlagen auf Tavares.","Lang geschlagen auf Tavares.","Long ballon vers Tavares.","Long ballon vers Tavares."]},
+ {w:22.61, m:1189713, src:"Template", lat:"115 ms", l:["To Fontaine.","To Fontaine.","Auf Fontaine.","Auf Fontaine.","Pour Fontaine.","Pour Fontaine."]},
+ {w:23.9, m:162, kind:"goal", src:"Template · interrupts", lat:"6 ms", l:[
+  "GOAL for Wexmoor Athletic! Fontaine finds the net, it's 1-1!","GOAL! Fontaine buries it, and it's 1-1!",
+  "TOR für Wexmoor Athletic! Fontaine netzt ein, es steht 1-1!","TOR! Fontaine macht ihn rein, 1-1!",
+  "BUT pour Wexmoor Athletic ! Fontaine fait mouche, c'est 1-1 !","BUT ! Fontaine ne tremble pas, 1-1 !"]},
+ {w:27.4, m:163, kind:"analyst", src:"Analyst · verified", lat:"3.6 s", l:[
+  "That goal changes the whole feel of the game for Wexmoor Athletic.","That goal lifts Wexmoor Athletic's chance of a win to 36 percent.",
+  "Dieses Tor verändert das ganze Spiel für Wexmoor Athletic.","Die Siegchance von Wexmoor Athletic steigt mit diesem Tor auf 36 Prozent.",
+  "Ce but change la physionomie du match pour Wexmoor Athletic.","Ce but fait grimper les chances de victoire de Wexmoor Athletic à 36 %."]},
+];
+
+// raw rows: the enriched feed rows of the clip, verbatim fields, ids not names
+const RAW = [
+ {w:12.9, j:{eid:23664,t:4382.7,type:"interception",team:"H",player:"H3",pass_eid:23648,contest_s:3.839}},
+ {w:13.05, j:{eid:23696,t:4382.7,type:"pass",team:"H",target:"H4",pass_type:"switch",height:"lofted",body_part:"left_foot",ball_speed:59.2,t_arr:4385.963}},
+ {w:16.16, j:{eid:23697,t:4385.963,type:"receipt",team:"H",player:"H4",x:59.1,y:62.0,touch:"chest",facing:"forward"}},
+ {w:19.8, j:{eid:23712,t:4389.6,type:"pass",team:"H",target:"H7",pass_type:"long",height:"lofted",body_part:"right_foot",ball_speed:59.6}},
+ {w:22.29, j:{eid:23713,t:4392.085,type:"receipt",team:"H",player:"H7",x:39.8,y:25.7,touch:"control",facing:"forward"}},
+ {w:22.5, j:{eid:23714,t:4392.301,type:"pass",team:"H",player:"H7",target:"H10",pass_type:"short",first_time:true,length:18.3}},
+ {w:23.65, j:{eid:23715,t:4393.45,type:"receipt",team:"H",player:"H10",x:25.0,y:36.5,touch:"control"}},
+ {w:23.9, j:{eid:23728,t:4393.7,type:"shot",team:"H",player:"H10",body_part:"right_foot",technique:"driven",first_time:true,assist_eid:23714,outcome:"goal",xg:0.25}},
+];
+
+// what the system made of it
+const INTEL = [
+ {w:0.3, tag:"State", h:"0-1 at 68'", p:"Wexmoor behind at home · win 9%"},
+ {w:3.5, tag:"Detector", h:"Quiet spell", p:"10 s without an event: nothing to call"},
+ {w:3.55, tag:"Club file", h:"Story picked: three comebacks", p:"Fits now: Wexmoor behind, home, 68th minute"},
+ {w:12.95, tag:"Event", h:"Turnover", p:"Ibsen (H3) wins it back"},
+ {w:13.1, tag:"Event", h:"Switch of play", p:"Lofted, left foot, to Rasmussen (H4)"},
+ {w:16.2, tag:"Event", h:"Clean receipt", p:"Rasmussen, on the chest, facing forward"},
+ {w:19.85, tag:"Event", h:"Long ball", p:"Into Tamsworth's half for Tavares (H7)"},
+ {w:22.55, tag:"Pattern", h:"Attack building", p:"Three passes, 40 m from goal, first time to Fontaine"},
+ {w:23.92, tag:"Moment", h:"GOAL · Fontaine", p:"xG 0.25 · 0-1 becomes 1-1", big:true},
+ {w:24.0, tag:"Facts", h:"Win probability 9% → 36%", p:"Tamsworth 67% → 22%"},
+ {w:24.1, tag:"Director", h:"Goal call interrupts", p:"Analysis queued for all six voices"},
+ {w:27.2, tag:"Agents", h:"Analyst wrote 6 lines", p:"Verifier checked every number and name ✓"},
+];
+
+// ball keyframes (metres, Wexmoor attack the left goal)
+const BALL = [[0,5.5,34],[10.2,5.5,34],[11.2,88,20],[12.9,79.7,12.5],[16.16,59.1,62,1],[19.8,58,60],[22.29,39.8,25.7,1],[22.5,39.8,25.7],[23.65,25,36.5],[23.9,24,36.5],[24.25,1.2,35.2],[30,1.2,35.2]];
+const TAGS = [[12.9,"Ibsen",79.7,12.5],[16.16,"Rasmussen",59.1,62],[22.29,"Tavares",39.8,25.7],[23.65,"Fontaine",25,36.5]];
+const AUDIO = Object.fromEntries(LINES.map(l=>[l.m,new Audio(`insert/story-audio/1-${l.m}.mp3`)]));
+
+const $ = id => document.getElementById(id);
+let t0 = 0, running = false, sound = true, done = new Set(), shown = null, actx, bedGain, bed;
+
+function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+function jsonHtml(o){
+  return "{ "+Object.entries(o).map(([k,v])=>`<span class="k">${k}</span>: `+(typeof v==="string"?`<span class="s">"${esc(v)}"</span>`:`<span class="n">${v}</span>`)).join(", ")+" }";
+}
+function words(el,text){el.innerHTML=text.split(" ").map((w,i)=>`<span class="w" style="animation-delay:${i*45}ms">${esc(w)}</span>`).join(" ")}
+
+function push(listId, el, max){const L=$(listId); L.prepend(el); while(L.children.length>max) L.lastChild.remove(); return el}
+
+function rawRow(r){
+  const d=document.createElement("div"); d.className="row hot";
+  d.innerHTML=`<div class="t"><span>t ${r.j.t.toFixed(1)}</span><span>${Object.keys(r.j).length} fields</span></div>${jsonHtml(r.j)}`;
+  setTimeout(()=>d.classList.remove("hot"),60); return push("stream",d,12);
+}
+function card(c){
+  const d=document.createElement("div"); d.className="card hot"+(c.big?" big":"");
+  d.innerHTML=`<span class="tag">${c.tag}</span><h3>${esc(c.h)}</h3><p>${esc(c.p)}</p>`;
+  setTimeout(()=>d.classList.remove("hot"),60); return push("cards",d,9);
+}
+
+// a pulse from one element to another
+function pulse(a,b){
+  if(!document.body.classList.contains("how")||!a||!b) return;
+  const ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect();
+  const x1=ra.right, y1=ra.top+Math.min(ra.height/2,22), x2=rb.left, y2=rb.top+Math.min(rb.height/2,22);
+  const svg=$("flow"), ns="http://www.w3.org/2000/svg";
+  const p=document.createElementNS(ns,"path"), mx=(x1+x2)/2;
+  p.setAttribute("d",`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
+  p.setAttribute("fill","none"); p.setAttribute("stroke","#3ddc84"); p.setAttribute("stroke-width","1.5"); p.setAttribute("opacity",".5");
+  const len=p.getTotalLength?0:0; svg.appendChild(p);
+  const L=p.getTotalLength(); p.style.strokeDasharray=L; p.style.strokeDashoffset=L;
+  const dot=document.createElementNS(ns,"circle"); dot.setAttribute("r","4"); dot.setAttribute("fill","#3ddc84"); svg.appendChild(dot);
+  const s=performance.now(), D=420;
+  (function f(n){const k=Math.min(1,(n-s)/D), e=1-Math.pow(1-k,3), pt=p.getPointAtLength(e*L);
+    dot.setAttribute("cx",pt.x); dot.setAttribute("cy",pt.y); p.style.strokeDashoffset=L*(1-e);
+    if(k<1) requestAnimationFrame(f); else {dot.remove(); p.animate([{opacity:.5},{opacity:0}],{duration:700}).onfinish=()=>p.remove();}})(s);
+}
+
+function showLine(line){
+  shown=line;
+  const i=CH.indexOf(ch()), text=line.l[i];
+  const fwho=$("fwho"), fsay=$("fsay");
+  fsay.className="say"+(line.kind==="goal"?" goal":"");
+  words(fsay,text);
+  fwho.innerHTML=(line.kind==="story"?`<span class="chip story">From the club file</span>`:"")+(line.kind==="analyst"?`<span class="chip ok">✓ Analyst · verified</span>`:"");
+  const msay=$("msay"); msay.className="say"+(line.kind==="goal"?" goal":""); words(msay,text);
+  $("mwho").innerHTML=`<span class="chip">${NAME[lang]} · ${lvl[0].toUpperCase()+lvl.slice(1)}</span>`;
+  $("mmeta").innerHTML=`<span class="chip${line.kind==="analyst"?" ok":""}">${line.kind==="analyst"?"✓ ":""}${line.src}</span><span>${line.lat} after the event</span>`;
+  const mine=$("mine"); mine.classList.add("hot"); setTimeout(()=>mine.classList.remove("hot"),60);
+  $("others").innerHTML=CH.map((c,k)=>k===i?"":`<div class="other" data-c="${c}"><b>${NAME[c.split("/")[0]].slice(0,2).toUpperCase()} · ${c.split("/")[1]}</b><span>${esc(line.l[k])}</span></div>`).join("");
+  document.querySelectorAll(".other").forEach(o=>o.onclick=()=>{const [l,s]=o.dataset.c.split("/");setLang(l);setLvl(s)});
+}
+
+function setWp(h,d,a){
+  $("bh").style.flexGrow=h;$("bd").style.flexGrow=d;$("ba").style.flexGrow=a;
+  $("wph").textContent=`WA ${h}%`;$("wpa").textContent=`${a}% TW`;$("wpd").textContent=`win probability · draw ${d}%`;
+}
+
+function reset(){
+  done.clear(); shown=null; $("stream").innerHTML=""; $("cards").innerHTML=""; $("fsay").innerHTML=""; $("fwho").innerHTML="";
+  $("msay").innerHTML=""; $("mmeta").innerHTML=""; $("mwho").innerHTML=""; $("others").innerHTML="";
+  $("sh").textContent="0"; $("clock").textContent="68'"; setWp(9,24,67); $("endcta").classList.remove("on");
+  const g=document.createElement("div"); g.className="row gap"; g.id="gap"; g.innerHTML=`No event for <b id="gapn">6.5</b> s`; $("stream").append(g);
+}
+
+function tick(){
+  if(!running) return;
+  const w=(performance.now()-t0)/1000;
+  $("prog").style.width=Math.min(100,w/LEN*100)+"%"; $("tt").textContent=`${Math.min(w,LEN).toFixed(1)} / ${LEN} s`;
+  const gn=$("gapn"); if(gn && w<10.2) gn.textContent=(6.5+w).toFixed(1);
+  const once=(k,f)=>{if(!done.has(k)){done.add(k);f()}};
+
+  if(w>=10.2) once("cut",()=>{ $("cut").classList.add("on"); $("clock").textContent="70'";
+    const dv=document.createElement("div"); dv.className="row div"; dv.textContent="· · · 2 minutes later · · ·"; push("stream",dv,12);
+    if(bedGain) bedGain.gain.setTargetAtTime(0.02,actx.currentTime,.15); });
+  if(w>=11.2) once("cutoff",()=>{ $("cut").classList.remove("on"); if(bedGain) bedGain.gain.setTargetAtTime(0.09,actx.currentTime,.4); });
+  if(w>=12.9) once("c71",()=>$("clock").textContent="71'");
+
+  RAW.forEach((r,k)=>{ if(w>=r.w) once("r"+k,()=>{ rawRow(r) }) });
+  INTEL.forEach((c,k)=>{ if(w>=c.w) once("i"+k,()=>{ const el=card(c); const src=$("stream").querySelector(".row:not(.gap):not(.div)")||$("gap"); requestAnimationFrame(()=>pulse(c.tag==="State"||c.tag==="Detector"||c.tag==="Club file"?$("gap"):src,el)); }) });
+  LINES.forEach((l,k)=>{ if(w>=l.w) once("l"+k,()=>{ showLine(l); requestAnimationFrame(()=>pulse($("cards").firstElementChild,$("mine")));
+    if(sound && ch()==="en/expert"){ const a=AUDIO[l.m]; a.currentTime=0; a.play().catch(()=>{}); if(l.kind==="goal") for(const m in AUDIO) if(+m!==162&&!AUDIO[m].paused&&m!=l.m) AUDIO[m].pause(); }
+    if(l.kind==="goal") goal(); }) });
+  if(w>=LEN) once("end",()=>{ running=false; $("endcta").classList.add("on"); $("tt").textContent=`${LEN.toFixed(1)} / ${LEN} s` });
+
+  fit(); draw(w);
+  if(running) requestAnimationFrame(tick);
+}
+
+function goal(){
+  $("sh").textContent="1"; const n=$("sh"); n.classList.add("pop"); setTimeout(()=>n.classList.remove("pop"),900);
+  $("gflash").classList.add("on"); setTimeout(()=>$("gflash").classList.remove("on"),1800);
+  setWp(36,42,22);
+  if(actx && sound){ const r=new Audio("audio/stadium-roar.mp3"); r.volume=.3; r.play().catch(()=>{}); bedGain.gain.setTargetAtTime(.16,actx.currentTime,.2); setTimeout(()=>bedGain&&bedGain.gain.setTargetAtTime(.08,actx.currentTime,1),5000); }
+}
+
+// pitch
+const cv=$("pitch"), cx=cv.getContext("2d");
+let lastSz="";
+function fit(){
+  const r=$("pitchwrap").getBoundingClientRect(), d=devicePixelRatio||1;
+  const w=Math.max(40,Math.floor(Math.min(r.width,r.height*105/68))), h=Math.floor(w*68/105), k=w+"x"+h;
+  if(k===lastSz) return; lastSz=k;
+  const b=$("pitchbox"); b.style.width=w+"px"; b.style.height=h+"px"; cv.width=w*d; cv.height=h*d;
+}
+addEventListener("resize",()=>{fit();draw(0)});
+
+function ballAt(w){
+  for(let i=0;i<BALL.length-1;i++){const a=BALL[i],b=BALL[i+1]; if(w>=a[0]&&w<b[0]){const k=(w-a[0])/(b[0]-a[0]); const e=b[3]?k:k; const x=a[1]+(b[1]-a[1])*e, y=a[2]+(b[2]-a[2])*e; const lift=b[3]?Math.sin(Math.PI*k)*6:0; return [x,y,lift,i]}}
+  const z=BALL[BALL.length-1]; return [z[1],z[2],0,BALL.length-1];
+}
+const trail=[];
+function draw(w){
+  const W=cv.width,H=cv.height, sx=W/105, sy=H/68, d=devicePixelRatio||1;
+  cx.clearRect(0,0,W,H);
+  const g=cx.createLinearGradient(0,0,0,H); g.addColorStop(0,"#1f6a47"); g.addColorStop(1,"#18583b"); cx.fillStyle=g; cx.fillRect(0,0,W,H);
+  for(let i=0;i<10;i++) if(i%2){cx.fillStyle="#ffffff07"; cx.fillRect(i*W/10,0,W/10,H)}
+  cx.strokeStyle="#ffffffaa"; cx.lineWidth=1.4*d;
+  cx.strokeRect(2*d,2*d,W-4*d,H-4*d); cx.beginPath(); cx.moveTo(W/2,0); cx.lineTo(W/2,H); cx.stroke();
+  cx.beginPath(); cx.arc(W/2,H/2,9.15*sx,0,7); cx.stroke();
+  for(const s of [0,1]){const x0=s?W:0, dir=s?-1:1;
+    cx.strokeRect(s?W-16.5*sx:0,(34-20.16)*sy,16.5*sx,40.32*sy); cx.strokeRect(s?W-5.5*sx:0,(34-9.16)*sy,5.5*sx,18.32*sy);}
+  const [bx,by,lift]=ballAt(Math.min(w,LEN));
+  if(w>11.2) trail.push([bx,by,w]); while(trail.length&&w-trail[0][2]>1.6) trail.shift();
+  if(w<11.2) trail.length=0;
+  cx.lineCap="round";
+  for(let i=1;i<trail.length;i++){const a=trail[i-1],b=trail[i]; cx.strokeStyle=`rgba(255,255,255,${.5*(1-(w-b[2])/1.6)})`; cx.lineWidth=3*d; cx.beginPath(); cx.moveTo(a[0]*sx,a[1]*sy); cx.lineTo(b[0]*sx,b[1]*sy); cx.stroke();}
+  TAGS.forEach(([tw,name,x,y])=>{const age=w-tw; if(age<0||age>2.6) return; const a=Math.min(1,(2.6-age)/.6);
+    cx.globalAlpha=a; cx.font=`600 ${11*d}px Schibsted Grotesk`; const tw2=cx.measureText(name).width+14*d;
+    cx.fillStyle="#0b0c10dd"; cx.beginPath(); cx.roundRect(x*sx-tw2/2,y*sy-30*d,tw2,18*d,9*d); cx.fill(); cx.fillStyle="#fff"; cx.fillText(name,x*sx-tw2/2+7*d,y*sy-17*d);
+    cx.fillStyle="#8b5cf6"; cx.strokeStyle="#fff"; cx.lineWidth=2*d; cx.beginPath(); cx.arc(x*sx,y*sy,6*d,0,7); cx.fill(); cx.stroke(); cx.globalAlpha=1;});
+  cx.fillStyle="#00000055"; cx.beginPath(); cx.ellipse(bx*sx+lift*d*.6,by*sy+lift*d*.6,5*d,3.5*d,0,0,7); cx.fill();
+  cx.fillStyle="#fff"; cx.strokeStyle="#111"; cx.lineWidth=1.2*d; cx.beginPath(); cx.arc(bx*sx,by*sy-lift*d,4.5*d+lift*.15*d,0,7); cx.fill(); cx.stroke();
+  if(w<10.2){cx.fillStyle="#ffffff99"; cx.font=`500 ${12*d}px Schibsted Grotesk`; cx.fillText("No event: a quiet spell", 12*d, H-14*d);}
+}
+
+function start(){
+  $("start").classList.add("off");
+  if(!actx){ actx=new AudioContext(); bedGain=actx.createGain(); bedGain.gain.value=0;
+    const lp=actx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=900; lp.connect(bedGain).connect(actx.destination);
+    fetch("audio/stadium-bed.mp3").then(r=>r.arrayBuffer()).then(b=>actx.decodeAudioData(b)).then(buf=>{bed=actx.createBufferSource();bed.buffer=buf;bed.loop=true;bed.connect(lp);bed.start(0,40)}).catch(()=>{}); }
+  bedGain.gain.setTargetAtTime(sound?.09:0,actx.currentTime,.6);
+  Object.values(AUDIO).forEach(a=>a.pause());
+  reset(); t0=performance.now(); running=true; requestAnimationFrame(tick);
+}
+$("go").onclick=start; $("replay").onclick=start;
+
+function setView(how){document.body.classList.toggle("how",how); $("vHow").setAttribute("aria-pressed",how); $("vFan").setAttribute("aria-pressed",!how); setTimeout(fit,750)}
+$("vFan").onclick=()=>setView(false); $("vHow").onclick=()=>setView(true);
+$("endcta").onclick=()=>{setView(true); start()};
+function setLang(l){lang=l; document.querySelectorAll("#langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===l)); if(shown) showLine(shown)}
+function setLvl(s){lvl=s; document.querySelectorAll("#lvls button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.s===s)); if(shown) showLine(shown)}
+document.querySelectorAll("#langs button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+document.querySelectorAll("#lvls button").forEach(b=>b.onclick=()=>setLvl(b.dataset.s));
+$("snd").onclick=()=>{sound=!sound; $("snd").textContent=sound?"Sound on":"Sound off"; if(actx) bedGain.gain.setTargetAtTime(sound?.09:0,actx.currentTime,.2); if(!sound) Object.values(AUDIO).forEach(a=>a.pause())};
+addEventListener("keydown",e=>{ if(e.key==="h") setView(!document.body.classList.contains("how")); if(e.key===" "){e.preventDefault();start()} });
+const q=new URLSearchParams(location.search); if(q.get("how")) setView(true); if(q.get("autoplay")){ sound=false; $("snd").textContent="Sound off"; start(); }
+fit(); reset(); draw(0);
+</script>
+</body>
+</html>

@@ -36,9 +36,20 @@ export async function detectBackend(forceStatic: boolean): Promise<Backend> {
 }
 
 /** The baked ElevenLabs mp3 of one line of the recorded insert (ui/public/insert/audio, made by backend/scripts/bake_insert_audio.py). */
-export const insertAudioUrl = (ch: number, m: number): string => here(`insert/audio/${ch}-${m}.mp3`);
+export const insertAudioUrl = (ch: number, m: number): string => here(`${audioDir}/${ch}-${m}.mp3`);
+let audioDir = "insert/audio";
 
-export const fetchInsert = (): Promise<Insert> => getJson<Insert>(here("insert/replay.json"), 15000);
+/** The recorded insert: the story insert (a quiet spell with a dossier story, then the goal) when it is there, else the 21 s goal insert. */
+export async function fetchInsert(): Promise<Insert> {
+  try {
+    const story = await getJson<Insert>(here("insert/story.json"), 15000);
+    audioDir = "insert/story-audio";
+    return story;
+  } catch {
+    audioDir = "insert/audio";
+    return getJson<Insert>(here("insert/replay.json"), 15000);
+  }
+}
 
 /** A fresh random match and its 60 second window. Asking does not count as a live run. Throws a Failure when the server refuses. */
 export async function fetchGuided(): Promise<Guided> {
@@ -105,3 +116,11 @@ export function openRecording(rec: Insert, h: StreamHandlers): () => void {
   step();
   return () => clearTimeout(timer);
 }
+
+/** What the real verifier said about the recorded goal's lines and about errors injected on purpose (backend: matchvoice.pipeline.proof). */
+export interface Proof {
+  v: number; match: string; t: number; note: string;
+  checked: { ch: number; text: string; ok: boolean; violations: { code: string; detail: string }[] }[];
+  attacks: { code: string; ch: number; label: string; text: string; ok: boolean; violations: { code: string; detail: string }[]; fallback: string }[];
+}
+export const fetchProof = (): Promise<Proof> => getJson<Proof>(here("insert/proof.json"), 8000);

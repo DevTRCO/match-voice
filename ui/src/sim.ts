@@ -26,6 +26,7 @@ export class Sim {
   clock = "";
   period = 1;
   score: [number, number] = [0, 0];
+  wp: [number, number, number] | null = null; // win probability home, draw, away, per mille, from the newest frame
   framed = false; // a frame has arrived, so score and clock are real
   lastSay = new Map<number, Say>(); // per channel, the newest line (a cut replaces it)
   said = new Map<string, Say>(); // "ch:m" -> caption: a `voice` message names its line this way
@@ -61,7 +62,7 @@ export class Sim {
     this.hello = hello;
     this.t = hello.start ?? 0;
     this.ended = false; this.framed = false;
-    this.clock = ""; this.period = 1; this.score = [0, 0];
+    this.clock = ""; this.period = 1; this.score = [0, 0]; this.wp = null;
     this.lastSay.clear(); this.said.clear(); this.logs = []; this.seenLogs.clear(); this.recent = []; this.flash = null;
     this.game = []; this.events.clear(); this.eventsAt.clear(); this.says = []; this.voices = []; this.skipped.clear(); this.sel = null; this.shown = null; this.calls = null;
     this.notify("meta");
@@ -119,7 +120,7 @@ export class Sim {
 
   private frame(f: Frame): void {
     const before = this.score;
-    this.clock = f.c; this.period = f.p; this.score = f.s; this.framed = true;
+    this.clock = f.c; this.period = f.p; this.score = f.s; this.wp = f.wp; this.framed = true;
     if (f.t < (this.hello?.start ?? 0)) return; // catch-up: the state of the match so far, not something the viewer is watching happen
     const at = performance.now();
     for (const row of f.e) {

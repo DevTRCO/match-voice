@@ -12,7 +12,7 @@ from pathlib import Path
 import orjson
 
 from ..commentary.analyst import KEYS
-from .export import capture_insert, write_static
+from .export import capture_insert, capture_story_insert, write_static
 from .library import Library
 from .runner import DEFAULT_SPEED, LiveConfig, LiveUnavailable, Runner
 
@@ -46,12 +46,26 @@ def main() -> None:
     e.add_argument("--speed", type=float, default=DEFAULT_SPEED)
     i = sub.add_parser("export-insert", help="record the demo insert (live run at 1x, from the answer cache) as one JSON file")
     i.add_argument("--out", type=Path, default=Path("ui/public/insert/replay.json"))
+    si = sub.add_parser("export-story-insert", help="record the story insert (a quiet spell with a dossier story, then the goal) with the dense voice")
+    si.add_argument("--out", type=Path, default=Path("ui/public/insert/story.json"))
+    si.add_argument("--max-calls", type=int, default=0, help="model calls allowed for prompts not in the answer cache (costs money)")
     a = ap.parse_args()
     try:
         if a.cmd == "play":
             asyncio.run(play(a))
         elif a.cmd == "export-insert":
             doc = asyncio.run(capture_insert(Library()))
+            a.out.parent.mkdir(parents=True, exist_ok=True)
+            a.out.write_bytes(orjson.dumps(doc))
+            print(a.out, f"{len(doc['messages'])} messages, {doc['calls']} model calls", file=sys.stderr)
+        elif a.cmd == "export-story-insert":
+            call = None
+            if a.max_calls:
+                from ..commentary.analyst import claude_llm
+                from ..config import anthropic_api_key
+                from ..commentary.precompute import MODEL
+                call = claude_llm(MODEL, anthropic_api_key())
+            doc = asyncio.run(capture_story_insert(Library(), call, a.max_calls))
             a.out.parent.mkdir(parents=True, exist_ok=True)
             a.out.write_bytes(orjson.dumps(doc))
             print(a.out, f"{len(doc['messages'])} messages, {doc['calls']} model calls", file=sys.stderr)

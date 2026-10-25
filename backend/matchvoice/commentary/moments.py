@@ -106,6 +106,15 @@ def render_params(m: Moment, lang: str) -> dict:
             p["count_word"] = number_words(int(p["count"]), lang)
         if "goals_h" in p:  # the score in words ("two-one"): a fast or context line carries no digits
             p["score_words"] = _score_words(int(p["goals_h"]), int(p["goals_a"]), lang)
+    if "place" in p:  # a table place, as an ordinal word
+        from .delivery import _ordinal_de, _ordinal_en, _ordinal_fr
+        n = int(p["place"])
+        p["place_word"] = {"en": _ordinal_en(n), "de": _ordinal_de(n, False), "fr": _ordinal_fr(n, True)}[lang]
+        from .delivery import number_words
+        p["place_n"] = number_words(n, lang)  # German says the place as "Platz zwei"
+    if "club" in p:  # French elides "de" before a vowel: "d'Aldermoor City"
+        c = str(p["club"])
+        p["de_club"] = (f"d'{c}" if c[:1].lower() in "aeiouh" else f"de {c}") if lang == "fr" else c
     if "facet" in p and m.kind in WORDS:  # a clause that fills the template, the same in both styles
         p["note"] = WORDS[m.kind][lang][p["facet"]].format(**p)
         for suffix in ("bare", "why"):  # the name-less clause, and the beginner's explanation of a restart

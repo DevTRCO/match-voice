@@ -164,12 +164,14 @@ def test_the_gates_that_hold_after_the_review_fixes_keep_holding_and_the_ones_th
 
     composition = {"short_share", "named_share", "names_per_100"}  # names and verbs are the volume now: the position readouts that kept these green are gone
     assert failing(res["summary"]["matches"]) == composition
-    assert failing(res["summary"]["windows"]) == {"named_share", "names_per_100"}
+    # dossier stories (sim/dossier.py) fill quiet spells with one longer sentence where short fragments were: in the 60 s windows that
+    # costs a quarter of a segment a minute (16.07 to 15.82, the gate is 16) and buys speech coverage (79.0 to 80.5 percent)
+    assert failing(res["summary"]["windows"]) == {"named_share", "names_per_100", "segments_per_min"}
     assert failing(res["summary"]["insert"]) == composition | {"long_share"}  # seven segments in 21 s; the analysis template of de/beginner has 9 words
     assert failing(res["insert_stand_in"]) == composition | {"long_share"}
     assert failing(res["matches_stand_in"]) == composition
     summary = res["summary"]
-    assert summary["windows"]["segments_per_min"]["gated"] >= 16.0  # was 14.4
+    assert summary["windows"]["segments_per_min"]["gated"] >= 15.7  # was 14.4, then 16.07 before the dossier stories (see above)
     assert summary["insert"]["coverage"]["worst_channel"] >= 0.75 and summary["insert"]["skip_share"]["worst_channel"] <= 0.35  # was 69% and 50%
     assert 0.05 <= summary["matches"]["long_share"]["gated"] <= 0.20 and 0.05 <= summary["windows"]["long_share"]["gated"] <= 0.20  # was 1% and 10%
     assert summary["matches"]["skip_share"]["worst_channel"] <= 0.35

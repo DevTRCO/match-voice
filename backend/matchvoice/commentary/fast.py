@@ -25,6 +25,7 @@ from dataclasses import dataclass
 
 from ..facts.engine import FactEngine
 from ..schema import PITCH_L, PITCH_W, Event, EventType, MatchMeta, Player, Side
+from ..sim.dossier import dossier_of
 from ..sim.tactics import plan_at
 from .director import CONTEXT_DEAD_S, CONTEXT_PER_WINDOW, CONTEXT_PLAY_S
 from .moments import Moment, MomentBuilder, surname
@@ -129,8 +130,43 @@ CONTEXT: dict[str, Spec] = {  # priority 30 to 45, ttl 8 s, voice wait 3 s
     "fatigue_note": Spec(38, 8.0, 3.0, 4),
     "counter_note": Spec(40, 8.0, 3.0, 5),
     "player_note": Spec(42, 8.0, 3.0, 6),
+    "story_note": Spec(44, 8.0, 3.0, 7),  # the dossier: what the booth knows before kick-off, for a quiet spell
 }
-RATIONED = ("touch", "pass_kind", "carry", "duel")  # kinds with name-less wordings
+RATIONED = ("touch", "pass_kind", "carry", "duel")
+STORY_GAP_S = 150.0  # one dossier story per this many match seconds at most
+STORY_ROOM = (600.0, 13)  # and only while the context layer has said fewer than 13 lines in the last 10 minutes: a story takes room, it does not add a ticker line
+STORY_FROM_S = 120.0
+COMEBACK_STORY_T = 64 * 60.0  # "they have come from behind before" waits for the last half hour, when it can still matter  # kinds with name-less wordings
+
+
+def story_params(st) -> dict:
+    """The template facts of a dossier story: its facet (the wording) and its numbers and names under the keys the renderer knows."""
+    d = st.data
+    k = st.kind
+    p: dict = {"story": st.id}
+    if k == "table":
+        p |= {"facet": "table", "place": d["place"], "n": d["points"]}
+    elif k == "form":
+        p |= {"facet": "form_winless" if not d["wins"] else "form_one" if d["wins"] == 1 else "form", "n": d["wins"], "m": d["losses"]}
+    elif k == "coach":
+        p |= {"facet": "coach_new" if d["years"] == 1 else "coach", "coach": d["coach"], "n": d["years"]}
+    elif k == "comebacks":
+        p |= {"facet": "comebacks" if d["n"] > 1 else "comebacks_once", "n": d["n"]}
+    elif k == "home_run":
+        p |= {"facet": "home_run", "n": d["n"], "venue": d["venue"]}
+    elif k == "last_meeting":
+        p |= {"facet": "last_meeting" if d.get("scorer") else "last_meeting_0", "goals_h": d["hg"], "goals_a": d["ag"]}
+        if d.get("scorer"):
+            p["player"] = d["scorer"]
+    elif k == "former_club":
+        p |= {"facet": "former_club" if d["years"] > 1 else "former_club_1", "player": d["player"], "club": d["club"], "n": d["years"]}
+    elif k == "milestone":
+        p |= {"facet": "milestone", "player": d["player"], "count": d["n"]}
+    elif k == "academy":
+        p |= {"facet": "academy", "player": d["player"], "n": d["age"]}
+    elif k == "debut":
+        p |= {"facet": "debut", "player": d["player"]}
+    return p
 
 
 def layer_of(moment_id: int) -> str:
@@ -242,6 +278,10 @@ class Layers:
         self.place_at = -1e9  # time and zone of the last pitch-zone readout
         self.place_last: tuple[str, str] | None = None
         self.note_at: dict[str, float] = {}  # player -> time of his last player_note
+        self.dossier = dossier_of(meta)
+        self.story_said: set[str] = set()  # ids of the dossier stories told: each once a match
+        self.story_at = -1e9  # time of the last story
+        self.ctx_times: list[float] = []  # times of the context lines built
         self.said_facets: dict[str, dict[str, float]] = {}  # player -> facet -> time it was said
         self.last_facet: str | None = None  # the facet of the last player note: the next one is another
         self.chain: list[str] = []  # the players of the move in progress, in the order they touched the ball
@@ -670,9 +710,9 @@ class Layers:
         return t - self.tactic_at[side] >= TACTIC_GAP_S
 
     TOPIC_KIND = {"counter": "counter_note", "fatigue": "fatigue_note", "player": "player_note", "tempo": "tempo_note",
-                  "shape": "shape_note", "press": "press_note", "phase": "phase_note"}
-    HOLD_TOPICS = ("fatigue", "player", "tempo", "shape", "press", "phase", "counter")  # a receiver holds the ball: news about him first, the match facts are kept for the dead ball
-    DEAD_TOPICS = ("counter", "shape", "press", "tempo", "phase", "fatigue", "player")  # a dead ball: the match first
+                  "shape": "shape_note", "press": "press_note", "phase": "phase_note", "story": "story_note"}
+    HOLD_TOPICS = ("story", "fatigue", "player", "tempo", "shape", "press", "phase", "counter")  # a receiver holds the ball: news about him first, the match facts are kept for the dead ball
+    DEAD_TOPICS = ("counter", "story", "shape", "press", "tempo", "phase", "fatigue", "player")  # a dead ball: the match first
 
     def offer(self, s: _Slot) -> None:
         """Fill a slot with the first topic that has something to say. A topic is asked only when it is its turn (asking marks its
@@ -696,6 +736,7 @@ class Layers:
             if self._emit(CONTEXT, CONTEXT_BASE, kind, s.t, round(10 * s.t), params, ev_i, "context") is not None:
                 self.last_topic = kind
                 self.ctx_last = s.t
+                self.ctx_times.append(s.t)
                 if s.dead:
                     self.ctx_window[s.window] = self.ctx_window.get(s.window, 0) + 1
                 self.cool[(kind, params["team_code"])] = s.t
@@ -914,6 +955,40 @@ class Layers:
                     params |= numbers_k
                 return "player_note", params
         return None
+
+    def topic_story(self, s: _Slot):
+        """A story from the dossier for a quiet spell: the player on the ball first (an old club, a milestone, the goal in the last meeting),
+        then his side or the other (the form, the table, the coach, comebacks, a home run). Only when there is time for a sentence (a dead ball
+        or a long hold), at most one per STORY_GAP_S, each story once a match, the best one first. Not in the first minutes: the booth sets
+        the scene with the play first."""
+        if not (s.dead or s.long) or s.t - self.story_at < STORY_GAP_S or s.t < STORY_FROM_S:
+            return None
+        span, most = STORY_ROOM
+        if sum(1 for x in self.ctx_times if s.t - x < span) >= most:
+            return None
+        d = self.dossier
+        pool = [x for x in d.for_player(s.holder or "")] if s.holder else []
+        pool += [x for x in d.stories if x.kind == "last_meeting" and x.data.get("scorer_id") == s.holder]
+        pool += d.for_side(s.team) + d.for_side("A" if s.team == "H" else "H")
+        pool = [x for x in pool if x.id not in self.story_said and x.side != s.exclude and self.story_fits(x, s.t)]
+        if not pool:
+            return None
+        best = max(pool, key=lambda x: x.weight + (0.3 if x.player and x.player == s.holder else 0)
+                   + (0.3 if x.kind == "last_meeting" and x.data.get("scorer_id") == s.holder else 0))
+        self.story_said.add(best.id)
+        self.story_at = s.t
+        return "story_note", self._ctx(best.side, **story_params(best))
+
+    def story_fits(self, st, t: float) -> bool:
+        """Some stories belong to a moment of the match, not to any quiet spell: "they have come from behind before" is told when that side
+        is behind in the second half, the form of a side when the score says something about it (behind, or level late on)."""
+        side, other = st.side, "A" if st.side == "H" else "H"
+        behind = self.goals[side] < self.goals[other]
+        if st.kind == "comebacks":
+            return behind and t >= COMEBACK_STORY_T
+        if st.kind == "form":
+            return behind or self.goals[side] > self.goals[other] or t >= COMEBACK_STORY_T
+        return True
 
     def _class_tempo(self, team: str, t: float) -> str:
         """slow | high | measured: the pass rate of one side over the last three minutes, for the side that has the ball. A side that lacks the

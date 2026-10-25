@@ -126,7 +126,7 @@ function build(sim: Sim, ch: number): Built {
       dur: slot.state === "skipped" ? "" : fmtDur(Math.max(0, slot.e - slot.s)) });
   }
   rows.sort((a, b) => a.w - b.w);
-  const window = sim.hello?.until !== undefined ? sim.hello.until - start : 0;
+  const window = sim.hello?.wall ?? (sim.hello?.until !== undefined ? sim.hello.until - start : 0); // a cut insert is shorter than its match span
   let end = window;
   for (const a of [lanes.ana, lanes.ver, lanes.pub, lanes.voc]) for (const iv of a) end = Math.max(end, iv.e ?? iv.s);
   for (const d of lanes.det) end = Math.max(end, d);

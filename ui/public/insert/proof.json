@@ -1,0 +1,131 @@
+{
+ "v": 1,
+ "match": "comeback-135",
+ "t": 4393.9,
+ "context": {
+  "t": 4393.7,
+  "clock": "71",
+  "score": [
+   1,
+   1
+  ],
+  "win": [
+   0.356,
+   0.422,
+   0.222
+  ],
+  "players": [
+   "Anton Dacosta",
+   "Anton Petrov",
+   "Dario Arnaud",
+   "Elias Abara",
+   "Hugo Zeller",
+   "Joel Okonkwo",
+   "Kenji Fontaine",
+   "Milan Nakamura-Reid",
+   "Nico Engstrom",
+   "Nico Ostrander",
+   "Rafael Pellegrin",
+   "Theo Ibsen",
+   "Theo Lemaire",
+   "Theo Rasmussen"
+  ]
+ },
+ "checked": [
+  {
+   "ch": 0,
+   "text": "That leveller takes the pressure off Wexmoor, and Tamsworth now have to come looking for it.",
+   "ok": true,
+   "violations": []
+  },
+  {
+   "ch": 1,
+   "text": "Wexmoor's chance of a win jumps to 36 percent, and Tamsworth have to start all over again.",
+   "ok": true,
+   "violations": []
+  },
+  {
+   "ch": 2,
+   "text": "Der Ausgleich nimmt Wexmoor die Angst, und Tamsworth muss jetzt wieder anrennen.",
+   "ok": true,
+   "violations": []
+  },
+  {
+   "ch": 3,
+   "text": "Die Siegchance von Wexmoor steigt auf 36 Prozent, und Tamsworth muss das Spiel neu aufmachen.",
+   "ok": true,
+   "violations": []
+  },
+  {
+   "ch": 4,
+   "text": "Ce but égalisateur redonne confiance à Wexmoor, et Tamsworth doit repartir à l'attaque.",
+   "ok": true,
+   "violations": []
+  },
+  {
+   "ch": 5,
+   "text": "Wexmoor passe à 36 % de chances de gagner, et Tamsworth doit tout reprendre à zéro.",
+   "ok": true,
+   "violations": []
+  }
+ ],
+ "attacks": [
+  {
+   "code": "score_mismatch",
+   "ch": 1,
+   "label": "Wrong scoreline",
+   "text": "Fontaine's goal puts Wexmoor 2-1 in front.",
+   "ok": false,
+   "violations": [
+    {
+     "code": "score_mismatch",
+     "detail": "2-1 is not a real scoreline of this moment"
+    }
+   ],
+   "fallback": "GOAL! Fontaine buries it, and it's 1-1!"
+  },
+  {
+   "code": "number_unsupported",
+   "ch": 1,
+   "label": "Invented statistic",
+   "text": "Wexmoor's chance of a win jumps to 61 percent, and Tamsworth have to start all over again.",
+   "ok": false,
+   "violations": [
+    {
+     "code": "number_unsupported",
+     "detail": "61 is not in the facts"
+    }
+   ],
+   "fallback": "GOAL! Fontaine buries it, and it's 1-1!"
+  },
+  {
+   "code": "player_unsupported",
+   "ch": 3,
+   "label": "Wrong player",
+   "text": "Rourke steht plötzlich vor dem Tor und gleicht aus.",
+   "ok": false,
+   "violations": [
+    {
+     "code": "player_unsupported",
+     "detail": "Pablo Rourke is not part of this moment"
+    }
+   ],
+   "fallback": "TOR! Fontaine macht ihn rein, 1-1!"
+  },
+  {
+   "code": "language_mismatch",
+   "ch": 5,
+   "label": "Wrong language",
+   "text": "Wexmoor have levelled it, and Tamsworth must respond now.",
+   "ok": false,
+   "violations": [
+    {
+     "code": "language_mismatch",
+     "detail": "expected fr, text looks like en"
+    }
+   ],
+   "fallback": "BUT ! Fontaine ne tremble pas, 1-1 !"
+  }
+ ],
+ "note": "checked: the lines the analyst wrote, run through the real verifier. attacks: injected errors, written for this demo, judged by the real verifier. fallback: the template line the pipeline publishes when a line fails twice."
+}

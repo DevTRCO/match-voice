@@ -96,7 +96,7 @@ export class PitchView {
 
     // turf and soft mown stripes
     const turf = c.createLinearGradient(0, oy, 0, oy + ph);
-    turf.addColorStop(0, "#52b27d"); turf.addColorStop(1, "#47a572");
+    turf.addColorStop(0, "#1f6a47"); turf.addColorStop(1, "#18583b");
     c.fillStyle = turf; c.fillRect(ox, oy, pw, ph);
     const stripes = 14;
     for (let i = 0; i < stripes; i++) {

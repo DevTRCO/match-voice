@@ -7,6 +7,7 @@ export interface Channel { id: number; key: string; lang: "en" | "de" | "fr"; st
 export interface Hello {
   k: "hello"; v: number; t: number; mode: "replay" | "live"; speed: number; dt: number; duration: number; start?: number;
   until?: number; // live insert: the stream ends at this match second
+  wall?: number; // a recording cut from several parts: its length in wall seconds
   run?: string; // live run id, the key of /api/tts
   match: { id: string; title: string; competition: string; venue: string; arc: string; pitch: [number, number]; teams: [Team, Team] };
   players: Player[]; scale: number;
@@ -50,7 +51,8 @@ export interface Health { ok: boolean; live: LiveHealth; tts?: TtsHealth }
 /** GET /api/guided-live: a fresh random match and the window of it with the most going on. `goal_t` is null without a goal. */
 export interface Guided { match: string; arc: string; seed: number; start: number; until: number; window_s: number; goal_t: number | null; fresh: boolean; runs_left: number | null }
 export interface DemoInsert { match: string; arc: string; seed: number; start: number; until: number; goal_t: number; goal_clock: string;
-  score?: [number, number]; clock?: string } // score and clock before the first frame
+  score?: [number, number]; clock?: string; // score and clock before the first frame
+  parts?: [number, number][]; length?: number; story_t?: number } // the story insert: its parts (match seconds) and their total length
 
 // Event row positions and the codes this UI reasons about. Names come from hello, these are the v1 indexes.
 export const EV = { i: 0, type: 1, side: 2, player: 3, x: 4, y: 5, ex: 6, ey: 7, outcome: 8, xg: 10 } as const;

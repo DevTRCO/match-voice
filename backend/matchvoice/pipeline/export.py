@@ -9,7 +9,7 @@ import orjson
 
 from . import protocol as proto
 from ..commentary.analyst import CallBudget
-from .demo import demo_insert
+from .demo import demo_insert, story_insert
 from .library import Library, MatchBundle
 from .runner import DEFAULT_SPEED, LiveConfig, Runner
 
@@ -59,3 +59,45 @@ async def capture_insert(lib: Library, call: Callable[[str], Awaitable[str]] | N
     hello.pop("run", None)  # a recording has no run: the server voice endpoint knows nothing about it
     return {"v": proto.VERSION, "demo": d, "hello": hello, "calls": live.budget.used,
             "messages": trim_catch_up(messages, d["start"])}
+
+
+PART_GAP_S = 1.2  # wall seconds between the parts of the story insert: the cut
+PART_LEAD_S = 0.4  # a part starts this soon after the cut
+
+
+async def capture_story_insert(lib: Library, call: Callable[[str], Awaitable[str]] | None = None, max_calls: int = 0) -> dict:
+    """The story insert: each part a paced-as-recorded live run at 1x with the dense voice (fast and context layers, the dossier
+    stories), the parts joined back to back on one wall clock. Analyst answers come from the answer cache; a prompt that is not
+    cached falls back to the template line unless `call` and `max_calls` allow a model call (the GuardedLLM budget holds)."""
+    async def no_call(prompt: str) -> str:
+        raise RuntimeError("not in the answer cache, and this capture makes no model calls")
+
+    d = story_insert(lib)
+    bundle = lib.bundle(d["match"])
+    budget = CallBudget(max(1, max_calls))
+    hello: dict = {}
+    out: list[dict] = []
+    offset = 0.0
+    for k, (start, until) in enumerate(d["parts"]):
+        live = LiveConfig(call if (call and max_calls) else no_call, budget)
+        h, *messages = await Runner(bundle, "live", 1.0, True, live, start, None, until, fast=True).collect()  # paced: the wall clock is real
+        if not hello:
+            hello = {**h, "start": d["start"], "until": d["until"]}
+            hello.pop("run", None)
+            messages = trim_catch_up(messages, start)
+        else:  # the cut: the state of the match at the new part, without replaying its events
+            messages = [{**m, "e": []} if m["k"] == "f" and m["t"] < start else m for m in trim_catch_up(messages, start, kept=1)]
+            messages = [m for m in messages if m["k"] != "end"] if k < len(d["parts"]) - 1 else messages
+        if k < len(d["parts"]) - 1:  # before a cut: no end, and no clock ticking on after the part while the voice finishes
+            messages = [m for m in messages if m["k"] != "end" and not (m["k"] == "hb" and m["t"] > until)]
+        last_w = 0.0
+        ws = [m["w"] for m in messages if "w" in m and m["t"] >= start]
+        lag = max(0.0, min(ws) - PART_LEAD_S) if ws else 0.0  # the run's own start-up (building the layers) is not part of the broadcast
+        for m in messages:
+            if "w" in m:
+                m["w"] = round(max(0.0, m["w"] - lag) + offset, 3)
+                last_w = m["w"]
+            out.append(m)
+        offset = last_w + PART_GAP_S
+    hello["wall"] = round(max(m["w"] for m in out if "w" in m), 1)
+    return {"v": proto.VERSION, "demo": d, "hello": hello, "calls": 0 if not (call and max_calls) else budget.used, "messages": out}
