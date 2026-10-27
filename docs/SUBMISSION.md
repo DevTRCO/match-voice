@@ -3,7 +3,7 @@
 Everything for the hackathon form and YouTube, one block per field. Copy the text inside each box. The character count
 under each box counts the box content only (spaces and line breaks included). Every number comes from CLAUDE.md,
 docs/EVAL.md, docs/DENSITY.md, docs/DEPLOY.md, the code or a file in `data/` or `ui/public/insert/`; the source is named
-where the number appears. Replace `VIDEO_URL` once the video is on YouTube.
+where the number appears. The video is on YouTube: https://www.youtube.com/watch?v=4TRUr6I2D6E
 
 Checked on 2026-10-27: `python -m pytest -q` gives 899 passed, 1 xfailed (no key, about 6 minutes); the demo URL and the live server's /api/health answer 200.
 The verifier figures below follow docs/EVAL.md as regenerated on 2026-10-26 at 23:54 (895 lines at x30).
@@ -139,10 +139,10 @@ Characters: 2,099
 ```text
 Demo: https://happy-bush-012530710.5.azurestaticapps.net
 Code: https://github.com/DevTRCO/match-voice
-Video: VIDEO_URL
+Video: https://www.youtube.com/watch?v=4TRUr6I2D6E
 ```
 
-Characters: 118
+Characters: 152
 
 ## 7. YouTube
 
