@@ -13,7 +13,9 @@ A project can win one Grand Prize and one Category Prize. Demo video must be und
 Judges may not run the project, so video and description must carry everything.
 
 ## Decisions already made (do not reopen without asking)
-- Languages: en, de, fr only. Styles: beginner, expert only.
+- Languages (the user approved 9 languages on 2026-10-26): core en, de, fr at both levels (instant templates for play-by-play, the analyst writes the analysis),
+  plus six world channels, one level each: es/expert, it/beginner, pt/expert, nl/beginner, tr/expert, ja/beginner (channel ids 6..11, after the core 0..5; solo booths;
+  EVERY line by the model, play-by-play included, one call per moment, the same verifier). Styles: beginner, expert only.
 - Agents run on the **Microsoft Agent Framework** (hero technology). Claude is the model behind it
   (`agent-framework-anthropic`). Do not switch to the Claude Agent SDK.
 - Two prototypes from ONE pipeline: a **live** run with a visible log, and a **static replay** of a recorded
@@ -22,6 +24,10 @@ Judges may not run the project, so video and description must carry everything.
 - Overlay format must be high performance (compact updates, canvas rendering, no per-event React re-render).
 - Prefer open source over custom code.
 - Fictional clubs and players only. No real logos, marks or music in the video.
+- Booth per channel (user, 2026-10-25), one source in `commentary/lang.py` `BOOTH`: leads Owen Carter (en/b), Charlie Hale (en/x), Felix Brandt (de/b),
+  Jonas Weber (de/x), Théo Laurent (fr/b), Hugo Martin (fr/x); co-commentators Daniel Price (en), Kim Berger (de, a woman), Sacha Morel (fr, a man), unisex first names.
+  World solo booths (user, 2026-10-26): Lucía Romero (es/x, woman), Giulia Conti (it/b, woman), Rafael Souza (pt/x, man), Sanne de Vries (nl/b, woman), Emre Aydın (tr/x, man),
+  Yuki Tanaka (ja/b, woman); the lead says every line. `BOOTH` and `hello.channels` carry name, gender, lang, level. Ewan Marsh and Nadia Rowe (Phase 11) are gone. Players may get gendered pronouns only when the squad's gender is known (`TeamMeta.gender`; the Synthetic League is men).
 - ElevenLabs voice is OPTIONAL. The key (`ELEVENLABS_API_KEY`, via `matchvoice.config`) lives server side only; the browser can
   only request lines the server published in a live run. Model `eleven_flash_v2_5` only. The browser SpeechSynthesis voice is the
   always-available fallback (no key, over budget, error, static build) and the UI says which voice is in use.
@@ -46,9 +52,11 @@ backend/matchvoice/
     templates.py       fast path wording, en/de/fr x beginner/expert, written as a commentator (Phase 11)
     delivery.py        energy_of (calm|rising|peak), ElevenLabs VOICE_SETTINGS per energy, shape_for_tts (pure text shaping); docs/VOICES.md lists voice candidates
     moments.py         things worth saying, detected from events and facts
+    patterns.py        pattern detector (no lookahead): a habit of one side found in a quiet spell (pattern_insight, the co's set-up) and the goal that breaks it (pay-off)
     verifier.py        deterministic fact check (numbers, scorelines, players, language, length)
     director.py        speech scheduling under a time budget, interruptions, silence; live form (captions_first) captions at arrival, only the voice queues
     analyst.py         slow path prompt, guarded model call, cache, budget
+    world.py           the world booth (es, it, pt, nl, tr, ja): its own system prompt (WORLD_PROMPT_VERSION), facts and room per moment; every world line is the model's
     newsroom.py        Agent Framework workflow: Analyst <-> Verifier loop -> Publisher, template fallback
     fast.py            the fast and context layers (DATA-MODEL 7.1, 7.2): build_layers(meta, events, enriched rows) -> moments with derived ids; the director applies their rules (ChannelDirector(dense=True)); Runner(fast=True) switches them on (off by default)
     precompute.py      run the newsroom over a match and store the replay
@@ -66,7 +74,7 @@ backend/matchvoice/
 ui/                    Vite + React + TypeScript single-screen UI (src/sim.ts store, pitch.ts canvas, player.ts guided flow, feed.ts, speech.ts, caption.ts, gamelog.ts event wording, derive.ts agent rows, lanes and evidence); ui/public/insert/replay.json is the recorded demo insert
 docs/PROTOCOL.md       overlay protocol v1, the single contract for UI and MCP
 docs/MCP.md            MCP tools and the Claude Desktop config snippet
-docs/ARCHITECTURE.md, PITCH.md, VIDEO.md, img/   submission material (diagram, form text, video script, screenshots, GIF)
+docs/ARCHITECTURE.md, SUBMISSION.md, VIDEO.md, img/   submission material (diagram, form text, video script, screenshots, GIF); PITCH.md was deleted 2026-10-27, SUBMISSION.md replaces it
 docs/EVAL.md           generated evaluation report (data/eval/results.json is the machine output)
 docs/DENSITY.md        generated density report against the broadcast profile (data/eval/density.json), with the phase 3 dry run
 backend/tests/         pytest suite
@@ -405,7 +413,8 @@ a dark palette, a stadium crowd bed (`ui/src/crowd.ts`, `ui/public/audio`, from 
 chants naming real clubs must not be audible in the video), hype shaping for eleven_v3 (`delivery.hype_for_tts`), a dossier of club and player stories for quiet
 spells (`sim/dossier.py`, `story_note` in `fast.py`), and a 30 s two-part story insert (`ui/public/insert/story.json`: comeback story at 68', cut, build-up and the
 71' equaliser; `export-story-insert`; en/expert baked in `ui/public/insert/story-audio`, 475 ElevenLabs credits). 704 tests green, 1 xfail.
-Open: the goal analysis in the story insert is a template fallback (needs 1 Haiku call, not approved yet); only en/expert has baked audio.
+Open (fixed 2026-10-25, next line): the goal analysis in the story insert was a template fallback; only en/expert has baked audio.
+Story insert analyst line (2026-10-25, Mac): `export-story-insert --max-calls 2` made 1 real Haiku call for m163 (4.1 s, all six lines accepted first time, no retry; cache file `534b2f054c32475976221dcd.json`), then a cache-only re-export (0 calls) is what ships in `ui/public/insert/story.json`: the live-timed run voiced the analysis in only 3 of 6 channels (the expert lines expired behind the goal call), the cached one in all six at the old times. `mock3.html` LINES updated to the new text. 0 ElevenLabs credits. STALE: `ui/public/insert/story-audio/1-163.mp3` still speaks the old template line ("That goal lifts Wexmoor Athletic's chance of a win to 36 percent."); re-bake that one file before the video.
 UI direction agreed with the user, NOT built yet: `ui/public/mock3.html` (served at /mock3.html, uses the insert's real data and audio) is the target:
 a "Choose your commentator" picker (flags, language and level filters, search, inactive languages marked Soon), a stream-style player (DAZN/Prime score bug,
 LIVE badge, subtitles, win probability as a data graphic, commentator name plate), and "How does it know?" with three columns (What arrives, What it understands,
@@ -413,12 +422,186 @@ What you hear). mock.html and mock2.html are earlier steps. Remove the mocks fro
 Open decisions for the user: generated faces (gpt-image-2.5-flare, about 13 calls; needs an OPENAI_API_KEY in .env, added by the user), and whether the
 commentators need female or native de/fr voices before the faces are made.
 
+Submission drafts and hosting prep (2026-10-25, no commit, nothing published, 0 calls, 0 credits): docs/VIDEO.md (8 shots, 1:45, game-first flow, shots marked NEEDS UI, a claims table),
+docs/PITCH.md (five criteria, short) and README.md (quick start static / server / live, honest limitations) rewritten for the game-first UI. `.github/workflows/pages.yml` builds `build:static` and deploys
+`ui/dist-static` to GitHub Pages on push to main (needs Pages enabled; private repo needs a paid plan, see docs/DEPLOY.md). `ui/vite.config.ts` drops `mock*.html` from the static build only. Checked: static build
+under `/match-voice/` and at `/` in headless Chrome, no console errors, no failed requests, insert plays. Before the video: re-bake `story-audio/1-163.mp3`; `proof.json` still comes from `replay.json` (old insert lines).
+
+Insert script encoded (2026-10-25, Mac; docs/INSERT-SCRIPT.md section 8 plus the user's four decisions; no commit, 0 ElevenLabs credits): the pipeline itself now speaks the script.
+- `PROMPT_VERSION` v5 (the stopped run's unfinished v5 was reviewed and replaced): SYSTEM names the booth per channel, a goal co line is HOW first (one picture from the move's real facts) then ONE idiom,
+  no score and no number in it (the score is the lead's), no percentage, probability, xG or count anywhere, room per channel in seconds, words and characters (`ROOM_S`, `room_of`), good examples
+  in that shape, the three mood lines of the old insert on the bad list, beginner plain words vs expert technique words, "switch" (Verlagerung, transversale) allowed when a move step has `pass_type` switch
+  (verifier: `claims_of` reads `move`, the de/fr switch patterns include Verlagerung and transversale). `MomentBuilder(engine, rows)` gives a goal analysis the move from the enriched rows (pass type, height, foot,
+  first time, touch, technique, pressure, distance band, `move_seconds`), the chain is every player of the move; without rows (non-fast runs) the skeleton steps as dicts.
+  `claude_llm` max_tokens 2048 -> 16000: Haiku 5.5 thinks by default and thinking counts toward max_tokens (two empty answers, then 3,947 output tokens for one answer, 16.4 s; live latency is now well over the old 4 to 6 s).
+- Templates: goal call = shout, scorer, meaning (`goal_facet`: equaliser, opener, go_ahead, more, back) or the hit for a strike from outside the box, no score; `player_full` for the English full name. New
+  kind `score_line` (runner `score_line_for`, id 900000 + analysis id, priority 60, voice wait 20 s): pushed when the goal analysis completes, so it is voiced after the co line, with the time left true to the clock
+  (`time_left`: "twenty minutes or so", "knapp zwanzig Minuten", "une vingtaine de minutes"; none under five minutes). German writes scores 1:1 in templates; `shape_for_tts` says "eins zu eins" and French
+  level scores "un partout" (`delivery.score_said`). Ticker words out (Abgefangen von, Brustannahme, Lang geschlagen, Intercepté par, Vers); per-type pass calls `WORDS["pass_call"]` / `pass_call_plain`
+  for switch, long and first time, always used for a named typed pass and allowed to run 1.3 s past the arrival (`director.CALL_SLACK_S`); story notes are the lead's (`fast.LEAD_CONTEXT`, voice pbp);
+  `_tidy` for clauses that carry their own end. Pronoun placeholders ({he}, {er}, {il}) render only with `squad` in the params (two kinds use them: big_chance_analysis). `GOAL_QUIET_S` 9 -> 15 s so the
+  post-goal context comes after call, co line and score.
+- Protocol: optional `who` on `say` (lead or co of the channel), documented as additive in docs/PROTOCOL.md, plus the `score_line` kind.
+- Story insert: about 33 s (part 1 4238 to 4246, part 2 4382 to 4407; `STORY_LEAD_S` 1, `GOAL_LEAD_S` 11, `GOAL_TAIL_S` 13). 4 real Haiku calls of the 6 allowed: 2 empty answers (max_tokens), then 1 answer plus 1 verifier
+  retry (fr/beginner said "frappe de loin", a trait claim). `ui/public/insert/story.json` re-exported from the cache (0 calls): all six channels voice story, build-up, call, co line (analyst), score line;
+  every template line equals the script. Weak co lines: en/expert ends "Level" with no stop, de/expert "und wieder gleich" is a thin idiom, fr/expert "Tout est relancé." sits next to the lead's "Le match est relancé".
+- 717 tests green, 1 xfail. Replay hashes re-measured (the replays now carry the score line and `who`). docs/EVAL.md and docs/DENSITY.md were not regenerated.
+- STALE baked audio: every file in `ui/public/insert/story-audio/` that speaks a changed line: `1-3339167` (story), `1-1189316` (unchanged text, keep), `1-1189569`, `1-1189576`, `1-1189713`, `1-162`, `1-163`; `1-1189697`
+  is unchanged text; there is no file for the new score line (`1-900163`), and channels 0 and 2 to 5 have no story audio at all. `1-152` to `1-155`, `1-1184328`, `1-1188808`, `1-1188936`, `1-1189061`, `1-3352221` are not in the insert any more.
+  `ui/public/insert/audio/` belongs to the old `replay.json` insert. The story note is now the lead's voice (was the co-commentator's). mock3/mock4 still show Daniel Price in every booth.
+
+Producer fixes to the story insert (2026-10-25, Mac; no commit, 0 ElevenLabs credits, 2 real Haiku calls of 3 allowed: 1 answer plus 1 verifier retry, fr/beginner "frappe de loin"):
+- `PROMPT_VERSION` v6: the lead's line right after the co line (the score line) is in the prompt (`AFTER` keys in `recent`, `Runner._recent_for`), the co idiom must not repeat the call's meaning or the next line's idiom, no phrase twice in a line, a line ends on a stop; the v5 lines are on the bad list; good examples without "chez eux" / "Hinten den Ball geholt". Capitalised pronoun helpers never reach the prompt.
+- Director: `BREATH_S` (0.7 s call -> co line, 0.4 s co line -> score line), and the score line waits while the co line is queued. Publisher: `finish_line` adds a final "." to an accepted line. `hype_for_tts`: only the first shout word is stretched ("BUUUT! But de Fontaine !").
+- Templates: expert first-time call is the name alone ("Fontaine!", the goal cut it mid-name); de/b "Rüber zu X...", "Lang nach vorne auf X!"; fr/b "Ibsen récupère.", shorter fr story notes; shorter beginner score lines; fast fragments carry `squad`, `touch_bare_plain_pron` ("Il contrôle de la poitrine."). `GOAL_QUIET_S` 17, `GOAL_TAIL_S` 15.5 (part 2 to 4410), `demo.length` from the wall (37 s). UI browser voice says German "1:1" as "eins zu eins" (`speech.ts spokenForm`).
+- At x30 replay the breaths (21 and 12 match s) drop some score lines (comeback-7 18 of 21, red_card-7 7 of 12, unlucky-7 3 of 6); replay hashes re-measured. 723 tests green, 1 xfail.
+- STALE story audio, channel 1: 1-3339167, 1-1189569, 1-1189576, 1-1189713, 1-162, 1-163; missing 1-900163; channels 0 and 2 to 5 have none.
+
+Analyst latency fix (2026-10-25, Mac; no commit, 0 ElevenLabs credits, 1 real Haiku call of 2 allowed): `claude_llm` uses `ANALYST_OPTIONS` = `max_tokens` 2048 and `thinking: {type: "disabled"}` (allowed on Haiku 5.5 at its default effort medium; passed through by agent-framework-anthropic). `GuardedLLM._fetch` never caches an empty answer: one retry taken from the same `CallBudget`, a second empty answer raises `EmptyAnswer` (template fallback). `PROMPT_VERSION` stays v6, so the cached insert answers stay valid; story insert not re-exported. Measured on a fresh prompt (red_card-11 goal, moment 114, `use_cache=False`, private cache dir): 2.14 s for the call (was 16.4 s with thinking), all six lines accepted first time, no retry. Seen in that answer: de/beginner and fr/beginner say "drei Pässe" / "trois passes", a count the v5 prompt forbids and the verifier lets through. 727 tests green (4 new in `test_empty_answer.py`), 1 xfail.
+
+Insight set-up and pay-off (2026-10-26, Mac; docs/INSIGHT-SETUP.md option A; no commit, 0 ElevenLabs credits, 4 real Haiku calls of 6 allowed):
+- `commentary/patterns.py` `PatternFeed`: fed every event in order, no lookahead (a test throws the later events away and gets the same set-ups). Habit `short_after_win`: a side has won the ball in its own half `MIN_WINS` (8) times this half,
+  every first pass after it went short and no open-play ball went 30 m or more across. It fires in a quiet spell (a dead ball: a shot that is not a goal, a foul, a card, a ball out; no event for `QUIET_S` 5 s), once per side and half,
+  one per spell (a named ball winner first), as moment `pattern_insight` (co voice, priority 50, id 800000 + 4 x (half - 1) + side). `broken_by(side)` at a goal: the possession began with an own-half ball win whose first pass went across.
+  The habit was common in the sim (switches are rare); after the fact check (below) it fires once on four of the five demo matches; on comeback-135 for Wexmoor at 65', in the insert (a live run that joins at 4233) at 68'.
+- Runner (live and `fast` only, `patterns=False` opts out; replays, recordings, guided live and the density report are unchanged): the detector is fed before the moment builder, asked on idle frames, its set-up goes through the newsroom like any model moment.
+  `booth` (a dict, shared by the parts of the story insert) keeps the set-ups said with each channel's caption; a goal analysis of that side and half that breaks the habit gets `pays_off` facts and the set-up lines (`SETUP` keys in `recent`);
+  a goal that does not break it gets the lines with "did NOT come that way: do not refer back". `say.ins` (evidence: zone, dots, arrows, players, counts, event ids) and log steps `detector/pattern` and `detector/payoff`, documented in docs/PROTOCOL.md.
+- `PROMPT_VERSION` v7: pattern and pay-off sections, a good set-up example, `ANGLE_PAYOFF` (callback first, `first time`/`direkt` only for first_time steps), +1 s room for a pay-off, beginner style says no counts and the good examples lost "two passes".
+  Verifier: habit claims (`habit_winner`, `habit_short`, `habit_never_across`) only with a pattern in the facts; the newsroom checks every model line with `spelled=True` (numbers two to twenty as words must be in the facts) and `style`
+  (beginner: a count like "three passes", "drei Pässe", "trois passes", "elfmal" is `count_in_beginner`). Templates and tools call `check` without them, unchanged. `pattern_insight` templates (no count) are the fallback.
+- Story insert re-exported (`export-story-insert`, then cache-only from a copy of the answer cache): part 1 is 4233 to 4249 (set-up at 4234.5, then the lead's story, cut before the corner at 4249.6), part 2 unchanged; 45 s as heard.
+  Calls: run 1 (3 calls: set-up, goal, one fr/beginner retry for "frappe de loin"); the de/expert pay-off said "Ibsen direkt quer" (the pass was not first time) and three channels had no callback, so `ANGLE_PAYOFF` was sharpened (user prompt only) and run 2 made 1 call for the goal.
+  Set-up (all six accepted first time): en/b "Ibsen keeps winning it back, and then it's always short. Nothing across, not once." en/x "Ibsen keeps winning it, and the first pass is always short. Nothing across."
+  de/b "Ibsen holt sich die Bälle immer wieder, aber dann geht es nur kurz. Nie rüber." de/x "Ibsen holt den Ball, und dann immer kurz. Nie rüber." fr/b "Ibsen récupère le ballon, et derrière c'est toujours court. Jamais une longue transversale." fr/x "Ibsen récupère, et derrière, toujours court. Jamais de transversale."
+  Pay-off: en/b "There it is. Ibsen wins it back, and this time it goes straight across, long to Rasmussen." en/x "There it is. Ibsen wins it, and this time it goes across, lofted to Rasmussen." de/b "Genau das. Ibsen holt den Ball, und diesmal geht er sofort quer rüber."
+  de/x "Genau das. Ibsen holt den Ball, und diesmal rüber, quer auf Rasmussen." fr/b "Voilà ! Ibsen récupère, et cette fois la longue balle passe de l'autre côté." fr/x "Voilà ! Ibsen récupère, et cette fois, la transversale passe de l'autre côté."
+  All six channels voice set-up, story, build-up, call, pay-off, score. `BREATH_S` gained set-up -> story 0.3 s (fr/beginner's story only starts inside its 3 s voice wait with that). Not read by a native de or fr speaker.
+- UI `ui/public/mock4.html`: an insight card under the score bug ("PATTERN SPOTTED · 11 balls won in own half since half-time, none played across"; at the pay-off "CALLED IT 2:44 AGO · Ibsen wins it, this time the first ball goes across",
+  match seconds between the two lines as the channel spoke them; a short text when the picture is small), the own half, the 11 ball wins and their 11 first passes on the board with Ibsen ringed; at the pay-off the switch arrow, the band it landed in,
+  the short passes once more faintly, Ibsen and Rasmussen ringed. How mode lane 2: "Pattern found from 11 ball wins since half-time" and "Goal breaks the pattern from 68'". Timing note now reads the goal analysis only.
+  Baked audio is not played for lines with `ins` or for 163 and 900163 (it would speak other words than the subtitle). Checked headless (own Chrome, ui/public on port 8773): no overlap of the card with bug, top right, win graphic, subtitles or name plate, card above the pitch,
+  no page scroll at 1430x769 and 1920x1080 (also How mode), no console errors; screenshots in the session scratchpad `insight/`. `npm run build` clean; the built app loads the new story.json without errors.
+- 742 tests green (15 new in `test_patterns.py`), 1 xfail.
+- Fact check (2026-10-26, 0 calls, 0 credits): every claim of the six set-ups is true from events before 4234.5 (11 own-half wins since half-time, all 11 first passes under 26 m and short/back, 0 of 184 passes 30 m or more across, Ibsen 5 of the 11 and 13 ball wins in the match, team high), and the goal matches (i1479 own half, first pass i1481 switch, lofted, 49.5 m across, same second, to Rasmussen).
+  Two detector defects fixed: (1) "short" was never checked, only "not across": 11 of the 15 set-ups on the five matches had a clearance, long or through first pass (38 to 51 m). Now every first pass must be under `SHORT_M` (30 m). (2) A free kick after the win no longer leaves the win open, so a pass 23 to 31 s later is not its "first pass" (comeback-135 i984, unlucky-7 i361).
+  Set-ups now: comeback-135 H 2nd half (65' in a full run, 68' in the insert, unchanged), comeback-7 A 56', red_card-7 H 59', red_card-11 H 67', unlucky-7 none; all recomputed true from raw events (pinned in `test_patterns.py`). The shipped `story.json` evidence equals the new detector output, no re-export needed. 750 tests green, 1 xfail.
+  Open: the verifier does not check whose number it is ("Ibsen keeps winning it, eleven times" passes; 11 is the team's, Ibsen has 5); `broken_by` has no time limit between the win and the goal.
+- STALE audio: no file for the set-up (800004) on any channel; `story-audio/1-163.mp3` speaks an old line (now skipped by mock4); still none for 900163; the earlier stale list (1-3339167, 1-1189569, 1-1189576, 1-1189713, 1-162) is unchanged. `docs/DENSITY.md` excludes the set-up (`patterns=False`).
+
+German and French set-up and pay-off fix, and six world channels (2026-10-26, Mac; no commit, 0 ElevenLabs credits, 13 real Haiku calls of the 16 allowed):
+- Task 1, `PROMPT_VERSION` v8 (2 calls, set-up and goal, all 12 lines accepted first time): the habit as a habit ("Ibsen holt die Bälle"), German switch "rüber" / "Verlagerung" / "auf die andere Seite" and never "quer"
+  (a square ball), a real callback "Genau das meinte ich.", fr/beginner "Jamais de l'autre côté.", fr/expert "transversale" said once; the v7 lines are on the bad list, a pay-off good example. Now in the insert:
+  de/b set-up "Ibsen holt die Bälle immer wieder, aber dann geht es immer nur kurz." pay-off "Genau das meinte ich! Ibsen holt den Ball, und diesmal geht's sofort auf die andere Seite.";
+  de/x "Ibsen holt die Bälle, und dann immer kurz. Nie rüber." / "Genau das meinte ich. Ibsen holt ihn, und diesmal sofort rüber."; fr/b "Ibsen récupère le ballon, mais après, toujours court.
+  Jamais de l'autre côté." / "Voilà ! Ibsen récupère, et cette fois, ça part de l'autre côté !"; fr/x "Ibsen récupère, et derrière, toujours court. Jamais de transversale." / "Voilà ! Ibsen récupère, et cette fois,
+  transversale tout de suite." The answers follow the new good examples almost word for word. The core prompt is frozen at v8 since (the world booth has its own), so these answers stay cached.
+- Task 2, world channels: `lang.py` (`Booth`, `Person`, `CORE_KEYS`, `WORLD_KEYS`, `ALL_KEYS`, CPS estimates for the new languages), `commentary/world.py` (WORLD_SYSTEM: six solo booths, register and shout per language,
+  score 1-1 / 1対1, katakana names, no percentages, xG or traits, good examples from the Harbour fixture; `world_facts` gives raw facts, never English template text; room per kind and level), the newsroom runs
+  the same Analyst -> Verifier -> Publisher workflow for the world keys (no template fallback: a line that fails twice is not said, log step `dropped`), `Runner(world=...)` adds directors 6..11:
+  a moment the English booth (ch 0 or 1) captions is queued, one call per moment writes all six lines, calls run one after another (deterministic continuity: each prompt sees the lines the booth wrote
+  before, so a cached re-run builds identical prompts). `LiveConfig.world_call` / `world_budget`, server `--world-calls N` (off by default, own budget so world calls never starve the core analysis).
+  `GuardedLLM(version=)`, `claude_llm(instructions=)`. Replays and recordings without the world booth keep six channels.
+- Verifier for es/it/pt/nl/tr/ja: stop words (and Turkish/Spanish letters), a world channel is checked against all nine languages and is wrong only by a clear margin (es, it and pt share function words),
+  Japanese by script (kana); number words two to twenty per language (Japanese kanji numerals only with a counter, 十分な is not ten), count nouns, the whole claims and traits lexicon in six more languages,
+  scores with 対, sentence split on 。！？. Names: Latin names in Japanese are matched without word boundaries ("Ibsenが"); decision: Japanese may write players in katakana as Japanese TV does, and a
+  katakana word is mapped to the roster by its consonant skeleton (r/l, b/v merged, one edit allowed from four consonants), so イブセン is Ibsen and ペトロフ outside the moment is `player_unsupported`; no football
+  loanword maps to a player on the five demo matches (test). Also new for every model line: no em dash and no middle dot ("·", "・"), code `punctuation`; and `comeback_win` (a comeback record counts points,
+  draws included, so "won", "virou", 逆転勝ち are wrong; scoped to the comebacks story). Delivery: "uno a uno", "um a um", "één-één", "bir bir", 1対1.
+- Story insert re-exported with all 12 channels (paid run, then cache only, 0 calls; 46 s as heard, was 45): 10 world calls (one per moment, all 60 lines accepted first time), then 1 retry call for the story note
+  after `comeback_win` was added (es "ha ganado tres veces", pt "virou três jogos", ja "3度逆転勝ち" overstated the record). World continuity is what the booth wrote first, before the check, so that retry changed no
+  later prompt. Every channel voices all 10 moments, 0 skips; the world first-time fragments are cut by the goal call. `WORLD_CONTEXT_WAIT_S` 6 s: a solo booth's story waits for its own set-up (it/b and nl/b
+  dropped the story before). Measured latency (the paid run, paced 1x, real calls): calls 1.1 to 2.6 s (median 1.3), world captions 1.2 to 4.4 s behind the English booth, event to caption median 2.6 s, max 5.7 s.
+- World lines in the insert (set-up, story, interception, switch, chest, long ball, first time, goal, pay-off, score):
+  es/x Lucía Romero: "Wexmoor recupera en campo propio y luego siempre en corto. Ni un balón cruzado desde el descanso." "Tercera vez esta temporada que el Wexmoor suma puntos tras ir por detrás." "Intercepta Ibsen."
+  "Ibsen cambia a Rasmussen." "Rasmussen, de pecho." "Rasmussen, largo a Tavares." "Tavares, de primeras." "¡GOOOL! ¡Fontaine! ¡Empata el Wexmoor!" "¡Lo que les decía! Ibsen la recupera y esta vez, cambio de
+  orientación al instante para Rasmussen." "Uno a uno, y quedan unos veinte minutos."
+  it/b Giulia Conti: "Il Wexmoor recupera palla nella sua metà campo, ma poi passa sempre corto. Dal riposo nessun pallone dall'altra parte." "Il Wexmoor ha già rimontato tre volte quest'anno, dopo essere stato sotto."
+  "Ibsen intercetta." "Ibsen, dall'altra parte." "Di petto, Rasmussen." "Lungo per Tavares, a sinistra." "Tavares, di prima." "GOOOL! Fontaine! Pareggio del Wexmoor!" "L'avevo detto! Ibsen recupera palla e
+  stavolta subito dall'altra parte, a Rasmussen." "1-1, e mancano una ventina di minuti."
+  pt/x Rafael Souza: "O Wexmoor rouba no seu campo e sempre passa curto. Nenhuma inversão desde o intervalo." "Terceira vez na temporada que o Wexmoor soma pontos depois de ficar atrás." "Ibsen rouba."
+  "Ibsen inverte para Rasmussen." "No peito, Rasmussen." "Lançamento longo para Tavares." "Tavares, de primeira." "GOOOL! Fontaine! Empata o Wexmoor!" "Não falei? Ibsen rouba e, dessa vez, inversão na hora
+  para Rasmussen." "Um a um, e faltam uns vinte minutos."
+  nl/b Sanne de Vries: "Wexmoor wint de bal op eigen helft, maar speelt daarna altijd kort. Sinds de rust nooit naar de andere kant." "Wexmoor heeft dit seizoen al drie keer een achterstand omgebogen."
+  "Ibsen onderschept." "Ibsen speelt naar de andere kant." "Op de borst, Rasmussen." "Lang naar Tavares, links." "Tavares, direct door." "GOAL! Fontaine! Wexmoor maakt gelijk!" "Zie je, dat zei ik! Ibsen wint de
+  bal en nu meteen naar de andere kant, naar Rasmussen." "1-1, en nog zo'n twintig minuten te gaan."
+  tr/x Emre Aydın: "Wexmoor kendi yarısında topu kapıyor, hep kısa pas. Devreden beri çapraz top yok." "Wexmoor bu sezon üç kez geriden gelip puan aldı." "Ibsen kesti." "Ibsen'den Rasmussen'e çapraz."
+  "Göğsünde, Rasmussen." "Tavares'e uzun top." "Tavares'e, tek vuruş." "GOOOL! Fontaine! Wexmoor eşitledi!" "Söylemiştim! İbsen topu kaptı, bu kez hemen Rasmussen'e çapraz pas." "Bir bir, yaklaşık yirmi dakika var."
+  ja/b Yuki Tanaka: "ウェクスモアは自陣で奪っても、いつも短いパス。後半、反対側へのボールは一度もありません。" "今季、ウェクスモアは3度、負けていた試合から勝ち点を拾っています。" "イブセンがカット。" "イブセンから反対側へ。"
+  "ラスムッセン、胸で。" "左のタバレスへ長いパス。" "タバレスへ、ワンタッチ。" "ゴール！フォンテーヌ！同点！" "言った通りです！イブセンが奪って、今度はすぐ反対側のラスムッセンへ！" "1対1。残りはおよそ20分です。"
+- Weak, for a native read (nobody has read or heard these): es "Ibsen cambia a Rasmussen." is no broadcast Spanish for a switch; it "rimontato" and nl "een achterstand omgebogen" lean towards a win (the verifier lets them
+  through); tr writes "İbsen" once (Turkish capital I); the world set-ups name the team, not Ibsen; it/b and nl/b set-ups run about 9 s (room 6.5); speech times use estimated CPS, no voice measured; no ElevenLabs
+  voice for the new languages (`tts/voices.py` has en/de/fr only). `ui/public/mock4.html`: one fix so a solo booth is read from `hello.channels` (`solo`, `lead` object), nothing else changed. Checked headless (own Chrome, ui/public on port 8779): mock4 plays every new channel with its name plate, the "Soon" row is gone,
+  no console errors, no page scroll at 1430x769 and 390x844. The user's rule (no "·", no em dash in user-facing text): the separators in `ui/src/components` Proof, Voices and Stage
+  became commas and the empty trace placeholder in `styles.css` says "none"; `npm run build` clean. `ui/public/mock.html` and `mock2.html` still have 13 each (old mocks, not in the static build).
+- 769 tests green (19 new in `test_world.py`), 1 xfail. The replay hashes in `test_fast.py` were re-pinned: with the new `hello.channels` fields taken out the three streams hash to the old digests.
+
+Story insert voice baked, all 12 channels (2026-10-26, Mac; no commit, 0 Anthropic calls, 5,075 ElevenLabs credits = sum of `character-cost`, cap 11,000; subscription 12,795 of 33,800 before): `backend/scripts/bake_story_audio.py`
+(dry run by default, `--go`, `--channel`, `--limit`, `--max-credits`, 2 requests at a time) voices every `say` of `story.json` with `eleven_v4` (1.0 credit a character, measured), cast per speaker (`who`), `language_code` per channel,
+delivery as in the v4 audition: goal call `[shouting]` with stability 0.25 and style 0.8, pay-off and lines ending "!" `[excited]`, the rest untagged. 120 files `ui/public/insert/story-audio/<ch>-<m>.mp3` (3.3 MB) plus `manifest.json`
+(per file a hash of voice, model, settings and sent text, and the caption): an up-to-date file is skipped, a stale one re-made, a file no line needs deleted (the 9 old ch-1 files went). New solo voices (premade, GET /v2/voices):
+Lucía Romero Sarah, Giulia Conti Matilda, Rafael Souza Eric, Sanne de Vries Lily, Emre Aydın Brian, Yuki Tanaka Jessica. `delivery.py` TAG_MODELS and STYLE_MODELS include `eleven_v4`; `bake_insert_audio.py` is the goal insert only now.
+`mock4.html` reads the manifest and plays `<channel id>-<m>.mp3` only when the manifest caption equals the subtitle (no more en/expert-only list, `ins` lines play too). Checked headless (own Chrome, ui/public on 8791): en/expert, es/expert, ja/beginner
+fetch all 10 files (200), 7 to 9 end; the others are cut by the next line as designed (first-time fragment by the goal call) or run past their slot (ja set-up 7.3 s, es and ja switch 2.2 to 2.3 s). Nobody has listened yet. 770 tests green, 1 xfail.
+
+Seek in mock4 (2026-10-26, the user asked; supersedes "no scrubber" in Decisions for the demo page): the progress bar is clickable and draggable, ArrowLeft/ArrowRight jump 5 s. `seek(w)` restarts at w, restores the score and the line on air (its baked file starts at the offset, the browser voice stays quiet mid-line), the insight card and montage resume at the right age, cuts ahead of w still play, a paused seek stays paused. Checked headless: back to 4 s (montage 6 / 11, card, 0-1), to 38 s (1-1, pay-off), no console errors.
+
+Live "New run" on the public demo (2026-10-27 night, founder approved "planen + machen"; plan docs/live/PLAN.md, reports docs/live/UNDERSTAND.md; no commit, no push):
+server `matchvoice.server.public` (scene whitelist `pipeline/scenes.py`, winner = comeback-135 5431 to 5490, HMAC session tokens, 3 runs a session, 10 an IP a UTC day,
+3 at once, 150 runs / 600 calls / 3,000 voice credits a day (900 a session, 1,500 an address since the review fixes), in memory, reset on restart; `row` stream message; `/api/session`, `/api/scene`, `/api/tts` with Flash voices per person;
+Origin allowlist; IP = rightmost X-Forwarded-For, `MATCHVOICE_TRUSTED_HOPS=1`). Deployed on Azure Container Apps `encara-live` (env `encara-env`, centralus, 1 replica)
+at https://encara-live.agreeablemeadow-1641ec5a.centralus.azurecontainerapps.io, image `encaramv630916.azurecr.io/match-voice:20261027-1251` (generated scenes, deployed 2026-10-27 13:10; before 20261027-0109); ACR Tasks are not allowed on this
+subscription, so build locally with `docker buildx --platform linux/amd64 --push`. Turkish "İki" crashed the verifier's number words (KeyError), fixed in `verifier.py` with a test.
+Page: `mock4.html` live branch (`LIVE_API` constant, `?api=` override), runs open in How mode 3 s behind the generator, lane 1 rows, lane 2 model calls with real times, voice per line from
+`/api/tts`, browser voice fallback; dev launcher `docs/live/devserver.py` (fake model and voice). Four-lens review, all majors fixed. SWA redeployed. End to end against the deployed
+server: en/expert at 1430x769 (18 ElevenLabs lines, analyst line sent back once and rewritten) and ja at 390x844, no console errors; forged X-Forwarded-For does not move the IP count.
+Spend for all live testing: about 23 Haiku calls, 329 ElevenLabs credits. Open: a ja (world) viewer hears nothing until the goal (world booth skips the fast build-up); the
+founder may want New run to default to a core channel. 804 tests green, 1 xfail.
+New run in the top bar and live-only motion (2026-10-27, page only, backend unchanged, no commit): `#topnew` next to How (hidden while a run streams and on the end screen, which has its own New run and count);
+a refusal clicked during a replay of a new run jumps that replay to its end screen. When the board shows live data (`D.isLive`) only: passes under 5 m are drawn as a carry by the player on the ball,
+receivers start a run up to DELAY-1 (2 s) before the kick (`preRuns`), break and pass-and-go runs after a ball win, a 10 m/s speed cap, the close-up to the ball with a 3 m dead-zone shape ball (`sbTrack`)
+and less wander, after the goal everyone stops where the goal found them (`goalSpots`, the board run up to the goal once off screen), the scorer and a few teammates celebrate, then each walks back into
+their own half. The recorded run is byte-identical (all players, 30 fps).
+Generated live scene (2026-10-27, founder: "massively optimise only the LIVE mode"; no commit, no push, 0 model calls, 0 ElevenLabs credits): the plain
+match's live window stuck the ball at the corner flag (19 of 26 on-ball points of 5431 to 5490 within 2.1 m of a line, a 0 m pass) and every New run streamed
+the same rows. Now every New run plays a new phase (`sim/scene.py` `ScenePlan`, hooked into `Sim.step` at Tamsworth's goal kick at 5408.6; `Library.scene_bundle`
+with an LRU of 8; `bundle()`, the recorded insert, EVAL and replays are untouched and pinned by `tests/test_scene_guard.py`): the keeper takes the goal kick
+7 to 9 s later, Tamsworth build up under Wexmoor's press, Wexmoor win it (interception in midfield, or a pressed ball back cut out near the box),
+then one of five finishes (through ball, switch and cross with a header, cutback, one-two at the edge, full back's cross) and the 2-1 in
+5462 to 5471.5 (89'). Scene window 5415 to 5490 (75 s, the run cap; it was 5431 and would have been refused at 84 s). Receivers are picked where the page
+draws them (`sim/sceneshape.py` ports `FORM` and `shapeOf`; a test parses mock4's `FORM`), passes 6 to 50 m with length-based flight, no ball on a line,
+presses after the ball arrived (else enrich squeezes), no tackles. `secrets` seed per run, `hello.scene_seed`, a `facts`/`scene` log, `seed=` only on a
+server that is not public (`docs/live/devserver.py --not-public` plus `&seed=N` on the page); `recent_memo` is keyed by variant; `/api/scene` has
+`goal_t` null and `goal_window`. Fakes name the run's scorer (katakana for ja). mock4 (live only): carries are drawn (the page ignored carry rows), `?seed=`
+is passed through. 839 tests green (35 new), 1 xfail. Measured over 5 seeds in headless Chrome (devserver, fake model): 0 of 31 to 45 on-ball points per
+scene on a line, pass median 10 to 15 m, top speed 10 m/s, ball to holder 0.93 m median, receiver to pass end at the kick median 5.7 to 7.7 m; 4 public
+runs (en, ja, en, ja at 390x844): goal call on all channels with the right scorer, 2-1, end screen, no console errors; the recorded run's positions are
+identical at 30 fps. The backend changed: the Container Apps image must be rebuilt and redeployed (and SWA for mock4).
+Scene review fixes (2026-10-27, after a three-lens review; no commit, no push, 0 model calls, 0 ElevenLabs credits): scene (`sim/scene.py`): no counter-press
+(`COUNTER_PRESS_P = 0`, one turnover per play), the ball winner by zone and role (midfield regains go to the central and wide midfielders, high
+regains to the strikers), the presser by role and flank (no centre back presses high), Tamsworth press Wexmoor's attack (about 30% of its passes
+under pressure, a full back closes the winger as he sets off before a cross), the counter is a run in behind by a striker who did not win the
+ball (pass end 7 to 20 m beyond his spot, met first time, a 7 to 8.5 m/s carry), cross targets 4.5 to 11 m out with no clamp, cutback runner and
+shooter and the edge finisher rotate (Tavares 30%, Dacosta 36%, Fontaine 26%, Abara 8% over 1,000 seeds; 964 distinct goal spots), Tamsworth's
+build-up plays one ball back and goes across before back (a back-and-forth swung the whole board), most finishes
+under pressure, `validate()` refuses a pass to oneself; enrich: a goal kick under 24 m is played on the ground (no plain-match goal kick is that
+short; all five matches' enriched rows checked identical). Booth (`fast.py`, only with `scene_at`, which the runner sets for a generated scene):
+no context line from Wexmoor's ball win to the goal, a carry is play from its first stride, one carry line per 8 s in the attack, a receipt is
+not called within 0.3 s of the shot and a header waits 1.2 s, a cut-out short pass is not "played on", cross, cutback and through ball outrank a
+touch (priority 38, wait 1.5 s): over 16 fake-booth runs every final ball was called and no context line fell in the attack. Server: the scene is
+simulated only after the session, IP and concurrency checks; voice caps 900 a session, 1,500 an address (global 3,000 a day unchanged). Page
+(live only): the side without the ball defends its box (back four 6 to 13 m out and narrow, nearest defender 2.4 to 3.4 m from the scorer at the
+shot), the keeper takes his goal kick (0.93 m from the ball), a run with under 250 credits left starts in the browser voice, lane 1 says metres
+instead of "Short", headers once, "met first time", carry and press rows name the player, "1 commentator", phone rows wrap. A forged-token test
+was flaky 1 time in 16 (it appended "0" to a real token), fixed. 849 tests green, 1 xfail. The backend changed again: rebuild and redeploy the image.
+
 Next, in order:
 6. Record the video from docs/VIDEO.md.
 
 ## Known issues
 - A measurement or test that runs the newsroom with a model call that raises must use a private `cache_dir`: `AnalystExecutor` discards the cached answer of a failing prompt (`GuardedLLM.discard`), also with `fresh=True`, and that deletes real recorded answers from `data/cache/analyst`.
-- Bump `PROMPT_VERSION` in `analyst.py` whenever `SYSTEM` or `build_prompt` change; the cache key ignores the system prompt.
+- Bump `PROMPT_VERSION` in `analyst.py` whenever `SYSTEM` or `build_prompt` change; the cache key ignores the system prompt. The same for `WORLD_PROMPT_VERSION` in `world.py` (`WORLD_SYSTEM`, `build_world_prompt`).
+- World continuity is the lines the world booth wrote first, before the verifier, so later prompts stay stable when a rule changes; a rejected line can therefore appear in the next prompts' continuity block.
 - xG is slightly high for point-blank shots. German templates need a native read-through, French has not been checked by a native speaker. Phase 12 rewrote parts of the de/fr bank (calques removed); both need a native read before the video.
 - Real-time speaking time is about 15% with templates alone; more variety from the analyst is expected.
 - A replay export is scheduled for one speed (speech durations are speed times seconds). `replay.json?speed=N` makes

@@ -24,26 +24,26 @@
         "momentum_swing": 60.0
       },
       "overall": {
-        "lines": 818,
+        "lines": 895,
         "grounding_rate": 1.0,
         "grounding_rate_analyst_lines": 1.0,
         "grounding_rate_template_lines": 1.0,
         "grounding_failures": 0,
         "injected_errors": {
           "score_swapped": {
-            "applicable": 53,
-            "caught": 53,
+            "applicable": 43,
+            "caught": 43,
             "catch_rate": 1.0
           },
           "number_changed": {
-            "applicable": 270,
-            "caught": 270,
+            "applicable": 203,
+            "caught": 203,
             "catch_rate": 1.0
           },
           "player_swapped": {
-            "applicable": 589,
-            "caught": 588,
-            "catch_rate": 0.9983
+            "applicable": 626,
+            "caught": 625,
+            "catch_rate": 0.9984
           }
         },
         "injected_misses": [
@@ -51,14 +51,14 @@
             "error": "player_swapped",
             "channel": "de/expert",
             "m": 33,
-            "text": "Abaras Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
+            "text": "Arnauds Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
             "match": "comeback-7"
           }
         ],
-        "lines_by_analyst": 81,
-        "said_by_analyst_share": 0.099,
-        "analyst_voice_lines": 201,
-        "analyst_voice_by_analyst_share": 0.403,
+        "lines_by_analyst": 77,
+        "said_by_analyst_share": 0.086,
+        "analyst_voice_lines": 199,
+        "analyst_voice_by_analyst_share": 0.3869,
         "published_by_analyst_share": 1.0,
         "keymoment_spoken_coverage": 0.9385,
         "keymoment_analysis_coverage": 0.841,
@@ -67,22 +67,22 @@
         "longest_silence_viewer_s": 0.0,
         "long_silences_per_match_channel": 0.0,
         "time_to_air_pbp_viewer_s": {
-          "n": 617,
-          "median": 2.32,
-          "p95": 6.78,
-          "max": 9.88
+          "n": 696,
+          "median": 2.63,
+          "p95": 9.43,
+          "max": 29.64
         },
         "time_to_air_analyst_viewer_s": {
-          "n": 81,
-          "median": 8.75,
-          "p95": 19.3,
-          "max": 21.3
+          "n": 77,
+          "median": 8.79,
+          "p95": 21.96,
+          "max": 24.87
         },
         "time_to_air_analyst_voice_template_viewer_s": {
-          "n": 120,
-          "median": 10.32,
-          "p95": 18.49,
-          "max": 21.94
+          "n": 122,
+          "median": 10.75,
+          "p95": 21.71,
+          "max": 24.97
         },
         "keymoment_detection_coverage": 0.9385,
         "claimed_moments": 27,
@@ -102,61 +102,7 @@
       },
       "by_channel": {
         "en/beginner": {
-          "lines": 137,
-          "grounding_rate": 1.0,
-          "grounding_rate_analyst_lines": 1.0,
-          "grounding_rate_template_lines": 1.0,
-          "grounding_failures": 0,
-          "injected_errors": {
-            "score_swapped": {
-              "applicable": 12,
-              "caught": 12,
-              "catch_rate": 1.0
-            },
-            "number_changed": {
-              "applicable": 24,
-              "caught": 24,
-              "catch_rate": 1.0
-            },
-            "player_swapped": {
-              "applicable": 98,
-              "caught": 98,
-              "catch_rate": 1.0
-            }
-          },
-          "injected_misses": [],
-          "lines_by_analyst": 15,
-          "said_by_analyst_share": 0.1095,
-          "analyst_voice_lines": 34,
-          "analyst_voice_by_analyst_share": 0.4412,
-          "published_by_analyst_share": 1.0,
-          "keymoment_spoken_coverage": 0.9385,
-          "keymoment_analysis_coverage": 0.841,
-          "speech_share": 1.0,
-          "silence_share": 0.0,
-          "longest_silence_viewer_s": 0.0,
-          "long_silences_per_match_channel": 0.0,
-          "time_to_air_pbp_viewer_s": {
-            "n": 103,
-            "median": 2.8,
-            "p95": 5.88,
-            "max": 9.12
-          },
-          "time_to_air_analyst_viewer_s": {
-            "n": 15,
-            "median": 9.3,
-            "p95": 18.98,
-            "max": 18.98
-          },
-          "time_to_air_analyst_voice_template_viewer_s": {
-            "n": 19,
-            "median": 9.43,
-            "p95": 18.28,
-            "max": 18.28
-          }
-        },
-        "en/expert": {
-          "lines": 132,
+          "lines": 146,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
@@ -165,60 +111,6 @@
             "score_swapped": {
               "applicable": 7,
               "caught": 7,
-              "catch_rate": 1.0
-            },
-            "number_changed": {
-              "applicable": 65,
-              "caught": 65,
-              "catch_rate": 1.0
-            },
-            "player_swapped": {
-              "applicable": 93,
-              "caught": 93,
-              "catch_rate": 1.0
-            }
-          },
-          "injected_misses": [],
-          "lines_by_analyst": 13,
-          "said_by_analyst_share": 0.0985,
-          "analyst_voice_lines": 32,
-          "analyst_voice_by_analyst_share": 0.4062,
-          "published_by_analyst_share": 1.0,
-          "keymoment_spoken_coverage": 0.9385,
-          "keymoment_analysis_coverage": 0.841,
-          "speech_share": 1.0,
-          "silence_share": 0.0,
-          "longest_silence_viewer_s": 0.0,
-          "long_silences_per_match_channel": 0.0,
-          "time_to_air_pbp_viewer_s": {
-            "n": 100,
-            "median": 1.96,
-            "p95": 7.69,
-            "max": 9.83
-          },
-          "time_to_air_analyst_viewer_s": {
-            "n": 13,
-            "median": 8.92,
-            "p95": 21.3,
-            "max": 21.3
-          },
-          "time_to_air_analyst_voice_template_viewer_s": {
-            "n": 19,
-            "median": 9.95,
-            "p95": 18.94,
-            "max": 18.94
-          }
-        },
-        "de/beginner": {
-          "lines": 133,
-          "grounding_rate": 1.0,
-          "grounding_rate_analyst_lines": 1.0,
-          "grounding_rate_template_lines": 1.0,
-          "grounding_failures": 0,
-          "injected_errors": {
-            "score_swapped": {
-              "applicable": 11,
-              "caught": 11,
               "catch_rate": 1.0
             },
             "number_changed": {
@@ -234,9 +126,9 @@
           },
           "injected_misses": [],
           "lines_by_analyst": 13,
-          "said_by_analyst_share": 0.0977,
-          "analyst_voice_lines": 33,
-          "analyst_voice_by_analyst_share": 0.3939,
+          "said_by_analyst_share": 0.089,
+          "analyst_voice_lines": 31,
+          "analyst_voice_by_analyst_share": 0.4194,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
@@ -245,26 +137,26 @@
           "longest_silence_viewer_s": 0.0,
           "long_silences_per_match_channel": 0.0,
           "time_to_air_pbp_viewer_s": {
-            "n": 100,
-            "median": 2.35,
-            "p95": 6.59,
-            "max": 9.59
+            "n": 115,
+            "median": 2.78,
+            "p95": 16.88,
+            "max": 29.64
           },
           "time_to_air_analyst_viewer_s": {
             "n": 13,
-            "median": 8.35,
-            "p95": 18.82,
-            "max": 18.82
+            "median": 8.32,
+            "p95": 21.96,
+            "max": 21.96
           },
           "time_to_air_analyst_voice_template_viewer_s": {
-            "n": 20,
-            "median": 10.67,
-            "p95": 18.49,
-            "max": 18.49
+            "n": 18,
+            "median": 9.45,
+            "p95": 22.8,
+            "max": 22.8
           }
         },
-        "de/expert": {
-          "lines": 133,
+        "en/expert": {
+          "lines": 154,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
@@ -276,29 +168,21 @@
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 66,
-              "caught": 66,
+              "applicable": 46,
+              "caught": 46,
               "catch_rate": 1.0
             },
             "player_swapped": {
-              "applicable": 93,
-              "caught": 92,
-              "catch_rate": 0.9892
+              "applicable": 110,
+              "caught": 110,
+              "catch_rate": 1.0
             }
           },
-          "injected_misses": [
-            {
-              "error": "player_swapped",
-              "channel": "de/expert",
-              "m": 33,
-              "text": "Abaras Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
-              "match": "comeback-7"
-            }
-          ],
-          "lines_by_analyst": 11,
-          "said_by_analyst_share": 0.0827,
-          "analyst_voice_lines": 33,
-          "analyst_voice_by_analyst_share": 0.3333,
+          "injected_misses": [],
+          "lines_by_analyst": 12,
+          "said_by_analyst_share": 0.0779,
+          "analyst_voice_lines": 35,
+          "analyst_voice_by_analyst_share": 0.3429,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
@@ -307,39 +191,155 @@
           "longest_silence_viewer_s": 0.0,
           "long_silences_per_match_channel": 0.0,
           "time_to_air_pbp_viewer_s": {
-            "n": 100,
-            "median": 1.92,
-            "p95": 6.93,
-            "max": 8.85
+            "n": 119,
+            "median": 2.58,
+            "p95": 9.44,
+            "max": 29.42
           },
           "time_to_air_analyst_viewer_s": {
-            "n": 11,
-            "median": 8.97,
-            "p95": 20.77,
-            "max": 20.77
+            "n": 12,
+            "median": 8.96,
+            "p95": 18.88,
+            "max": 18.88
           },
           "time_to_air_analyst_voice_template_viewer_s": {
-            "n": 22,
-            "median": 10.64,
-            "p95": 17.25,
-            "max": 21.94
+            "n": 23,
+            "median": 10.45,
+            "p95": 23.28,
+            "max": 24.94
           }
         },
-        "fr/beginner": {
-          "lines": 147,
+        "de/beginner": {
+          "lines": 137,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
           "grounding_failures": 0,
           "injected_errors": {
             "score_swapped": {
-              "applicable": 12,
-              "caught": 12,
+              "applicable": 10,
+              "caught": 10,
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 24,
-              "caught": 24,
+              "applicable": 22,
+              "caught": 22,
+              "catch_rate": 1.0
+            },
+            "player_swapped": {
+              "applicable": 96,
+              "caught": 96,
+              "catch_rate": 1.0
+            }
+          },
+          "injected_misses": [],
+          "lines_by_analyst": 14,
+          "said_by_analyst_share": 0.1022,
+          "analyst_voice_lines": 32,
+          "analyst_voice_by_analyst_share": 0.4375,
+          "published_by_analyst_share": 1.0,
+          "keymoment_spoken_coverage": 0.9385,
+          "keymoment_analysis_coverage": 0.841,
+          "speech_share": 1.0,
+          "silence_share": 0.0,
+          "longest_silence_viewer_s": 0.0,
+          "long_silences_per_match_channel": 0.0,
+          "time_to_air_pbp_viewer_s": {
+            "n": 105,
+            "median": 2.9,
+            "p95": 9.33,
+            "max": 28.7
+          },
+          "time_to_air_analyst_viewer_s": {
+            "n": 14,
+            "median": 10.17,
+            "p95": 24.87,
+            "max": 24.87
+          },
+          "time_to_air_analyst_voice_template_viewer_s": {
+            "n": 18,
+            "median": 10.7,
+            "p95": 20.66,
+            "max": 20.66
+          }
+        },
+        "de/expert": {
+          "lines": 148,
+          "grounding_rate": 1.0,
+          "grounding_rate_analyst_lines": 1.0,
+          "grounding_rate_template_lines": 1.0,
+          "grounding_failures": 0,
+          "injected_errors": {
+            "score_swapped": {
+              "applicable": 8,
+              "caught": 8,
+              "catch_rate": 1.0
+            },
+            "number_changed": {
+              "applicable": 45,
+              "caught": 45,
+              "catch_rate": 1.0
+            },
+            "player_swapped": {
+              "applicable": 104,
+              "caught": 103,
+              "catch_rate": 0.9904
+            }
+          },
+          "injected_misses": [
+            {
+              "error": "player_swapped",
+              "channel": "de/expert",
+              "m": 33,
+              "text": "Arnauds Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
+              "match": "comeback-7"
+            }
+          ],
+          "lines_by_analyst": 10,
+          "said_by_analyst_share": 0.0676,
+          "analyst_voice_lines": 33,
+          "analyst_voice_by_analyst_share": 0.303,
+          "published_by_analyst_share": 1.0,
+          "keymoment_spoken_coverage": 0.9385,
+          "keymoment_analysis_coverage": 0.841,
+          "speech_share": 1.0,
+          "silence_share": 0.0,
+          "longest_silence_viewer_s": 0.0,
+          "long_silences_per_match_channel": 0.0,
+          "time_to_air_pbp_viewer_s": {
+            "n": 115,
+            "median": 2.58,
+            "p95": 7.61,
+            "max": 27.72
+          },
+          "time_to_air_analyst_viewer_s": {
+            "n": 10,
+            "median": 9.09,
+            "p95": 20.53,
+            "max": 20.53
+          },
+          "time_to_air_analyst_voice_template_viewer_s": {
+            "n": 23,
+            "median": 11.1,
+            "p95": 21.71,
+            "max": 24.37
+          }
+        },
+        "fr/beginner": {
+          "lines": 152,
+          "grounding_rate": 1.0,
+          "grounding_rate_analyst_lines": 1.0,
+          "grounding_rate_template_lines": 1.0,
+          "grounding_failures": 0,
+          "injected_errors": {
+            "score_swapped": {
+              "applicable": 8,
+              "caught": 8,
+              "catch_rate": 1.0
+            },
+            "number_changed": {
+              "applicable": 23,
+              "caught": 23,
               "catch_rate": 1.0
             },
             "player_swapped": {
@@ -350,7 +350,7 @@
           },
           "injected_misses": [],
           "lines_by_analyst": 17,
-          "said_by_analyst_share": 0.1156,
+          "said_by_analyst_share": 0.1118,
           "analyst_voice_lines": 35,
           "analyst_voice_by_analyst_share": 0.4857,
           "published_by_analyst_share": 1.0,
@@ -361,52 +361,52 @@
           "longest_silence_viewer_s": 0.0,
           "long_silences_per_match_channel": 0.0,
           "time_to_air_pbp_viewer_s": {
-            "n": 112,
-            "median": 2.88,
-            "p95": 6.63,
-            "max": 9.68
+            "n": 117,
+            "median": 2.71,
+            "p95": 9.68,
+            "max": 28.65
           },
           "time_to_air_analyst_viewer_s": {
             "n": 17,
-            "median": 8.75,
-            "p95": 18.52,
-            "max": 18.52
+            "median": 8.57,
+            "p95": 23.51,
+            "max": 23.51
           },
           "time_to_air_analyst_voice_template_viewer_s": {
             "n": 18,
             "median": 11.78,
-            "p95": 19.48,
-            "max": 19.48
+            "p95": 22.14,
+            "max": 22.14
           }
         },
         "fr/expert": {
-          "lines": 136,
+          "lines": 158,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
           "grounding_failures": 0,
           "injected_errors": {
             "score_swapped": {
-              "applicable": 5,
-              "caught": 5,
+              "applicable": 4,
+              "caught": 4,
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 69,
-              "caught": 69,
+              "applicable": 45,
+              "caught": 45,
               "catch_rate": 1.0
             },
             "player_swapped": {
-              "applicable": 100,
-              "caught": 100,
+              "applicable": 111,
+              "caught": 111,
               "catch_rate": 1.0
             }
           },
           "injected_misses": [],
-          "lines_by_analyst": 12,
-          "said_by_analyst_share": 0.0882,
-          "analyst_voice_lines": 34,
-          "analyst_voice_by_analyst_share": 0.3529,
+          "lines_by_analyst": 11,
+          "said_by_analyst_share": 0.0696,
+          "analyst_voice_lines": 33,
+          "analyst_voice_by_analyst_share": 0.3333,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
@@ -415,54 +415,54 @@
           "longest_silence_viewer_s": 0.0,
           "long_silences_per_match_channel": 0.0,
           "time_to_air_pbp_viewer_s": {
-            "n": 102,
-            "median": 2.08,
-            "p95": 6.71,
-            "max": 9.88
+            "n": 125,
+            "median": 2.34,
+            "p95": 9.32,
+            "max": 26.96
           },
           "time_to_air_analyst_viewer_s": {
-            "n": 12,
-            "median": 9.11,
-            "p95": 20.14,
-            "max": 20.14
+            "n": 11,
+            "median": 7.52,
+            "p95": 20.2,
+            "max": 20.2
           },
           "time_to_air_analyst_voice_template_viewer_s": {
             "n": 22,
-            "median": 10.29,
-            "p95": 17.51,
-            "max": 20.86
+            "median": 10.53,
+            "p95": 20.92,
+            "max": 24.97
           }
         }
       },
       "by_language": {
         "en": {
-          "lines": 269,
+          "lines": 300,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
           "grounding_failures": 0,
           "injected_errors": {
             "score_swapped": {
-              "applicable": 19,
-              "caught": 19,
+              "applicable": 13,
+              "caught": 13,
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 89,
-              "caught": 89,
+              "applicable": 68,
+              "caught": 68,
               "catch_rate": 1.0
             },
             "player_swapped": {
-              "applicable": 191,
-              "caught": 191,
+              "applicable": 208,
+              "caught": 208,
               "catch_rate": 1.0
             }
           },
           "injected_misses": [],
-          "lines_by_analyst": 28,
-          "said_by_analyst_share": 0.1041,
+          "lines_by_analyst": 25,
+          "said_by_analyst_share": 0.0833,
           "analyst_voice_lines": 66,
-          "analyst_voice_by_analyst_share": 0.4242,
+          "analyst_voice_by_analyst_share": 0.3788,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
@@ -471,198 +471,26 @@
           "longest_silence_viewer_s": 0.0,
           "long_silences_per_match_channel": 0.0,
           "time_to_air_pbp_viewer_s": {
-            "n": 203,
-            "median": 2.44,
-            "p95": 6.85,
-            "max": 9.83
+            "n": 234,
+            "median": 2.69,
+            "p95": 9.44,
+            "max": 29.64
           },
           "time_to_air_analyst_viewer_s": {
-            "n": 28,
-            "median": 9.11,
-            "p95": 18.98,
-            "max": 21.3
+            "n": 25,
+            "median": 8.79,
+            "p95": 19.68,
+            "max": 21.96
           },
           "time_to_air_analyst_voice_template_viewer_s": {
-            "n": 38,
-            "median": 9.69,
-            "p95": 18.28,
-            "max": 18.94
+            "n": 41,
+            "median": 9.57,
+            "p95": 22.8,
+            "max": 24.94
           }
         },
         "de": {
-          "lines": 266,
-          "grounding_rate": 1.0,
-          "grounding_rate_analyst_lines": 1.0,
-          "grounding_rate_template_lines": 1.0,
-          "grounding_failures": 0,
-          "injected_errors": {
-            "score_swapped": {
-              "applicable": 17,
-              "caught": 17,
-              "catch_rate": 1.0
-            },
-            "number_changed": {
-              "applicable": 88,
-              "caught": 88,
-              "catch_rate": 1.0
-            },
-            "player_swapped": {
-              "applicable": 191,
-              "caught": 190,
-              "catch_rate": 0.9948
-            }
-          },
-          "injected_misses": [
-            {
-              "error": "player_swapped",
-              "channel": "de/expert",
-              "m": 33,
-              "text": "Abaras Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
-              "match": "comeback-7"
-            }
-          ],
-          "lines_by_analyst": 24,
-          "said_by_analyst_share": 0.0902,
-          "analyst_voice_lines": 66,
-          "analyst_voice_by_analyst_share": 0.3636,
-          "published_by_analyst_share": 1.0,
-          "keymoment_spoken_coverage": 0.9385,
-          "keymoment_analysis_coverage": 0.841,
-          "speech_share": 1.0,
-          "silence_share": 0.0,
-          "longest_silence_viewer_s": 0.0,
-          "long_silences_per_match_channel": 0.0,
-          "time_to_air_pbp_viewer_s": {
-            "n": 200,
-            "median": 2.17,
-            "p95": 6.59,
-            "max": 9.59
-          },
-          "time_to_air_analyst_viewer_s": {
-            "n": 24,
-            "median": 8.35,
-            "p95": 20.34,
-            "max": 20.77
-          },
-          "time_to_air_analyst_voice_template_viewer_s": {
-            "n": 42,
-            "median": 10.64,
-            "p95": 17.73,
-            "max": 21.94
-          }
-        },
-        "fr": {
-          "lines": 283,
-          "grounding_rate": 1.0,
-          "grounding_rate_analyst_lines": 1.0,
-          "grounding_rate_template_lines": 1.0,
-          "grounding_failures": 0,
-          "injected_errors": {
-            "score_swapped": {
-              "applicable": 17,
-              "caught": 17,
-              "catch_rate": 1.0
-            },
-            "number_changed": {
-              "applicable": 93,
-              "caught": 93,
-              "catch_rate": 1.0
-            },
-            "player_swapped": {
-              "applicable": 207,
-              "caught": 207,
-              "catch_rate": 1.0
-            }
-          },
-          "injected_misses": [],
-          "lines_by_analyst": 29,
-          "said_by_analyst_share": 0.1025,
-          "analyst_voice_lines": 69,
-          "analyst_voice_by_analyst_share": 0.4203,
-          "published_by_analyst_share": 1.0,
-          "keymoment_spoken_coverage": 0.9385,
-          "keymoment_analysis_coverage": 0.841,
-          "speech_share": 1.0,
-          "silence_share": 0.0,
-          "longest_silence_viewer_s": 0.0,
-          "long_silences_per_match_channel": 0.0,
-          "time_to_air_pbp_viewer_s": {
-            "n": 214,
-            "median": 2.61,
-            "p95": 6.71,
-            "max": 9.88
-          },
-          "time_to_air_analyst_viewer_s": {
-            "n": 29,
-            "median": 8.75,
-            "p95": 19.3,
-            "max": 20.14
-          },
-          "time_to_air_analyst_voice_template_viewer_s": {
-            "n": 40,
-            "median": 10.67,
-            "p95": 19.48,
-            "max": 20.86
-          }
-        }
-      },
-      "by_style": {
-        "beginner": {
-          "lines": 417,
-          "grounding_rate": 1.0,
-          "grounding_rate_analyst_lines": 1.0,
-          "grounding_rate_template_lines": 1.0,
-          "grounding_failures": 0,
-          "injected_errors": {
-            "score_swapped": {
-              "applicable": 35,
-              "caught": 35,
-              "catch_rate": 1.0
-            },
-            "number_changed": {
-              "applicable": 70,
-              "caught": 70,
-              "catch_rate": 1.0
-            },
-            "player_swapped": {
-              "applicable": 303,
-              "caught": 303,
-              "catch_rate": 1.0
-            }
-          },
-          "injected_misses": [],
-          "lines_by_analyst": 45,
-          "said_by_analyst_share": 0.1079,
-          "analyst_voice_lines": 102,
-          "analyst_voice_by_analyst_share": 0.4412,
-          "published_by_analyst_share": 1.0,
-          "keymoment_spoken_coverage": 0.9385,
-          "keymoment_analysis_coverage": 0.841,
-          "speech_share": 1.0,
-          "silence_share": 0.0,
-          "longest_silence_viewer_s": 0.0,
-          "long_silences_per_match_channel": 0.0,
-          "time_to_air_pbp_viewer_s": {
-            "n": 315,
-            "median": 2.7,
-            "p95": 6.57,
-            "max": 9.68
-          },
-          "time_to_air_analyst_viewer_s": {
-            "n": 45,
-            "median": 8.35,
-            "p95": 18.65,
-            "max": 18.98
-          },
-          "time_to_air_analyst_voice_template_viewer_s": {
-            "n": 57,
-            "median": 10.72,
-            "p95": 18.49,
-            "max": 19.48
-          }
-        },
-        "expert": {
-          "lines": 401,
+          "lines": 285,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
@@ -674,14 +502,14 @@
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 200,
-              "caught": 200,
+              "applicable": 67,
+              "caught": 67,
               "catch_rate": 1.0
             },
             "player_swapped": {
-              "applicable": 286,
-              "caught": 285,
-              "catch_rate": 0.9965
+              "applicable": 200,
+              "caught": 199,
+              "catch_rate": 0.995
             }
           },
           "injected_misses": [
@@ -689,14 +517,14 @@
               "error": "player_swapped",
               "channel": "de/expert",
               "m": 33,
-              "text": "Abaras Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
+              "text": "Arnauds Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
               "match": "comeback-7"
             }
           ],
-          "lines_by_analyst": 36,
-          "said_by_analyst_share": 0.0898,
-          "analyst_voice_lines": 99,
-          "analyst_voice_by_analyst_share": 0.3636,
+          "lines_by_analyst": 24,
+          "said_by_analyst_share": 0.0842,
+          "analyst_voice_lines": 65,
+          "analyst_voice_by_analyst_share": 0.3692,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
@@ -705,22 +533,194 @@
           "longest_silence_viewer_s": 0.0,
           "long_silences_per_match_channel": 0.0,
           "time_to_air_pbp_viewer_s": {
-            "n": 302,
-            "median": 1.96,
-            "p95": 7.09,
-            "max": 9.88
+            "n": 220,
+            "median": 2.65,
+            "p95": 8.72,
+            "max": 28.7
           },
           "time_to_air_analyst_viewer_s": {
-            "n": 36,
-            "median": 8.95,
-            "p95": 20.77,
-            "max": 21.3
+            "n": 24,
+            "median": 9.48,
+            "p95": 22.24,
+            "max": 24.87
           },
           "time_to_air_analyst_voice_template_viewer_s": {
-            "n": 63,
-            "median": 10.24,
-            "p95": 17.85,
-            "max": 21.94
+            "n": 41,
+            "median": 11.1,
+            "p95": 20.66,
+            "max": 24.37
+          }
+        },
+        "fr": {
+          "lines": 310,
+          "grounding_rate": 1.0,
+          "grounding_rate_analyst_lines": 1.0,
+          "grounding_rate_template_lines": 1.0,
+          "grounding_failures": 0,
+          "injected_errors": {
+            "score_swapped": {
+              "applicable": 12,
+              "caught": 12,
+              "catch_rate": 1.0
+            },
+            "number_changed": {
+              "applicable": 68,
+              "caught": 68,
+              "catch_rate": 1.0
+            },
+            "player_swapped": {
+              "applicable": 218,
+              "caught": 218,
+              "catch_rate": 1.0
+            }
+          },
+          "injected_misses": [],
+          "lines_by_analyst": 28,
+          "said_by_analyst_share": 0.0903,
+          "analyst_voice_lines": 68,
+          "analyst_voice_by_analyst_share": 0.4118,
+          "published_by_analyst_share": 1.0,
+          "keymoment_spoken_coverage": 0.9385,
+          "keymoment_analysis_coverage": 0.841,
+          "speech_share": 1.0,
+          "silence_share": 0.0,
+          "longest_silence_viewer_s": 0.0,
+          "long_silences_per_match_channel": 0.0,
+          "time_to_air_pbp_viewer_s": {
+            "n": 242,
+            "median": 2.47,
+            "p95": 9.55,
+            "max": 28.65
+          },
+          "time_to_air_analyst_viewer_s": {
+            "n": 28,
+            "median": 8.42,
+            "p95": 20.2,
+            "max": 23.51
+          },
+          "time_to_air_analyst_voice_template_viewer_s": {
+            "n": 40,
+            "median": 11.1,
+            "p95": 22.14,
+            "max": 24.97
+          }
+        }
+      },
+      "by_style": {
+        "beginner": {
+          "lines": 435,
+          "grounding_rate": 1.0,
+          "grounding_rate_analyst_lines": 1.0,
+          "grounding_rate_template_lines": 1.0,
+          "grounding_failures": 0,
+          "injected_errors": {
+            "score_swapped": {
+              "applicable": 25,
+              "caught": 25,
+              "catch_rate": 1.0
+            },
+            "number_changed": {
+              "applicable": 67,
+              "caught": 67,
+              "catch_rate": 1.0
+            },
+            "player_swapped": {
+              "applicable": 301,
+              "caught": 301,
+              "catch_rate": 1.0
+            }
+          },
+          "injected_misses": [],
+          "lines_by_analyst": 44,
+          "said_by_analyst_share": 0.1011,
+          "analyst_voice_lines": 98,
+          "analyst_voice_by_analyst_share": 0.449,
+          "published_by_analyst_share": 1.0,
+          "keymoment_spoken_coverage": 0.9385,
+          "keymoment_analysis_coverage": 0.841,
+          "speech_share": 1.0,
+          "silence_share": 0.0,
+          "longest_silence_viewer_s": 0.0,
+          "long_silences_per_match_channel": 0.0,
+          "time_to_air_pbp_viewer_s": {
+            "n": 337,
+            "median": 2.78,
+            "p95": 9.58,
+            "max": 29.64
+          },
+          "time_to_air_analyst_viewer_s": {
+            "n": 44,
+            "median": 8.77,
+            "p95": 22.24,
+            "max": 24.87
+          },
+          "time_to_air_analyst_voice_template_viewer_s": {
+            "n": 54,
+            "median": 10.55,
+            "p95": 20.66,
+            "max": 22.8
+          }
+        },
+        "expert": {
+          "lines": 460,
+          "grounding_rate": 1.0,
+          "grounding_rate_analyst_lines": 1.0,
+          "grounding_rate_template_lines": 1.0,
+          "grounding_failures": 0,
+          "injected_errors": {
+            "score_swapped": {
+              "applicable": 18,
+              "caught": 18,
+              "catch_rate": 1.0
+            },
+            "number_changed": {
+              "applicable": 136,
+              "caught": 136,
+              "catch_rate": 1.0
+            },
+            "player_swapped": {
+              "applicable": 325,
+              "caught": 324,
+              "catch_rate": 0.9969
+            }
+          },
+          "injected_misses": [
+            {
+              "error": "player_swapped",
+              "channel": "de/expert",
+              "m": 33,
+              "text": "Arnauds Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
+              "match": "comeback-7"
+            }
+          ],
+          "lines_by_analyst": 33,
+          "said_by_analyst_share": 0.0717,
+          "analyst_voice_lines": 101,
+          "analyst_voice_by_analyst_share": 0.3267,
+          "published_by_analyst_share": 1.0,
+          "keymoment_spoken_coverage": 0.9385,
+          "keymoment_analysis_coverage": 0.841,
+          "speech_share": 1.0,
+          "silence_share": 0.0,
+          "longest_silence_viewer_s": 0.0,
+          "long_silences_per_match_channel": 0.0,
+          "time_to_air_pbp_viewer_s": {
+            "n": 359,
+            "median": 2.44,
+            "p95": 9.32,
+            "max": 29.42
+          },
+          "time_to_air_analyst_viewer_s": {
+            "n": 33,
+            "median": 8.97,
+            "p95": 20.2,
+            "max": 20.53
+          },
+          "time_to_air_analyst_voice_template_viewer_s": {
+            "n": 68,
+            "median": 10.89,
+            "p95": 23.28,
+            "max": 24.97
           }
         }
       },
@@ -732,25 +732,25 @@
           "duration_s": 5822.0,
           "channels": {
             "en/beginner": {
-              "said": 46,
-              "grounded": 46,
+              "said": 49,
+              "grounded": 49,
               "from_analyst": 5,
-              "analyst_voice": 13,
+              "analyst_voice": 10,
               "analyst_voice_from_analyst": 5,
               "grounded_from_analyst": 5,
               "failures": [],
               "injected": {
                 "player_swapped": {
-                  "applicable": 32,
-                  "caught": 32
+                  "applicable": 31,
+                  "caught": 31
                 },
                 "number_changed": {
                   "applicable": 7,
                   "caught": 7
                 },
                 "score_swapped": {
-                  "applicable": 5,
-                  "caught": 5
+                  "applicable": 3,
+                  "caught": 3
                 }
               },
               "missed_injections": [],
@@ -760,44 +760,44 @@
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 46,
+              "lines": 49,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 33,
-                "median": 2.8,
-                "p95": 6.71,
-                "max": 9.05
+                "n": 39,
+                "median": 2.7,
+                "p95": 28.72,
+                "max": 28.86
               },
               "time_to_air_analyst_s": {
                 "n": 5,
-                "median": 10.08,
-                "p95": 17.62,
-                "max": 17.62
+                "median": 8.32,
+                "p95": 17.36,
+                "max": 17.36
               },
               "time_to_air_analyst_voice_template_s": {
-                "n": 8,
-                "median": 11.14,
-                "p95": 16.65,
-                "max": 16.65
+                "n": 5,
+                "median": 5.48,
+                "p95": 10.46,
+                "max": 10.46
               }
             },
             "en/expert": {
-              "said": 46,
-              "grounded": 46,
+              "said": 54,
+              "grounded": 54,
               "from_analyst": 3,
-              "analyst_voice": 11,
+              "analyst_voice": 13,
               "analyst_voice_from_analyst": 3,
               "grounded_from_analyst": 3,
               "failures": [],
               "injected": {
                 "player_swapped": {
-                  "applicable": 33,
-                  "caught": 33
+                  "applicable": 39,
+                  "caught": 39
                 },
                 "number_changed": {
-                  "applicable": 23,
-                  "caught": 23
+                  "applicable": 16,
+                  "caught": 16
                 },
                 "score_swapped": {
                   "applicable": 2,
@@ -811,40 +811,40 @@
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 46,
+              "lines": 54,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 35,
-                "median": 2.72,
-                "p95": 9.43,
-                "max": 9.83
+                "n": 41,
+                "median": 3.56,
+                "p95": 16.4,
+                "max": 26.94
               },
               "time_to_air_analyst_s": {
                 "n": 3,
-                "median": 6.78,
-                "p95": 16.84,
-                "max": 16.84
+                "median": 8.36,
+                "p95": 17.44,
+                "max": 17.44
               },
               "time_to_air_analyst_voice_template_s": {
-                "n": 8,
-                "median": 10.1,
-                "p95": 15.97,
-                "max": 15.97
+                "n": 10,
+                "median": 9.91,
+                "p95": 18.85,
+                "max": 18.85
               }
             },
             "de/beginner": {
-              "said": 43,
-              "grounded": 43,
-              "from_analyst": 4,
+              "said": 48,
+              "grounded": 48,
+              "from_analyst": 3,
               "analyst_voice": 11,
-              "analyst_voice_from_analyst": 4,
-              "grounded_from_analyst": 4,
+              "analyst_voice_from_analyst": 3,
+              "grounded_from_analyst": 3,
               "failures": [],
               "injected": {
                 "player_swapped": {
-                  "applicable": 31,
-                  "caught": 31
+                  "applicable": 33,
+                  "caught": 33
                 },
                 "number_changed": {
                   "applicable": 6,
@@ -862,31 +862,31 @@
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 43,
+              "lines": 48,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 32,
-                "median": 2.0,
-                "p95": 9.35,
-                "max": 9.59
+                "n": 37,
+                "median": 2.97,
+                "p95": 28.5,
+                "max": 28.7
               },
               "time_to_air_analyst_s": {
-                "n": 4,
-                "median": 8.14,
-                "p95": 18.65,
-                "max": 18.65
+                "n": 3,
+                "median": 6.85,
+                "p95": 16.65,
+                "max": 16.65
               },
               "time_to_air_analyst_voice_template_s": {
-                "n": 7,
-                "median": 11.19,
-                "p95": 17.73,
-                "max": 17.73
+                "n": 8,
+                "median": 9.4,
+                "p95": 19.7,
+                "max": 19.7
               }
             },
             "de/expert": {
-              "said": 44,
-              "grounded": 44,
+              "said": 50,
+              "grounded": 50,
               "from_analyst": 3,
               "analyst_voice": 12,
               "analyst_voice_from_analyst": 3,
@@ -894,16 +894,16 @@
               "failures": [],
               "injected": {
                 "player_swapped": {
-                  "applicable": 30,
-                  "caught": 29
+                  "applicable": 33,
+                  "caught": 32
                 },
                 "number_changed": {
-                  "applicable": 23,
-                  "caught": 23
+                  "applicable": 16,
+                  "caught": 16
                 },
                 "score_swapped": {
-                  "applicable": 2,
-                  "caught": 2
+                  "applicable": 4,
+                  "caught": 4
                 }
               },
               "missed_injections": [
@@ -911,7 +911,7 @@
                   "error": "player_swapped",
                   "channel": "de/expert",
                   "m": 33,
-                  "text": "Abaras Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent."
+                  "text": "Arnauds Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent."
                 }
               ],
               "published": 8,
@@ -920,33 +920,33 @@
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 44,
+              "lines": 50,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 32,
-                "median": 2.12,
-                "p95": 6.93,
-                "max": 7.54
+                "n": 38,
+                "median": 3.03,
+                "p95": 25.45,
+                "max": 27.42
               },
               "time_to_air_analyst_s": {
                 "n": 3,
-                "median": 7.8,
-                "p95": 18.1,
-                "max": 18.1
+                "median": 8.18,
+                "p95": 17.28,
+                "max": 17.28
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 9,
-                "median": 10.11,
-                "p95": 17.25,
-                "max": 17.25
+                "median": 8.97,
+                "p95": 17.08,
+                "max": 17.08
               }
             },
             "fr/beginner": {
-              "said": 48,
-              "grounded": 48,
+              "said": 51,
+              "grounded": 51,
               "from_analyst": 5,
-              "analyst_voice": 13,
+              "analyst_voice": 12,
               "analyst_voice_from_analyst": 5,
               "grounded_from_analyst": 5,
               "failures": [],
@@ -960,8 +960,8 @@
                   "caught": 7
                 },
                 "score_swapped": {
-                  "applicable": 5,
-                  "caught": 5
+                  "applicable": 3,
+                  "caught": 3
                 }
               },
               "missed_injections": [],
@@ -971,44 +971,44 @@
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 48,
+              "lines": 51,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 35,
+                "n": 39,
                 "median": 2.3,
-                "p95": 9.09,
-                "max": 9.46
+                "p95": 26.82,
+                "max": 28.58
               },
               "time_to_air_analyst_s": {
                 "n": 5,
-                "median": 9.89,
-                "p95": 16.98,
-                "max": 16.98
+                "median": 8.28,
+                "p95": 15.59,
+                "max": 15.59
               },
               "time_to_air_analyst_voice_template_s": {
-                "n": 8,
-                "median": 11.24,
-                "p95": 19.48,
-                "max": 19.48
+                "n": 7,
+                "median": 10.65,
+                "p95": 19.69,
+                "max": 19.69
               }
             },
             "fr/expert": {
-              "said": 46,
-              "grounded": 46,
+              "said": 53,
+              "grounded": 53,
               "from_analyst": 3,
-              "analyst_voice": 12,
+              "analyst_voice": 11,
               "analyst_voice_from_analyst": 3,
               "grounded_from_analyst": 3,
               "failures": [],
               "injected": {
                 "player_swapped": {
-                  "applicable": 34,
-                  "caught": 34
+                  "applicable": 35,
+                  "caught": 35
                 },
                 "number_changed": {
-                  "applicable": 24,
-                  "caught": 24
+                  "applicable": 15,
+                  "caught": 15
                 },
                 "score_swapped": {
                   "applicable": 1,
@@ -1022,26 +1022,26 @@
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 46,
+              "lines": 53,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 34,
-                "median": 2.07,
-                "p95": 7.62,
-                "max": 9.88
+                "n": 42,
+                "median": 2.4,
+                "p95": 16.57,
+                "max": 26.96
               },
               "time_to_air_analyst_s": {
                 "n": 3,
-                "median": 7.45,
-                "p95": 17.6,
-                "max": 17.6
+                "median": 6.98,
+                "p95": 16.51,
+                "max": 16.51
               },
               "time_to_air_analyst_voice_template_s": {
-                "n": 9,
-                "median": 10.69,
-                "p95": 16.02,
-                "max": 16.02
+                "n": 8,
+                "median": 7.43,
+                "p95": 14.53,
+                "max": 14.53
               }
             }
           },
@@ -1236,72 +1236,21 @@
           "duration_s": 5820.8,
           "channels": {
             "en/beginner": {
-              "said": 43,
-              "grounded": 43,
-              "from_analyst": 6,
+              "said": 47,
+              "grounded": 47,
+              "from_analyst": 5,
               "analyst_voice": 9,
-              "analyst_voice_from_analyst": 6,
-              "grounded_from_analyst": 6,
+              "analyst_voice_from_analyst": 5,
+              "grounded_from_analyst": 5,
               "failures": [],
               "injected": {
                 "player_swapped": {
-                  "applicable": 30,
-                  "caught": 30
+                  "applicable": 31,
+                  "caught": 31
                 },
                 "number_changed": {
                   "applicable": 8,
                   "caught": 8
-                },
-                "score_swapped": {
-                  "applicable": 3,
-                  "caught": 3
-                }
-              },
-              "missed_injections": [],
-              "published": 9,
-              "published_by_analyst": 9,
-              "spoken_match_s": 5820.8,
-              "duration_match_s": 5820.8,
-              "longest_silence_viewer_s": 0.0,
-              "long_silences": 0,
-              "lines": 43,
-              "covered_weight": 4.05,
-              "analysis_weight": 3.1,
-              "time_to_air_pbp_s": {
-                "n": 34,
-                "median": 3.1,
-                "p95": 4.98,
-                "max": 5.78
-              },
-              "time_to_air_analyst_s": {
-                "n": 6,
-                "median": 10.26,
-                "p95": 18.64,
-                "max": 18.64
-              },
-              "time_to_air_analyst_voice_template_s": {
-                "n": 3,
-                "median": 13.15,
-                "p95": 16.27,
-                "max": 16.27
-              }
-            },
-            "en/expert": {
-              "said": 39,
-              "grounded": 39,
-              "from_analyst": 6,
-              "analyst_voice": 9,
-              "analyst_voice_from_analyst": 6,
-              "grounded_from_analyst": 6,
-              "failures": [],
-              "injected": {
-                "player_swapped": {
-                  "applicable": 24,
-                  "caught": 24
-                },
-                "number_changed": {
-                  "applicable": 16,
-                  "caught": 16
                 },
                 "score_swapped": {
                   "applicable": 2,
@@ -1315,33 +1264,33 @@
               "duration_match_s": 5820.8,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 39,
+              "lines": 47,
               "covered_weight": 4.05,
               "analysis_weight": 3.1,
               "time_to_air_pbp_s": {
-                "n": 30,
-                "median": 1.13,
-                "p95": 5.13,
-                "max": 5.44
+                "n": 38,
+                "median": 3.1,
+                "p95": 24.6,
+                "max": 29.64
               },
               "time_to_air_analyst_s": {
-                "n": 6,
-                "median": 11.61,
-                "p95": 21.3,
-                "max": 21.3
+                "n": 5,
+                "median": 9.28,
+                "p95": 21.96,
+                "max": 21.96
               },
               "time_to_air_analyst_voice_template_s": {
-                "n": 3,
-                "median": 11.73,
-                "p95": 15.89,
-                "max": 15.89
+                "n": 4,
+                "median": 12.78,
+                "p95": 16.27,
+                "max": 16.27
               }
             },
-            "de/beginner": {
-              "said": 40,
-              "grounded": 40,
+            "en/expert": {
+              "said": 45,
+              "grounded": 45,
               "from_analyst": 5,
-              "analyst_voice": 10,
+              "analyst_voice": 9,
               "analyst_voice_from_analyst": 5,
               "grounded_from_analyst": 5,
               "failures": [],
@@ -1351,8 +1300,59 @@
                   "caught": 28
                 },
                 "number_changed": {
-                  "applicable": 8,
-                  "caught": 8
+                  "applicable": 11,
+                  "caught": 11
+                },
+                "score_swapped": {
+                  "applicable": 1,
+                  "caught": 1
+                }
+              },
+              "missed_injections": [],
+              "published": 9,
+              "published_by_analyst": 9,
+              "spoken_match_s": 5820.8,
+              "duration_match_s": 5820.8,
+              "longest_silence_viewer_s": 0.0,
+              "long_silences": 0,
+              "lines": 45,
+              "covered_weight": 4.05,
+              "analysis_weight": 3.1,
+              "time_to_air_pbp_s": {
+                "n": 36,
+                "median": 2.46,
+                "p95": 7.17,
+                "max": 27.5
+              },
+              "time_to_air_analyst_s": {
+                "n": 5,
+                "median": 11.92,
+                "p95": 12.82,
+                "max": 12.82
+              },
+              "time_to_air_analyst_voice_template_s": {
+                "n": 4,
+                "median": 13.95,
+                "p95": 24.94,
+                "max": 24.94
+              }
+            },
+            "de/beginner": {
+              "said": 38,
+              "grounded": 38,
+              "from_analyst": 7,
+              "analyst_voice": 9,
+              "analyst_voice_from_analyst": 7,
+              "grounded_from_analyst": 7,
+              "failures": [],
+              "injected": {
+                "player_swapped": {
+                  "applicable": 25,
+                  "caught": 25
+                },
+                "number_changed": {
+                  "applicable": 9,
+                  "caught": 9
                 },
                 "score_swapped": {
                   "applicable": 3,
@@ -1366,44 +1366,44 @@
               "duration_match_s": 5820.8,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 40,
+              "lines": 38,
               "covered_weight": 4.05,
               "analysis_weight": 3.1,
               "time_to_air_pbp_s": {
-                "n": 30,
-                "median": 2.25,
-                "p95": 4.83,
-                "max": 4.89
+                "n": 29,
+                "median": 2.08,
+                "p95": 9.58,
+                "max": 25.25
               },
               "time_to_air_analyst_s": {
-                "n": 5,
-                "median": 9.6,
-                "p95": 17.8,
-                "max": 17.8
+                "n": 7,
+                "median": 10.6,
+                "p95": 24.87,
+                "max": 24.87
               },
               "time_to_air_analyst_voice_template_s": {
-                "n": 5,
-                "median": 13.4,
-                "p95": 17.15,
-                "max": 17.15
+                "n": 2,
+                "median": 10.42,
+                "p95": 14.23,
+                "max": 14.23
               }
             },
             "de/expert": {
-              "said": 39,
-              "grounded": 39,
-              "from_analyst": 5,
+              "said": 45,
+              "grounded": 45,
+              "from_analyst": 4,
               "analyst_voice": 9,
-              "analyst_voice_from_analyst": 5,
-              "grounded_from_analyst": 5,
+              "analyst_voice_from_analyst": 4,
+              "grounded_from_analyst": 4,
               "failures": [],
               "injected": {
                 "player_swapped": {
-                  "applicable": 24,
-                  "caught": 24
+                  "applicable": 30,
+                  "caught": 30
                 },
                 "number_changed": {
-                  "applicable": 16,
-                  "caught": 16
+                  "applicable": 11,
+                  "caught": 11
                 },
                 "score_swapped": {
                   "applicable": 2,
@@ -1417,31 +1417,31 @@
               "duration_match_s": 5820.8,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 39,
+              "lines": 45,
               "covered_weight": 4.05,
               "analysis_weight": 3.1,
               "time_to_air_pbp_s": {
-                "n": 30,
-                "median": 1.3,
-                "p95": 4.84,
-                "max": 5.6
+                "n": 36,
+                "median": 2.31,
+                "p95": 7.6,
+                "max": 27.72
               },
               "time_to_air_analyst_s": {
-                "n": 5,
-                "median": 11.68,
-                "p95": 20.34,
-                "max": 20.34
+                "n": 4,
+                "median": 10.66,
+                "p95": 13.52,
+                "max": 13.52
               },
               "time_to_air_analyst_voice_template_s": {
-                "n": 4,
-                "median": 12.41,
-                "p95": 15.68,
-                "max": 15.68
+                "n": 5,
+                "median": 13.48,
+                "p95": 24.37,
+                "max": 24.37
               }
             },
             "fr/beginner": {
-              "said": 45,
-              "grounded": 45,
+              "said": 46,
+              "grounded": 46,
               "from_analyst": 6,
               "analyst_voice": 10,
               "analyst_voice_from_analyst": 6,
@@ -1457,57 +1457,6 @@
                   "caught": 8
                 },
                 "score_swapped": {
-                  "applicable": 3,
-                  "caught": 3
-                }
-              },
-              "missed_injections": [],
-              "published": 9,
-              "published_by_analyst": 9,
-              "spoken_match_s": 5820.8,
-              "duration_match_s": 5820.8,
-              "longest_silence_viewer_s": 0.0,
-              "long_silences": 0,
-              "lines": 45,
-              "covered_weight": 4.05,
-              "analysis_weight": 3.1,
-              "time_to_air_pbp_s": {
-                "n": 35,
-                "median": 3.11,
-                "p95": 5.48,
-                "max": 6.63
-              },
-              "time_to_air_analyst_s": {
-                "n": 6,
-                "median": 9.46,
-                "p95": 18.45,
-                "max": 18.45
-              },
-              "time_to_air_analyst_voice_template_s": {
-                "n": 4,
-                "median": 11.62,
-                "p95": 17.51,
-                "max": 17.51
-              }
-            },
-            "fr/expert": {
-              "said": 40,
-              "grounded": 40,
-              "from_analyst": 6,
-              "analyst_voice": 10,
-              "analyst_voice_from_analyst": 6,
-              "grounded_from_analyst": 6,
-              "failures": [],
-              "injected": {
-                "player_swapped": {
-                  "applicable": 28,
-                  "caught": 28
-                },
-                "number_changed": {
-                  "applicable": 18,
-                  "caught": 18
-                },
-                "score_swapped": {
                   "applicable": 2,
                   "caught": 2
                 }
@@ -1519,26 +1468,77 @@
               "duration_match_s": 5820.8,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 40,
+              "lines": 46,
               "covered_weight": 4.05,
               "analysis_weight": 3.1,
               "time_to_air_pbp_s": {
-                "n": 30,
-                "median": 2.15,
-                "p95": 5.48,
-                "max": 6.71
+                "n": 36,
+                "median": 2.64,
+                "p95": 7.89,
+                "max": 25.35
               },
               "time_to_air_analyst_s": {
                 "n": 6,
-                "median": 10.8,
-                "p95": 19.3,
-                "max": 19.3
+                "median": 9.96,
+                "p95": 23.51,
+                "max": 23.51
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 4,
-                "median": 15.15,
-                "p95": 17.51,
-                "max": 17.51
+                "median": 15.33,
+                "p95": 19.72,
+                "max": 19.72
+              }
+            },
+            "fr/expert": {
+              "said": 46,
+              "grounded": 46,
+              "from_analyst": 5,
+              "analyst_voice": 10,
+              "analyst_voice_from_analyst": 5,
+              "grounded_from_analyst": 5,
+              "failures": [],
+              "injected": {
+                "player_swapped": {
+                  "applicable": 31,
+                  "caught": 31
+                },
+                "number_changed": {
+                  "applicable": 12,
+                  "caught": 12
+                },
+                "score_swapped": {
+                  "applicable": 1,
+                  "caught": 1
+                }
+              },
+              "missed_injections": [],
+              "published": 9,
+              "published_by_analyst": 9,
+              "spoken_match_s": 5820.8,
+              "duration_match_s": 5820.8,
+              "longest_silence_viewer_s": 0.0,
+              "long_silences": 0,
+              "lines": 46,
+              "covered_weight": 4.05,
+              "analysis_weight": 3.1,
+              "time_to_air_pbp_s": {
+                "n": 36,
+                "median": 1.99,
+                "p95": 7.69,
+                "max": 25.27
+              },
+              "time_to_air_analyst_s": {
+                "n": 5,
+                "median": 10.6,
+                "p95": 12.57,
+                "max": 12.57
+              },
+              "time_to_air_analyst_voice_template_s": {
+                "n": 5,
+                "median": 16.42,
+                "p95": 24.97,
+                "max": 24.97
               }
             }
           },
@@ -1741,12 +1741,12 @@
           "duration_s": 5822.7,
           "channels": {
             "en/beginner": {
-              "said": 48,
-              "grounded": 48,
-              "from_analyst": 4,
+              "said": 50,
+              "grounded": 50,
+              "from_analyst": 3,
               "analyst_voice": 12,
-              "analyst_voice_from_analyst": 4,
-              "grounded_from_analyst": 4,
+              "analyst_voice_from_analyst": 3,
+              "grounded_from_analyst": 3,
               "failures": [],
               "injected": {
                 "player_swapped": {
@@ -1754,12 +1754,12 @@
                   "caught": 36
                 },
                 "number_changed": {
-                  "applicable": 9,
-                  "caught": 9
+                  "applicable": 7,
+                  "caught": 7
                 },
                 "score_swapped": {
-                  "applicable": 4,
-                  "caught": 4
+                  "applicable": 2,
+                  "caught": 2
                 }
               },
               "missed_injections": [],
@@ -1769,44 +1769,44 @@
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 48,
+              "lines": 50,
               "covered_weight": 1.6,
               "analysis_weight": 1.6,
               "time_to_air_pbp_s": {
-                "n": 36,
-                "median": 2.56,
-                "p95": 6.79,
-                "max": 9.12
+                "n": 38,
+                "median": 2.64,
+                "p95": 9.12,
+                "max": 29.02
               },
               "time_to_air_analyst_s": {
-                "n": 4,
-                "median": 7.38,
-                "p95": 18.98,
-                "max": 18.98
+                "n": 3,
+                "median": 7.78,
+                "p95": 19.68,
+                "max": 19.68
               },
               "time_to_air_analyst_voice_template_s": {
-                "n": 8,
-                "median": 8.52,
-                "p95": 18.28,
-                "max": 18.28
+                "n": 9,
+                "median": 9.57,
+                "p95": 22.8,
+                "max": 22.8
               }
             },
             "en/expert": {
-              "said": 47,
-              "grounded": 47,
+              "said": 55,
+              "grounded": 55,
               "from_analyst": 4,
-              "analyst_voice": 12,
+              "analyst_voice": 13,
               "analyst_voice_from_analyst": 4,
               "grounded_from_analyst": 4,
               "failures": [],
               "injected": {
                 "player_swapped": {
-                  "applicable": 36,
-                  "caught": 36
+                  "applicable": 43,
+                  "caught": 43
                 },
                 "number_changed": {
-                  "applicable": 26,
-                  "caught": 26
+                  "applicable": 19,
+                  "caught": 19
                 },
                 "score_swapped": {
                   "applicable": 3,
@@ -1820,31 +1820,31 @@
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 47,
+              "lines": 55,
               "covered_weight": 1.6,
               "analysis_weight": 1.6,
               "time_to_air_pbp_s": {
-                "n": 35,
-                "median": 1.96,
-                "p95": 7.69,
-                "max": 8.3
+                "n": 42,
+                "median": 2.26,
+                "p95": 6.97,
+                "max": 29.42
               },
               "time_to_air_analyst_s": {
                 "n": 4,
-                "median": 7.69,
-                "p95": 18.44,
-                "max": 18.44
+                "median": 7.34,
+                "p95": 18.88,
+                "max": 18.88
               },
               "time_to_air_analyst_voice_template_s": {
-                "n": 8,
-                "median": 9.65,
-                "p95": 18.94,
-                "max": 18.94
+                "n": 9,
+                "median": 9.23,
+                "p95": 23.28,
+                "max": 23.28
               }
             },
             "de/beginner": {
-              "said": 50,
-              "grounded": 50,
+              "said": 51,
+              "grounded": 51,
               "from_analyst": 4,
               "analyst_voice": 12,
               "analyst_voice_from_analyst": 4,
@@ -1852,16 +1852,16 @@
               "failures": [],
               "injected": {
                 "player_swapped": {
-                  "applicable": 39,
-                  "caught": 39
+                  "applicable": 38,
+                  "caught": 38
                 },
                 "number_changed": {
-                  "applicable": 8,
-                  "caught": 8
+                  "applicable": 7,
+                  "caught": 7
                 },
                 "score_swapped": {
-                  "applicable": 4,
-                  "caught": 4
+                  "applicable": 3,
+                  "caught": 3
                 }
               },
               "missed_injections": [],
@@ -1871,31 +1871,31 @@
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 50,
+              "lines": 51,
               "covered_weight": 1.6,
               "analysis_weight": 1.6,
               "time_to_air_pbp_s": {
-                "n": 38,
-                "median": 3.07,
+                "n": 39,
+                "median": 3.49,
                 "p95": 7.41,
                 "max": 8.72
               },
               "time_to_air_analyst_s": {
                 "n": 4,
-                "median": 8.01,
-                "p95": 18.82,
-                "max": 18.82
+                "median": 9.27,
+                "p95": 20.98,
+                "max": 20.98
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 8,
-                "median": 9.43,
-                "p95": 18.49,
-                "max": 18.49
+                "median": 10.79,
+                "p95": 20.66,
+                "max": 20.66
               }
             },
             "de/expert": {
-              "said": 50,
-              "grounded": 50,
+              "said": 53,
+              "grounded": 53,
               "from_analyst": 3,
               "analyst_voice": 12,
               "analyst_voice_from_analyst": 3,
@@ -1903,12 +1903,12 @@
               "failures": [],
               "injected": {
                 "player_swapped": {
-                  "applicable": 39,
-                  "caught": 39
+                  "applicable": 41,
+                  "caught": 41
                 },
                 "number_changed": {
-                  "applicable": 27,
-                  "caught": 27
+                  "applicable": 18,
+                  "caught": 18
                 },
                 "score_swapped": {
                   "applicable": 2,
@@ -1922,33 +1922,33 @@
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 50,
+              "lines": 53,
               "covered_weight": 1.6,
               "analysis_weight": 1.6,
               "time_to_air_pbp_s": {
-                "n": 38,
-                "median": 1.88,
-                "p95": 8.21,
-                "max": 8.85
+                "n": 41,
+                "median": 2.38,
+                "p95": 5.92,
+                "max": 8.09
               },
               "time_to_air_analyst_s": {
                 "n": 3,
-                "median": 8.15,
-                "p95": 20.77,
-                "max": 20.77
+                "median": 8.03,
+                "p95": 20.53,
+                "max": 20.53
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 9,
-                "median": 11.04,
-                "p95": 21.94,
-                "max": 21.94
+                "median": 10.92,
+                "p95": 21.71,
+                "max": 21.71
               }
             },
             "fr/beginner": {
-              "said": 54,
-              "grounded": 54,
+              "said": 55,
+              "grounded": 55,
               "from_analyst": 6,
-              "analyst_voice": 12,
+              "analyst_voice": 13,
               "analyst_voice_from_analyst": 6,
               "grounded_from_analyst": 6,
               "failures": [],
@@ -1958,12 +1958,12 @@
                   "caught": 41
                 },
                 "number_changed": {
-                  "applicable": 9,
-                  "caught": 9
+                  "applicable": 8,
+                  "caught": 8
                 },
                 "score_swapped": {
-                  "applicable": 4,
-                  "caught": 4
+                  "applicable": 3,
+                  "caught": 3
                 }
               },
               "missed_injections": [],
@@ -1973,31 +1973,31 @@
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 54,
+              "lines": 55,
               "covered_weight": 1.6,
               "analysis_weight": 1.6,
               "time_to_air_pbp_s": {
                 "n": 42,
-                "median": 2.98,
-                "p95": 6.2,
-                "max": 9.68
+                "median": 3.05,
+                "p95": 7.17,
+                "max": 28.65
               },
               "time_to_air_analyst_s": {
                 "n": 6,
                 "median": 8.23,
-                "p95": 18.52,
-                "max": 18.52
+                "p95": 18.58,
+                "max": 18.58
               },
               "time_to_air_analyst_voice_template_s": {
-                "n": 6,
-                "median": 12.61,
-                "p95": 18.54,
-                "max": 18.54
+                "n": 7,
+                "median": 11.74,
+                "p95": 22.14,
+                "max": 22.14
               }
             },
             "fr/expert": {
-              "said": 50,
-              "grounded": 50,
+              "said": 59,
+              "grounded": 59,
               "from_analyst": 3,
               "analyst_voice": 12,
               "analyst_voice_from_analyst": 3,
@@ -2005,12 +2005,12 @@
               "failures": [],
               "injected": {
                 "player_swapped": {
-                  "applicable": 38,
-                  "caught": 38
+                  "applicable": 45,
+                  "caught": 45
                 },
                 "number_changed": {
-                  "applicable": 27,
-                  "caught": 27
+                  "applicable": 18,
+                  "caught": 18
                 },
                 "score_swapped": {
                   "applicable": 2,
@@ -2024,26 +2024,26 @@
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 0.0,
               "long_silences": 0,
-              "lines": 50,
+              "lines": 59,
               "covered_weight": 1.6,
               "analysis_weight": 1.6,
               "time_to_air_pbp_s": {
-                "n": 38,
-                "median": 2.1,
-                "p95": 7.33,
-                "max": 9.55
+                "n": 47,
+                "median": 2.34,
+                "p95": 6.19,
+                "max": 9.59
               },
               "time_to_air_analyst_s": {
                 "n": 3,
-                "median": 7.45,
-                "p95": 20.14,
-                "max": 20.14
+                "median": 7.52,
+                "p95": 20.2,
+                "max": 20.2
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 9,
-                "median": 9.47,
-                "p95": 20.86,
-                "max": 20.86
+                "median": 10.21,
+                "p95": 20.92,
+                "max": 20.92
               }
             }
           },
@@ -2178,25 +2178,25 @@
         "momentum_swing": 60.0
       },
       "overall": {
-        "lines": 3548,
+        "lines": 3583,
         "grounding_rate": 1.0,
         "grounding_rate_analyst_lines": 1.0,
         "grounding_rate_template_lines": 1.0,
         "grounding_failures": 0,
         "injected_errors": {
           "score_swapped": {
-            "applicable": 82,
-            "caught": 82,
+            "applicable": 77,
+            "caught": 77,
             "catch_rate": 1.0
           },
           "number_changed": {
-            "applicable": 493,
-            "caught": 493,
+            "applicable": 254,
+            "caught": 254,
             "catch_rate": 1.0
           },
           "player_swapped": {
-            "applicable": 3058,
-            "caught": 3055,
+            "applicable": 3060,
+            "caught": 3057,
             "catch_rate": 0.999
           }
         },
@@ -2205,7 +2205,7 @@
             "error": "player_swapped",
             "channel": "de/expert",
             "m": 33,
-            "text": "Abaras Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
+            "text": "Arnauds Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
             "match": "comeback-7"
           },
           {
@@ -2224,33 +2224,33 @@
           }
         ],
         "lines_by_analyst": 120,
-        "said_by_analyst_share": 0.0338,
+        "said_by_analyst_share": 0.0335,
         "analyst_voice_lines": 264,
         "analyst_voice_by_analyst_share": 0.4545,
         "published_by_analyst_share": 1.0,
         "keymoment_spoken_coverage": 0.9385,
         "keymoment_analysis_coverage": 0.841,
-        "speech_share": 0.1655,
-        "silence_share": 0.8345,
+        "speech_share": 0.1623,
+        "silence_share": 0.8377,
         "longest_silence_viewer_s": 174.0,
-        "long_silences_per_match_channel": 90.83,
+        "long_silences_per_match_channel": 91.33,
         "time_to_air_pbp_viewer_s": {
-          "n": 3284,
+          "n": 3319,
           "median": 0.0,
-          "p95": 1.88,
-          "max": 7.84
+          "p95": 2.26,
+          "max": 29.95
         },
         "time_to_air_analyst_viewer_s": {
           "n": 120,
-          "median": 6.95,
-          "p95": 18.1,
-          "max": 20.77
+          "median": 6.52,
+          "p95": 17.72,
+          "max": 19.47
         },
         "time_to_air_analyst_voice_template_viewer_s": {
           "n": 144,
-          "median": 5.43,
-          "p95": 7.8,
-          "max": 18.73
+          "median": 4.41,
+          "p95": 6.24,
+          "max": 17.67
         },
         "keymoment_detection_coverage": 0.9385,
         "claimed_moments": 27,
@@ -2270,15 +2270,15 @@
       },
       "by_channel": {
         "en/beginner": {
-          "lines": 593,
+          "lines": 599,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
           "grounding_failures": 0,
           "injected_errors": {
             "score_swapped": {
-              "applicable": 16,
-              "caught": 16,
+              "applicable": 12,
+              "caught": 12,
               "catch_rate": 1.0
             },
             "number_changed": {
@@ -2294,21 +2294,21 @@
           },
           "injected_misses": [],
           "lines_by_analyst": 20,
-          "said_by_analyst_share": 0.0337,
+          "said_by_analyst_share": 0.0334,
           "analyst_voice_lines": 44,
           "analyst_voice_by_analyst_share": 0.4545,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
-          "speech_share": 0.159,
-          "silence_share": 0.841,
+          "speech_share": 0.1594,
+          "silence_share": 0.8406,
           "longest_silence_viewer_s": 173.4,
-          "long_silences_per_match_channel": 91.0,
+          "long_silences_per_match_channel": 90.67,
           "time_to_air_pbp_viewer_s": {
-            "n": 549,
+            "n": 555,
             "median": 0.0,
-            "p95": 1.9,
-            "max": 7.84
+            "p95": 2.46,
+            "max": 27.74
           },
           "time_to_air_analyst_viewer_s": {
             "n": 20,
@@ -2324,7 +2324,7 @@
           }
         },
         "en/expert": {
-          "lines": 593,
+          "lines": 600,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
@@ -2336,49 +2336,49 @@
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 137,
-              "caught": 137,
+              "applicable": 58,
+              "caught": 58,
               "catch_rate": 1.0
             },
             "player_swapped": {
-              "applicable": 508,
-              "caught": 508,
+              "applicable": 509,
+              "caught": 509,
               "catch_rate": 1.0
             }
           },
           "injected_misses": [],
           "lines_by_analyst": 20,
-          "said_by_analyst_share": 0.0337,
+          "said_by_analyst_share": 0.0333,
           "analyst_voice_lines": 44,
           "analyst_voice_by_analyst_share": 0.4545,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
-          "speech_share": 0.1823,
-          "silence_share": 0.8177,
+          "speech_share": 0.1715,
+          "silence_share": 0.8285,
           "longest_silence_viewer_s": 171.8,
-          "long_silences_per_match_channel": 89.67,
+          "long_silences_per_match_channel": 92.0,
           "time_to_air_pbp_viewer_s": {
-            "n": 549,
+            "n": 556,
             "median": 0.0,
-            "p95": 2.94,
-            "max": 6.48
+            "p95": 3.7,
+            "max": 28.7
           },
           "time_to_air_analyst_viewer_s": {
             "n": 20,
-            "median": 6.82,
-            "p95": 18.44,
-            "max": 18.44
+            "median": 6.51,
+            "p95": 18.16,
+            "max": 18.16
           },
           "time_to_air_analyst_voice_template_viewer_s": {
             "n": 24,
-            "median": 6.7,
-            "p95": 17.0,
-            "max": 18.73
+            "median": 4.14,
+            "p95": 6.24,
+            "max": 17.21
           }
         },
         "de/beginner": {
-          "lines": 588,
+          "lines": 592,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
@@ -2402,21 +2402,21 @@
           },
           "injected_misses": [],
           "lines_by_analyst": 20,
-          "said_by_analyst_share": 0.034,
+          "said_by_analyst_share": 0.0338,
           "analyst_voice_lines": 44,
           "analyst_voice_by_analyst_share": 0.4545,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
-          "speech_share": 0.1577,
-          "silence_share": 0.8423,
+          "speech_share": 0.1579,
+          "silence_share": 0.8421,
           "longest_silence_viewer_s": 173.3,
-          "long_silences_per_match_channel": 90.0,
+          "long_silences_per_match_channel": 89.67,
           "time_to_air_pbp_viewer_s": {
-            "n": 544,
+            "n": 548,
             "median": 0.0,
-            "p95": 1.52,
-            "max": 5.97
+            "p95": 1.88,
+            "max": 28.58
           },
           "time_to_air_analyst_viewer_s": {
             "n": 20,
@@ -2432,20 +2432,20 @@
           }
         },
         "de/expert": {
-          "lines": 595,
+          "lines": 600,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
           "grounding_failures": 0,
           "injected_errors": {
             "score_swapped": {
-              "applicable": 11,
-              "caught": 11,
+              "applicable": 14,
+              "caught": 14,
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 137,
-              "caught": 137,
+              "applicable": 58,
+              "caught": 58,
               "catch_rate": 1.0
             },
             "player_swapped": {
@@ -2459,7 +2459,7 @@
               "error": "player_swapped",
               "channel": "de/expert",
               "m": 33,
-              "text": "Abaras Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
+              "text": "Arnauds Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
               "match": "comeback-7"
             },
             {
@@ -2478,45 +2478,45 @@
             }
           ],
           "lines_by_analyst": 20,
-          "said_by_analyst_share": 0.0336,
+          "said_by_analyst_share": 0.0333,
           "analyst_voice_lines": 44,
           "analyst_voice_by_analyst_share": 0.4545,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
-          "speech_share": 0.1843,
-          "silence_share": 0.8157,
+          "speech_share": 0.1792,
+          "silence_share": 0.8208,
           "longest_silence_viewer_s": 171.8,
-          "long_silences_per_match_channel": 89.0,
+          "long_silences_per_match_channel": 89.67,
           "time_to_air_pbp_viewer_s": {
-            "n": 551,
+            "n": 556,
             "median": 0.0,
-            "p95": 3.23,
-            "max": 6.43
+            "p95": 3.6,
+            "max": 26.24
           },
           "time_to_air_analyst_viewer_s": {
             "n": 20,
-            "median": 7.22,
-            "p95": 20.77,
-            "max": 20.77
+            "median": 6.51,
+            "p95": 19.47,
+            "max": 19.47
           },
           "time_to_air_analyst_voice_template_viewer_s": {
             "n": 24,
-            "median": 6.08,
-            "p95": 17.51,
-            "max": 18.43
+            "median": 5.22,
+            "p95": 17.43,
+            "max": 17.67
           }
         },
         "fr/beginner": {
-          "lines": 589,
+          "lines": 595,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
           "grounding_failures": 0,
           "injected_errors": {
             "score_swapped": {
-              "applicable": 16,
-              "caught": 16,
+              "applicable": 12,
+              "caught": 12,
               "catch_rate": 1.0
             },
             "number_changed": {
@@ -2532,21 +2532,21 @@
           },
           "injected_misses": [],
           "lines_by_analyst": 20,
-          "said_by_analyst_share": 0.034,
+          "said_by_analyst_share": 0.0336,
           "analyst_voice_lines": 44,
           "analyst_voice_by_analyst_share": 0.4545,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
-          "speech_share": 0.1445,
-          "silence_share": 0.8555,
+          "speech_share": 0.1454,
+          "silence_share": 0.8546,
           "longest_silence_viewer_s": 174.0,
-          "long_silences_per_match_channel": 94.33,
+          "long_silences_per_match_channel": 94.0,
           "time_to_air_pbp_viewer_s": {
-            "n": 545,
+            "n": 551,
             "median": 0.0,
-            "p95": 0.81,
-            "max": 7.45
+            "p95": 1.45,
+            "max": 28.56
           },
           "time_to_air_analyst_viewer_s": {
             "n": 20,
@@ -2562,7 +2562,7 @@
           }
         },
         "fr/expert": {
-          "lines": 590,
+          "lines": 597,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
@@ -2574,118 +2574,118 @@
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 139,
-              "caught": 139,
+              "applicable": 58,
+              "caught": 58,
               "catch_rate": 1.0
             },
             "player_swapped": {
-              "applicable": 510,
-              "caught": 510,
+              "applicable": 511,
+              "caught": 511,
               "catch_rate": 1.0
             }
           },
           "injected_misses": [],
           "lines_by_analyst": 20,
-          "said_by_analyst_share": 0.0339,
+          "said_by_analyst_share": 0.0335,
           "analyst_voice_lines": 44,
           "analyst_voice_by_analyst_share": 0.4545,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
-          "speech_share": 0.1652,
-          "silence_share": 0.8348,
+          "speech_share": 0.1605,
+          "silence_share": 0.8395,
           "longest_silence_viewer_s": 172.8,
-          "long_silences_per_match_channel": 91.0,
+          "long_silences_per_match_channel": 92.0,
           "time_to_air_pbp_viewer_s": {
-            "n": 546,
+            "n": 553,
             "median": 0.0,
-            "p95": 1.72,
-            "max": 6.37
+            "p95": 1.95,
+            "max": 29.95
           },
           "time_to_air_analyst_viewer_s": {
             "n": 20,
-            "median": 7.3,
-            "p95": 20.14,
-            "max": 20.14
+            "median": 6.62,
+            "p95": 19.19,
+            "max": 19.19
           },
           "time_to_air_analyst_voice_template_viewer_s": {
             "n": 24,
-            "median": 6.01,
-            "p95": 7.45,
-            "max": 17.83
+            "median": 4.3,
+            "p95": 6.02,
+            "max": 6.24
           }
         }
       },
       "by_language": {
         "en": {
-          "lines": 1186,
+          "lines": 1199,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
           "grounding_failures": 0,
           "injected_errors": {
             "score_swapped": {
-              "applicable": 28,
-              "caught": 28,
+              "applicable": 24,
+              "caught": 24,
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 163,
-              "caught": 163,
+              "applicable": 84,
+              "caught": 84,
               "catch_rate": 1.0
             },
             "player_swapped": {
-              "applicable": 1018,
-              "caught": 1018,
+              "applicable": 1019,
+              "caught": 1019,
               "catch_rate": 1.0
             }
           },
           "injected_misses": [],
           "lines_by_analyst": 40,
-          "said_by_analyst_share": 0.0337,
+          "said_by_analyst_share": 0.0334,
           "analyst_voice_lines": 88,
           "analyst_voice_by_analyst_share": 0.4545,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
-          "speech_share": 0.1707,
-          "silence_share": 0.8293,
+          "speech_share": 0.1655,
+          "silence_share": 0.8345,
           "longest_silence_viewer_s": 173.4,
-          "long_silences_per_match_channel": 90.33,
+          "long_silences_per_match_channel": 91.33,
           "time_to_air_pbp_viewer_s": {
-            "n": 1098,
+            "n": 1111,
             "median": 0.0,
-            "p95": 2.18,
-            "max": 7.84
+            "p95": 2.72,
+            "max": 28.7
           },
           "time_to_air_analyst_viewer_s": {
             "n": 40,
-            "median": 6.78,
-            "p95": 18.4,
-            "max": 18.44
+            "median": 6.51,
+            "p95": 18.16,
+            "max": 18.4
           },
           "time_to_air_analyst_voice_template_viewer_s": {
             "n": 48,
-            "median": 5.26,
-            "p95": 14.92,
-            "max": 18.73
+            "median": 4.3,
+            "p95": 6.24,
+            "max": 17.21
           }
         },
         "de": {
-          "lines": 1183,
+          "lines": 1192,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
           "grounding_failures": 0,
           "injected_errors": {
             "score_swapped": {
-              "applicable": 27,
-              "caught": 27,
+              "applicable": 30,
+              "caught": 30,
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 163,
-              "caught": 163,
+              "applicable": 84,
+              "caught": 84,
               "catch_rate": 1.0
             },
             "player_swapped": {
@@ -2699,7 +2699,7 @@
               "error": "player_swapped",
               "channel": "de/expert",
               "m": 33,
-              "text": "Abaras Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
+              "text": "Arnauds Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
               "match": "comeback-7"
             },
             {
@@ -2718,101 +2718,101 @@
             }
           ],
           "lines_by_analyst": 40,
-          "said_by_analyst_share": 0.0338,
+          "said_by_analyst_share": 0.0336,
           "analyst_voice_lines": 88,
           "analyst_voice_by_analyst_share": 0.4545,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
-          "speech_share": 0.171,
-          "silence_share": 0.829,
+          "speech_share": 0.1685,
+          "silence_share": 0.8315,
           "longest_silence_viewer_s": 173.3,
-          "long_silences_per_match_channel": 89.5,
+          "long_silences_per_match_channel": 89.67,
           "time_to_air_pbp_viewer_s": {
-            "n": 1095,
+            "n": 1104,
             "median": 0.0,
-            "p95": 2.08,
-            "max": 6.43
+            "p95": 2.72,
+            "max": 28.58
           },
           "time_to_air_analyst_viewer_s": {
             "n": 40,
-            "median": 7.03,
-            "p95": 18.1,
-            "max": 20.77
+            "median": 6.51,
+            "p95": 17.72,
+            "max": 19.47
           },
           "time_to_air_analyst_voice_template_viewer_s": {
             "n": 48,
-            "median": 5.92,
+            "median": 5.38,
             "p95": 15.68,
-            "max": 18.43
+            "max": 17.67
           }
         },
         "fr": {
-          "lines": 1179,
+          "lines": 1192,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
           "grounding_failures": 0,
           "injected_errors": {
             "score_swapped": {
-              "applicable": 27,
-              "caught": 27,
+              "applicable": 23,
+              "caught": 23,
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 167,
-              "caught": 167,
+              "applicable": 86,
+              "caught": 86,
               "catch_rate": 1.0
             },
             "player_swapped": {
-              "applicable": 1021,
-              "caught": 1021,
+              "applicable": 1022,
+              "caught": 1022,
               "catch_rate": 1.0
             }
           },
           "injected_misses": [],
           "lines_by_analyst": 40,
-          "said_by_analyst_share": 0.0339,
+          "said_by_analyst_share": 0.0336,
           "analyst_voice_lines": 88,
           "analyst_voice_by_analyst_share": 0.4545,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
-          "speech_share": 0.1548,
-          "silence_share": 0.8452,
+          "speech_share": 0.153,
+          "silence_share": 0.847,
           "longest_silence_viewer_s": 174.0,
-          "long_silences_per_match_channel": 92.67,
+          "long_silences_per_match_channel": 93.0,
           "time_to_air_pbp_viewer_s": {
-            "n": 1091,
+            "n": 1104,
             "median": 0.0,
-            "p95": 1.38,
-            "max": 7.45
+            "p95": 1.69,
+            "max": 29.95
           },
           "time_to_air_analyst_viewer_s": {
             "n": 40,
-            "median": 7.03,
+            "median": 6.52,
             "p95": 18.11,
-            "max": 20.14
+            "max": 19.19
           },
           "time_to_air_analyst_voice_template_viewer_s": {
             "n": 48,
-            "median": 4.57,
-            "p95": 6.61,
-            "max": 17.83
+            "median": 4.19,
+            "p95": 6.02,
+            "max": 6.24
           }
         }
       },
       "by_style": {
         "beginner": {
-          "lines": 1770,
+          "lines": 1786,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
           "grounding_failures": 0,
           "injected_errors": {
             "score_swapped": {
-              "applicable": 48,
-              "caught": 48,
+              "applicable": 40,
+              "caught": 40,
               "catch_rate": 1.0
             },
             "number_changed": {
@@ -2828,21 +2828,21 @@
           },
           "injected_misses": [],
           "lines_by_analyst": 60,
-          "said_by_analyst_share": 0.0339,
+          "said_by_analyst_share": 0.0336,
           "analyst_voice_lines": 132,
           "analyst_voice_by_analyst_share": 0.4545,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
-          "speech_share": 0.1537,
-          "silence_share": 0.8463,
+          "speech_share": 0.1542,
+          "silence_share": 0.8458,
           "longest_silence_viewer_s": 174.0,
-          "long_silences_per_match_channel": 91.78,
+          "long_silences_per_match_channel": 91.44,
           "time_to_air_pbp_viewer_s": {
-            "n": 1638,
+            "n": 1654,
             "median": 0.0,
-            "p95": 1.42,
-            "max": 7.84
+            "p95": 1.9,
+            "max": 28.58
           },
           "time_to_air_analyst_viewer_s": {
             "n": 60,
@@ -2858,25 +2858,25 @@
           }
         },
         "expert": {
-          "lines": 1778,
+          "lines": 1797,
           "grounding_rate": 1.0,
           "grounding_rate_analyst_lines": 1.0,
           "grounding_rate_template_lines": 1.0,
           "grounding_failures": 0,
           "injected_errors": {
             "score_swapped": {
-              "applicable": 34,
-              "caught": 34,
+              "applicable": 37,
+              "caught": 37,
               "catch_rate": 1.0
             },
             "number_changed": {
-              "applicable": 413,
-              "caught": 413,
+              "applicable": 174,
+              "caught": 174,
               "catch_rate": 1.0
             },
             "player_swapped": {
-              "applicable": 1528,
-              "caught": 1525,
+              "applicable": 1530,
+              "caught": 1527,
               "catch_rate": 0.998
             }
           },
@@ -2885,7 +2885,7 @@
               "error": "player_swapped",
               "channel": "de/expert",
               "m": 33,
-              "text": "Abaras Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
+              "text": "Arnauds Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent.",
               "match": "comeback-7"
             },
             {
@@ -2904,33 +2904,33 @@
             }
           ],
           "lines_by_analyst": 60,
-          "said_by_analyst_share": 0.0337,
+          "said_by_analyst_share": 0.0334,
           "analyst_voice_lines": 132,
           "analyst_voice_by_analyst_share": 0.4545,
           "published_by_analyst_share": 1.0,
           "keymoment_spoken_coverage": 0.9385,
           "keymoment_analysis_coverage": 0.841,
-          "speech_share": 0.1773,
-          "silence_share": 0.8227,
+          "speech_share": 0.1704,
+          "silence_share": 0.8296,
           "longest_silence_viewer_s": 172.8,
-          "long_silences_per_match_channel": 89.89,
+          "long_silences_per_match_channel": 91.22,
           "time_to_air_pbp_viewer_s": {
-            "n": 1646,
+            "n": 1665,
             "median": 0.0,
-            "p95": 2.32,
-            "max": 6.48
+            "p95": 2.94,
+            "max": 29.95
           },
           "time_to_air_analyst_viewer_s": {
             "n": 60,
-            "median": 7.13,
-            "p95": 18.44,
-            "max": 20.77
+            "median": 6.52,
+            "p95": 18.16,
+            "max": 19.47
           },
           "time_to_air_analyst_voice_template_viewer_s": {
             "n": 72,
-            "median": 6.02,
-            "p95": 17.51,
-            "max": 18.73
+            "median": 4.3,
+            "p95": 6.24,
+            "max": 17.67
           }
         }
       },
@@ -2942,8 +2942,8 @@
           "duration_s": 5822.0,
           "channels": {
             "en/beginner": {
-              "said": 193,
-              "grounded": 193,
+              "said": 196,
+              "grounded": 196,
               "from_analyst": 7,
               "analyst_voice": 15,
               "analyst_voice_from_analyst": 7,
@@ -2955,8 +2955,8 @@
                   "caught": 163
                 },
                 "score_swapped": {
-                  "applicable": 8,
-                  "caught": 8
+                  "applicable": 6,
+                  "caught": 6
                 },
                 "number_changed": {
                   "applicable": 9,
@@ -2966,18 +2966,18 @@
               "missed_injections": [],
               "published": 8,
               "published_by_analyst": 8,
-              "spoken_match_s": 918.4,
+              "spoken_match_s": 922.4,
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 142.6,
               "long_silences": 90,
-              "lines": 193,
+              "lines": 196,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 178,
+                "n": 181,
                 "median": 0.0,
-                "p95": 1.88,
-                "max": 5.9
+                "p95": 3.46,
+                "max": 26.73
               },
               "time_to_air_analyst_s": {
                 "n": 7,
@@ -2993,8 +2993,8 @@
               }
             },
             "en/expert": {
-              "said": 192,
-              "grounded": 192,
+              "said": 195,
+              "grounded": 195,
               "from_analyst": 7,
               "analyst_voice": 15,
               "analyst_voice_from_analyst": 7,
@@ -3006,8 +3006,8 @@
                   "caught": 162
                 },
                 "number_changed": {
-                  "applicable": 49,
-                  "caught": 49
+                  "applicable": 19,
+                  "caught": 19
                 },
                 "score_swapped": {
                   "applicable": 6,
@@ -3017,35 +3017,35 @@
               "missed_injections": [],
               "published": 8,
               "published_by_analyst": 8,
-              "spoken_match_s": 1031.2,
+              "spoken_match_s": 961.5,
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 141.0,
-              "long_silences": 87,
-              "lines": 192,
+              "long_silences": 90,
+              "lines": 195,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 177,
+                "n": 180,
                 "median": 0.0,
-                "p95": 1.16,
-                "max": 5.34
+                "p95": 4.78,
+                "max": 25.37
               },
               "time_to_air_analyst_s": {
                 "n": 7,
-                "median": 7.13,
-                "p95": 16.84,
-                "max": 16.84
+                "median": 6.92,
+                "p95": 15.87,
+                "max": 15.87
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 8,
-                "median": 3.01,
-                "p95": 17.0,
-                "max": 17.0
+                "median": 1.63,
+                "p95": 6.02,
+                "max": 6.02
               }
             },
             "de/beginner": {
-              "said": 192,
-              "grounded": 192,
+              "said": 194,
+              "grounded": 194,
               "from_analyst": 7,
               "analyst_voice": 15,
               "analyst_voice_from_analyst": 7,
@@ -3068,18 +3068,18 @@
               "missed_injections": [],
               "published": 8,
               "published_by_analyst": 8,
-              "spoken_match_s": 922.2,
+              "spoken_match_s": 923.2,
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 142.5,
               "long_silences": 88,
-              "lines": 192,
+              "lines": 194,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 177,
+                "n": 179,
                 "median": 0.0,
-                "p95": 1.52,
-                "max": 5.97
+                "p95": 3.55,
+                "max": 28.58
               },
               "time_to_air_analyst_s": {
                 "n": 7,
@@ -3095,8 +3095,8 @@
               }
             },
             "de/expert": {
-              "said": 193,
-              "grounded": 193,
+              "said": 196,
+              "grounded": 196,
               "from_analyst": 7,
               "analyst_voice": 15,
               "analyst_voice_from_analyst": 7,
@@ -3108,12 +3108,12 @@
                   "caught": 161
                 },
                 "number_changed": {
-                  "applicable": 49,
-                  "caught": 49
+                  "applicable": 19,
+                  "caught": 19
                 },
                 "score_swapped": {
-                  "applicable": 5,
-                  "caught": 5
+                  "applicable": 7,
+                  "caught": 7
                 }
               },
               "missed_injections": [
@@ -3121,7 +3121,7 @@
                   "error": "player_swapped",
                   "channel": "de/expert",
                   "m": 33,
-                  "text": "Abaras Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent."
+                  "text": "Arnauds Tor in der 14. Minute (0-1) bei 0,25 xG erhöht die Siegwahrscheinlichkeit von Marlow Bay von 61 auf 84 Prozent."
                 },
                 {
                   "error": "player_swapped",
@@ -3132,35 +3132,35 @@
               ],
               "published": 8,
               "published_by_analyst": 8,
-              "spoken_match_s": 1046.0,
+              "spoken_match_s": 1015.7,
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 141.1,
-              "long_silences": 87,
-              "lines": 193,
+              "long_silences": 88,
+              "lines": 196,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 178,
+                "n": 181,
                 "median": 0.0,
-                "p95": 2.85,
-                "max": 5.47
+                "p95": 4.22,
+                "max": 26.24
               },
               "time_to_air_analyst_s": {
                 "n": 7,
-                "median": 7.63,
-                "p95": 18.1,
-                "max": 18.1
+                "median": 6.18,
+                "p95": 16.11,
+                "max": 16.11
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 8,
-                "median": 3.01,
-                "p95": 18.43,
-                "max": 18.43
+                "median": 1.78,
+                "p95": 17.43,
+                "max": 17.43
               }
             },
             "fr/beginner": {
-              "said": 191,
-              "grounded": 191,
+              "said": 194,
+              "grounded": 194,
               "from_analyst": 7,
               "analyst_voice": 15,
               "analyst_voice_from_analyst": 7,
@@ -3176,25 +3176,25 @@
                   "caught": 10
                 },
                 "score_swapped": {
-                  "applicable": 8,
-                  "caught": 8
+                  "applicable": 6,
+                  "caught": 6
                 }
               },
               "missed_injections": [],
               "published": 8,
               "published_by_analyst": 8,
-              "spoken_match_s": 839.1,
+              "spoken_match_s": 845.1,
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 143.3,
               "long_silences": 93,
-              "lines": 191,
+              "lines": 194,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 176,
+                "n": 179,
                 "median": 0.0,
-                "p95": 0.79,
-                "max": 4.07
+                "p95": 2.84,
+                "max": 28.56
               },
               "time_to_air_analyst_s": {
                 "n": 7,
@@ -3210,8 +3210,8 @@
               }
             },
             "fr/expert": {
-              "said": 192,
-              "grounded": 192,
+              "said": 195,
+              "grounded": 195,
               "from_analyst": 7,
               "analyst_voice": 15,
               "analyst_voice_from_analyst": 7,
@@ -3223,8 +3223,8 @@
                   "caught": 163
                 },
                 "number_changed": {
-                  "applicable": 49,
-                  "caught": 49
+                  "applicable": 19,
+                  "caught": 19
                 },
                 "score_swapped": {
                   "applicable": 5,
@@ -3234,30 +3234,30 @@
               "missed_injections": [],
               "published": 8,
               "published_by_analyst": 8,
-              "spoken_match_s": 944.7,
+              "spoken_match_s": 914.3,
               "duration_match_s": 5822.0,
               "longest_silence_viewer_s": 142.0,
-              "long_silences": 89,
-              "lines": 192,
+              "long_silences": 90,
+              "lines": 195,
               "covered_weight": 3.5,
               "analysis_weight": 3.5,
               "time_to_air_pbp_s": {
-                "n": 177,
+                "n": 180,
                 "median": 0.0,
-                "p95": 1.81,
-                "max": 5.99
+                "p95": 3.68,
+                "max": 25.87
               },
               "time_to_air_analyst_s": {
                 "n": 7,
-                "median": 7.3,
-                "p95": 17.6,
-                "max": 17.6
+                "median": 6.83,
+                "p95": 15.96,
+                "max": 15.96
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 8,
-                "median": 3.01,
-                "p95": 17.83,
-                "max": 17.83
+                "median": 1.49,
+                "p95": 6.02,
+                "max": 6.02
               }
             }
           },
@@ -3452,6 +3452,108 @@
           "duration_s": 5820.8,
           "channels": {
             "en/beginner": {
+              "said": 182,
+              "grounded": 182,
+              "from_analyst": 6,
+              "analyst_voice": 14,
+              "analyst_voice_from_analyst": 6,
+              "grounded_from_analyst": 6,
+              "failures": [],
+              "injected": {
+                "player_swapped": {
+                  "applicable": 155,
+                  "caught": 155
+                },
+                "number_changed": {
+                  "applicable": 8,
+                  "caught": 8
+                },
+                "score_swapped": {
+                  "applicable": 2,
+                  "caught": 2
+                }
+              },
+              "missed_injections": [],
+              "published": 9,
+              "published_by_analyst": 9,
+              "spoken_match_s": 841.4,
+              "duration_match_s": 5820.8,
+              "longest_silence_viewer_s": 160.4,
+              "long_silences": 90,
+              "lines": 182,
+              "covered_weight": 4.05,
+              "analysis_weight": 3.1,
+              "time_to_air_pbp_s": {
+                "n": 168,
+                "median": 0.0,
+                "p95": 0.84,
+                "max": 21.4
+              },
+              "time_to_air_analyst_s": {
+                "n": 6,
+                "median": 6.84,
+                "p95": 9.58,
+                "max": 9.58
+              },
+              "time_to_air_analyst_voice_template_s": {
+                "n": 8,
+                "median": 5.29,
+                "p95": 6.24,
+                "max": 6.24
+              }
+            },
+            "en/expert": {
+              "said": 184,
+              "grounded": 184,
+              "from_analyst": 6,
+              "analyst_voice": 14,
+              "analyst_voice_from_analyst": 6,
+              "grounded_from_analyst": 6,
+              "failures": [],
+              "injected": {
+                "player_swapped": {
+                  "applicable": 155,
+                  "caught": 155
+                },
+                "number_changed": {
+                  "applicable": 17,
+                  "caught": 17
+                },
+                "score_swapped": {
+                  "applicable": 2,
+                  "caught": 2
+                }
+              },
+              "missed_injections": [],
+              "published": 9,
+              "published_by_analyst": 9,
+              "spoken_match_s": 923.8,
+              "duration_match_s": 5820.8,
+              "longest_silence_viewer_s": 159.3,
+              "long_silences": 93,
+              "lines": 184,
+              "covered_weight": 4.05,
+              "analysis_weight": 3.1,
+              "time_to_air_pbp_s": {
+                "n": 170,
+                "median": 0.0,
+                "p95": 3.56,
+                "max": 22.52
+              },
+              "time_to_air_analyst_s": {
+                "n": 6,
+                "median": 6.23,
+                "p95": 10.62,
+                "max": 10.62
+              },
+              "time_to_air_analyst_voice_template_s": {
+                "n": 8,
+                "median": 5.2,
+                "p95": 17.21,
+                "max": 17.21
+              }
+            },
+            "de/beginner": {
               "said": 180,
               "grounded": 180,
               "from_analyst": 6,
@@ -3476,120 +3578,18 @@
               "missed_injections": [],
               "published": 9,
               "published_by_analyst": 9,
-              "spoken_match_s": 839.1,
+              "spoken_match_s": 838.7,
               "duration_match_s": 5820.8,
-              "longest_silence_viewer_s": 160.4,
-              "long_silences": 91,
+              "longest_silence_viewer_s": 160.8,
+              "long_silences": 89,
               "lines": 180,
               "covered_weight": 4.05,
               "analysis_weight": 3.1,
               "time_to_air_pbp_s": {
                 "n": 166,
                 "median": 0.0,
-                "p95": 0.1,
-                "max": 5.9
-              },
-              "time_to_air_analyst_s": {
-                "n": 6,
-                "median": 6.84,
-                "p95": 9.58,
-                "max": 9.58
-              },
-              "time_to_air_analyst_voice_template_s": {
-                "n": 8,
-                "median": 5.29,
-                "p95": 6.24,
-                "max": 6.24
-              }
-            },
-            "en/expert": {
-              "said": 182,
-              "grounded": 182,
-              "from_analyst": 6,
-              "analyst_voice": 14,
-              "analyst_voice_from_analyst": 6,
-              "grounded_from_analyst": 6,
-              "failures": [],
-              "injected": {
-                "player_swapped": {
-                  "applicable": 155,
-                  "caught": 155
-                },
-                "number_changed": {
-                  "applicable": 37,
-                  "caught": 37
-                },
-                "score_swapped": {
-                  "applicable": 2,
-                  "caught": 2
-                }
-              },
-              "missed_injections": [],
-              "published": 9,
-              "published_by_analyst": 9,
-              "spoken_match_s": 969.7,
-              "duration_match_s": 5820.8,
-              "longest_silence_viewer_s": 159.3,
-              "long_silences": 91,
-              "lines": 182,
-              "covered_weight": 4.05,
-              "analysis_weight": 3.1,
-              "time_to_air_pbp_s": {
-                "n": 168,
-                "median": 0.0,
-                "p95": 1.58,
-                "max": 5.58
-              },
-              "time_to_air_analyst_s": {
-                "n": 6,
-                "median": 6.84,
-                "p95": 11.16,
-                "max": 11.16
-              },
-              "time_to_air_analyst_voice_template_s": {
-                "n": 8,
-                "median": 6.74,
-                "p95": 18.73,
-                "max": 18.73
-              }
-            },
-            "de/beginner": {
-              "said": 178,
-              "grounded": 178,
-              "from_analyst": 6,
-              "analyst_voice": 14,
-              "analyst_voice_from_analyst": 6,
-              "grounded_from_analyst": 6,
-              "failures": [],
-              "injected": {
-                "player_swapped": {
-                  "applicable": 155,
-                  "caught": 155
-                },
-                "number_changed": {
-                  "applicable": 8,
-                  "caught": 8
-                },
-                "score_swapped": {
-                  "applicable": 3,
-                  "caught": 3
-                }
-              },
-              "missed_injections": [],
-              "published": 9,
-              "published_by_analyst": 9,
-              "spoken_match_s": 832.6,
-              "duration_match_s": 5820.8,
-              "longest_silence_viewer_s": 160.8,
-              "long_silences": 90,
-              "lines": 178,
-              "covered_weight": 4.05,
-              "analysis_weight": 3.1,
-              "time_to_air_pbp_s": {
-                "n": 164,
-                "median": 0.0,
-                "p95": 0.0,
-                "max": 4.8
+                "p95": 0.57,
+                "max": 21.99
               },
               "time_to_air_analyst_s": {
                 "n": 6,
@@ -3605,8 +3605,8 @@
               }
             },
             "de/expert": {
-              "said": 182,
-              "grounded": 182,
+              "said": 184,
+              "grounded": 184,
               "from_analyst": 6,
               "analyst_voice": 14,
               "analyst_voice_from_analyst": 6,
@@ -3618,12 +3618,12 @@
                   "caught": 154
                 },
                 "number_changed": {
-                  "applicable": 37,
-                  "caught": 37
+                  "applicable": 17,
+                  "caught": 17
                 },
                 "score_swapped": {
-                  "applicable": 2,
-                  "caught": 2
+                  "applicable": 3,
+                  "caught": 3
                 }
               },
               "missed_injections": [
@@ -3636,35 +3636,35 @@
               ],
               "published": 9,
               "published_by_analyst": 9,
-              "spoken_match_s": 976.0,
+              "spoken_match_s": 957.9,
               "duration_match_s": 5820.8,
               "longest_silence_viewer_s": 159.1,
               "long_silences": 90,
-              "lines": 182,
+              "lines": 184,
               "covered_weight": 4.05,
               "analysis_weight": 3.1,
               "time_to_air_pbp_s": {
-                "n": 168,
+                "n": 170,
                 "median": 0.0,
-                "p95": 1.99,
-                "max": 5.72
+                "p95": 2.88,
+                "max": 22.24
               },
               "time_to_air_analyst_s": {
                 "n": 6,
-                "median": 6.73,
-                "p95": 11.68,
-                "max": 11.68
+                "median": 6.82,
+                "p95": 10.13,
+                "max": 10.13
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 8,
-                "median": 6.08,
-                "p95": 17.51,
-                "max": 17.51
+                "median": 5.74,
+                "p95": 17.67,
+                "max": 17.67
               }
             },
             "fr/beginner": {
-              "said": 179,
-              "grounded": 179,
+              "said": 181,
+              "grounded": 181,
               "from_analyst": 6,
               "analyst_voice": 14,
               "analyst_voice_from_analyst": 6,
@@ -3680,25 +3680,25 @@
                   "caught": 9
                 },
                 "score_swapped": {
-                  "applicable": 3,
-                  "caught": 3
+                  "applicable": 2,
+                  "caught": 2
                 }
               },
               "missed_injections": [],
               "published": 9,
               "published_by_analyst": 9,
-              "spoken_match_s": 768.4,
+              "spoken_match_s": 775.3,
               "duration_match_s": 5820.8,
               "longest_silence_viewer_s": 160.9,
-              "long_silences": 93,
-              "lines": 179,
+              "long_silences": 92,
+              "lines": 181,
               "covered_weight": 4.05,
               "analysis_weight": 3.1,
               "time_to_air_pbp_s": {
-                "n": 165,
+                "n": 167,
                 "median": 0.0,
-                "p95": 0.33,
-                "max": 5.76
+                "p95": 0.4,
+                "max": 20.4
               },
               "time_to_air_analyst_s": {
                 "n": 6,
@@ -3714,8 +3714,8 @@
               }
             },
             "fr/expert": {
-              "said": 179,
-              "grounded": 179,
+              "said": 181,
+              "grounded": 181,
               "from_analyst": 6,
               "analyst_voice": 14,
               "analyst_voice_from_analyst": 6,
@@ -3727,8 +3727,8 @@
                   "caught": 155
                 },
                 "number_changed": {
-                  "applicable": 39,
-                  "caught": 39
+                  "applicable": 17,
+                  "caught": 17
                 },
                 "score_swapped": {
                   "applicable": 2,
@@ -3738,30 +3738,30 @@
               "missed_injections": [],
               "published": 9,
               "published_by_analyst": 9,
-              "spoken_match_s": 866.8,
+              "spoken_match_s": 853.6,
               "duration_match_s": 5820.8,
               "longest_silence_viewer_s": 159.8,
-              "long_silences": 91,
-              "lines": 179,
+              "long_silences": 92,
+              "lines": 181,
               "covered_weight": 4.05,
               "analysis_weight": 3.1,
               "time_to_air_pbp_s": {
-                "n": 165,
+                "n": 167,
                 "median": 0.0,
-                "p95": 0.29,
-                "max": 5.84
+                "p95": 0.56,
+                "max": 20.55
               },
               "time_to_air_analyst_s": {
                 "n": 6,
-                "median": 6.9,
-                "p95": 10.83,
-                "max": 10.83
+                "median": 6.84,
+                "p95": 9.62,
+                "max": 9.62
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 8,
-                "median": 5.93,
-                "p95": 7.45,
-                "max": 7.45
+                "median": 5.34,
+                "p95": 6.24,
+                "max": 6.24
               }
             }
           },
@@ -3964,8 +3964,8 @@
           "duration_s": 5822.7,
           "channels": {
             "en/beginner": {
-              "said": 220,
-              "grounded": 220,
+              "said": 221,
+              "grounded": 221,
               "from_analyst": 7,
               "analyst_voice": 15,
               "analyst_voice_from_analyst": 7,
@@ -3981,25 +3981,25 @@
                   "caught": 9
                 },
                 "score_swapped": {
-                  "applicable": 5,
-                  "caught": 5
+                  "applicable": 4,
+                  "caught": 4
                 }
               },
               "missed_injections": [],
               "published": 7,
               "published_by_analyst": 7,
-              "spoken_match_s": 1019.7,
+              "spoken_match_s": 1021.0,
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 173.4,
               "long_silences": 92,
-              "lines": 220,
+              "lines": 221,
               "covered_weight": 1.6,
               "analysis_weight": 1.6,
               "time_to_air_pbp_s": {
-                "n": 205,
+                "n": 206,
                 "median": 0.0,
-                "p95": 2.46,
-                "max": 7.84
+                "p95": 2.48,
+                "max": 27.74
               },
               "time_to_air_analyst_s": {
                 "n": 7,
@@ -4015,21 +4015,21 @@
               }
             },
             "en/expert": {
-              "said": 219,
-              "grounded": 219,
+              "said": 221,
+              "grounded": 221,
               "from_analyst": 7,
               "analyst_voice": 15,
               "analyst_voice_from_analyst": 7,
               "grounded_from_analyst": 7,
               "failures": [],
               "injected": {
-                "number_changed": {
-                  "applicable": 51,
-                  "caught": 51
-                },
                 "player_swapped": {
-                  "applicable": 191,
-                  "caught": 191
+                  "applicable": 192,
+                  "caught": 192
+                },
+                "number_changed": {
+                  "applicable": 22,
+                  "caught": 22
                 },
                 "score_swapped": {
                   "applicable": 4,
@@ -4039,30 +4039,30 @@
               "missed_injections": [],
               "published": 7,
               "published_by_analyst": 7,
-              "spoken_match_s": 1183.2,
+              "spoken_match_s": 1110.3,
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 171.8,
-              "long_silences": 91,
-              "lines": 219,
+              "long_silences": 93,
+              "lines": 221,
               "covered_weight": 1.6,
               "analysis_weight": 1.6,
               "time_to_air_pbp_s": {
-                "n": 204,
+                "n": 206,
                 "median": 0.0,
-                "p95": 4.14,
-                "max": 6.48
+                "p95": 3.7,
+                "max": 28.7
               },
               "time_to_air_analyst_s": {
                 "n": 7,
-                "median": 6.78,
-                "p95": 18.44,
-                "max": 18.44
+                "median": 6.52,
+                "p95": 18.16,
+                "max": 18.16
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 8,
-                "median": 6.7,
-                "p95": 7.18,
-                "max": 7.18
+                "median": 4.14,
+                "p95": 4.62,
+                "max": 4.62
               }
             },
             "de/beginner": {
@@ -4090,7 +4090,7 @@
               "missed_injections": [],
               "published": 7,
               "published_by_analyst": 7,
-              "spoken_match_s": 998.8,
+              "spoken_match_s": 995.6,
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 173.3,
               "long_silences": 92,
@@ -4101,7 +4101,7 @@
                 "n": 203,
                 "median": 0.0,
                 "p95": 2.27,
-                "max": 5.97
+                "max": 27.43
               },
               "time_to_air_analyst_s": {
                 "n": 7,
@@ -4125,13 +4125,13 @@
               "grounded_from_analyst": 7,
               "failures": [],
               "injected": {
-                "number_changed": {
-                  "applicable": 51,
-                  "caught": 51
-                },
                 "player_swapped": {
                   "applicable": 192,
                   "caught": 192
+                },
+                "number_changed": {
+                  "applicable": 22,
+                  "caught": 22
                 },
                 "score_swapped": {
                   "applicable": 4,
@@ -4141,35 +4141,35 @@
               "missed_injections": [],
               "published": 7,
               "published_by_analyst": 7,
-              "spoken_match_s": 1197.0,
+              "spoken_match_s": 1156.1,
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 171.8,
-              "long_silences": 90,
+              "long_silences": 91,
               "lines": 220,
               "covered_weight": 1.6,
               "analysis_weight": 1.6,
               "time_to_air_pbp_s": {
                 "n": 205,
                 "median": 0.0,
-                "p95": 3.9,
+                "p95": 3.42,
                 "max": 6.43
               },
               "time_to_air_analyst_s": {
                 "n": 7,
-                "median": 6.95,
-                "p95": 20.77,
-                "max": 20.77
+                "median": 6.52,
+                "p95": 19.47,
+                "max": 19.47
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 8,
-                "median": 6.22,
-                "p95": 6.72,
-                "max": 6.72
+                "median": 5.22,
+                "p95": 5.72,
+                "max": 5.72
               }
             },
             "fr/beginner": {
-              "said": 219,
-              "grounded": 219,
+              "said": 220,
+              "grounded": 220,
               "from_analyst": 7,
               "analyst_voice": 15,
               "analyst_voice_from_analyst": 7,
@@ -4185,25 +4185,25 @@
                   "caught": 9
                 },
                 "score_swapped": {
-                  "applicable": 5,
-                  "caught": 5
+                  "applicable": 4,
+                  "caught": 4
                 }
               },
               "missed_injections": [],
               "published": 7,
               "published_by_analyst": 7,
-              "spoken_match_s": 916.3,
+              "spoken_match_s": 918.6,
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 174.0,
               "long_silences": 97,
-              "lines": 219,
+              "lines": 220,
               "covered_weight": 1.6,
               "analysis_weight": 1.6,
               "time_to_air_pbp_s": {
-                "n": 204,
+                "n": 205,
                 "median": 0.0,
-                "p95": 1.5,
-                "max": 7.45
+                "p95": 1.56,
+                "max": 28.18
               },
               "time_to_air_analyst_s": {
                 "n": 7,
@@ -4219,21 +4219,21 @@
               }
             },
             "fr/expert": {
-              "said": 219,
-              "grounded": 219,
+              "said": 221,
+              "grounded": 221,
               "from_analyst": 7,
               "analyst_voice": 15,
               "analyst_voice_from_analyst": 7,
               "grounded_from_analyst": 7,
               "failures": [],
               "injected": {
-                "number_changed": {
-                  "applicable": 51,
-                  "caught": 51
-                },
                 "player_swapped": {
-                  "applicable": 192,
-                  "caught": 192
+                  "applicable": 193,
+                  "caught": 193
+                },
+                "number_changed": {
+                  "applicable": 22,
+                  "caught": 22
                 },
                 "score_swapped": {
                   "applicable": 4,
@@ -4243,30 +4243,30 @@
               "missed_injections": [],
               "published": 7,
               "published_by_analyst": 7,
-              "spoken_match_s": 1073.7,
+              "spoken_match_s": 1035.8,
               "duration_match_s": 5822.7,
               "longest_silence_viewer_s": 172.8,
-              "long_silences": 93,
-              "lines": 219,
+              "long_silences": 94,
+              "lines": 221,
               "covered_weight": 1.6,
               "analysis_weight": 1.6,
               "time_to_air_pbp_s": {
-                "n": 204,
+                "n": 206,
                 "median": 0.0,
-                "p95": 3.02,
-                "max": 6.37
+                "p95": 2.35,
+                "max": 29.95
               },
               "time_to_air_analyst_s": {
                 "n": 7,
-                "median": 6.95,
-                "p95": 20.14,
-                "max": 20.14
+                "median": 6.52,
+                "p95": 19.19,
+                "max": 19.19
               },
               "time_to_air_analyst_voice_template_s": {
                 "n": 8,
-                "median": 6.15,
-                "p95": 6.61,
-                "max": 6.61
+                "median": 4.15,
+                "p95": 4.61,
+                "max": 4.61
               }
             }
           },

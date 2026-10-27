@@ -24,10 +24,19 @@ Query parameters (WebSocket and SSE):
 | `analyst_from` | `start` | live only, between 0 and `start`: a restarted stream asks again for the analyst moments detected from this match second on that were still being written. Their answer comes from the call under way or the cache, so a restart makes no second call. Nothing else about the skipped stretch is said. Rejected with `bad_request` in replay mode |
 | `until` | none | live only, greater than `start` and at most the match length: the stream feeds no event after this match second, lets the commentary drain (at most 20 viewer seconds), and ends. It makes a short live insert, such as the demo insert, a self-contained run. `hello.until` echoes it. Rejected with `bad_request` in replay mode. A server started with a run length cap (`--live-max-seconds`, default 75) refuses a live run whose `until - start` is larger, and a live run without `until`, with `bad_request` |
 | `paced` | `true` | `false` sends everything as fast as possible (tests, tooling). Message content does not change |
+| `fast` | `0` | live only, `1`: run like the recorded story insert: the dense voice (fast and context layers, `touch`, `pass_kind`, the stories), the pattern detector on (`say.ins`, the `pattern` and `payoff` steps), the booth's memory per run, and the `row` messages. Additive (2026-10-27) |
+| `world` | server default | live only, `1`: this run gets the world channels 6 to 11 (one world call per moment the English booth calls); `0`: it does not, so a viewer of a core channel never pays for them. Absent: the server's default (on when it was started with `--world-calls N`), except on a public server, where absent means `0`. `1` on a server without a world booth, or with its calls used, is refused with `no_world`. Additive (2026-10-27) |
+| `rows` | `0` | live only, `1`: the `row` messages without the dense voice (`fast=1` implies it). Additive (2026-10-27) |
+| `token` | none | the session token from `GET /api/session`. Required for a live run on a public server, ignored elsewhere. Additive (2026-10-27) |
+| `seed` | none | live only, a whole number 0 to 999999: the play of a generated scene (see "Public live server"). Only on a server that is not public and only with a generated scene's exact `match`, `start`, `until`; otherwise `bad_request`. Additive (2026-10-27) |
 
 Other endpoints: `GET /api/health` (`{ok, protocol, replay, live: {available, code, reason, calls_left, fresh, runs_left, runs_per_day, max_seconds}, tts: {available, reason, voice, model, credits_left, credits_max}}`; `live.available` turns
-`false` with code `no_budget` once `calls_left` reaches 0, or with code `no_runs_today` once `runs_left` reaches 0, and new live runs are then refused. `runs_left`, `runs_per_day` and `max_seconds` are `null` when that cap is off or live is not configured; `code` is one of `ok`, `no_key`, `no_budget`, `no_runs_today`),
+`false` with code `no_budget` once `calls_left` reaches 0, or with code `no_runs_today` once `runs_left` reaches 0, and new live runs are then refused.
+Additive (2026-10-27): `live.code` may also be `no_calls_today` (the daily model call cap) or `no_session_secret` (a public server without a session secret), `live.calls_left` is the smaller of the lifetime budget and today's calls, and two more objects follow,
+`today: {runs_left, calls_left, calls_per_day, voice_credits_left, voice_credits_per_day, world, world_calls_left}` (what a page needs to offer a live run; `world` says whether `world=1` can be asked for; `null` where a cap is off) and
+`public: {on, sessions, session_runs, ip_runs, concurrent, active, busy, scenes}`; `tts` gains `credits_per_day` and `credits_today_left` when the voice has a daily cap. `runs_left`, `runs_per_day` and `max_seconds` are `null` when that cap is off or live is not configured; `code` is one of `ok`, `no_key`, `no_budget`, `no_runs_today`),
 `GET /api/demo-insert` (the preset live window: `{match, arc, seed, start, until, goal_t, goal_clock}`), `GET /api/guided-live` (see "Guided live run"), `GET /api/tts` (see "Spoken lines"),
+`GET /api/session` and `GET /api/scene` (see "Public live server"),
 `GET /api/matches` (list with title, teams, final score, duration, `replay` flag), `GET /api/matches/<id>`
 (that summary plus a `hello` message).
 
@@ -78,7 +87,8 @@ Sent once. Everything needed to decode frames, so a client hard-codes nothing bu
 | `eventFields` | names of the positions of an event array |
 | `until` | optional, live only: the match second a live insert ends at (see the `until` query parameter) |
 | `run` | optional, live only: the id of this run. `GET /api/tts` finds the lines the server published in it by this id |
-| `channels` | the six commentary channels: `id`, `key` (`en/expert`), `lang` (`en`, `de`, `fr`), `style` (`beginner`, `expert`). `say.ch` is the `id` |
+| `scene_seed` | optional, live only: the seed of a generated scene's play (see "Public live server"). Additive (2026-10-27) |
+| `channels` | the six commentary channels: `id`, `key` (`en/expert`), `lang` (`en`, `de`, `fr`), `style` (`beginner`, `expert`). `say.ch` is the `id`. Additive (2026-10-26): `level` (same value as `style`), `solo` (true for a one-person booth), `lead` and, in a two-person booth, `co`, each `{name, gender}` (`man` or `woman`). A run with the world booth lists twelve channels: ids 6 to 11 are appended after 0 to 5, so no existing id moves (see "World channels" below) |
 
 ### `f` (frame)
 
@@ -126,12 +136,14 @@ One line of commentary on one channel.
 | `t` | emission time (the clock at which the director committed the line) |
 | `ch` | channel id |
 | `m` | moment id. `(ch, m)` identifies the line |
-| `kind` | moment kind, e.g. `shot_goal`, `corner`, `goal_analysis` |
-| `voice` | `pbp` (play-by-play) or `analyst` |
+| `kind` | moment kind, e.g. `shot_goal`, `corner`, `goal_analysis`, `score_line` (the lead after the co-commentator's goal line: the score in its spoken form and the time left; moment id 900000 plus the goal analysis id), `pattern_insight` (the co-commentator points out a habit of one side in a quiet spell; live runs with the dense voice only; moment id 800000 + 4 x (half - 1) + 0 for home, 1 for away) |
+| `voice` | `pbp` (the channel's lead: play-by-play, the dossier story notes, the score line after a goal) or `analyst` (its co-commentator: the model's lines and the other context notes) |
+| `who` | optional, additive (older clients ignore it): the person in the channel's booth who says the line, the lead for `voice: pbp` and the co-commentator for `voice: analyst`. Booths: en/beginner Owen Carter and Daniel Price, en/expert Charlie Hale and Daniel Price, de/beginner Felix Brandt and Kim Berger, de/expert Jonas Weber and Kim Berger, fr/beginner Théo Laurent and Sacha Morel, fr/expert Hugo Martin and Sacha Morel (`commentary/lang.py` `BOOTH`). Fictional names. The world channels are solo booths: `who` is the lead for every line, analysis included (es/expert Lucía Romero, it/beginner Giulia Conti, pt/expert Rafael Souza, nl/beginner Sanne de Vries, tr/expert Emre Aydın, ja/beginner Yuki Tanaka) |
 | `text` | the sentence, already in the channel's language and style, checked by the verifier |
 | `s`, `e` | start and end of the speech in match seconds. `e - s` is the estimated speaking time times `speed` |
 | `cut` | `0`, or `1` when a more important moment interrupted the line |
 | `src` | `analyst` when the model wrote this exact text, `template` otherwise (template wording, or a shorter template variant chosen because time was short) |
+| `ins` | optional, additive (older clients ignore it): set on a `pattern_insight` line and on the goal analysis line that pays a pattern off, the same object on every channel. What the overlay may highlight, in absolute pitch metres (x 0 to 105, y 0 to 68, as the events). See **Insight evidence** below |
 | `cached` | optional, `1` when the analyst line came from the answer cache (an earlier call), not from a call made in this run. Absent otherwise |
 | `w` | paced live only: wall seconds since the stream started, at emission |
 | `lat` | paced live only: wall seconds from the event (when it was due at the stream's pace) to this caption. Play-by-play is captioned within milliseconds, an analyst line after the model call (voice queueing is not in it, see `voice`). Absent in replay, and for an analyst moment a restarted stream picked up (the event happened in the old stream) |
@@ -165,8 +177,12 @@ every caption.
 
 ### Spoken lines (`GET /api/tts`)
 
-Optional, live runs only. `GET /api/tts?run=<hello.run>&ch=<say.ch>&m=<say.m>` returns `audio/mpeg` for one line the server
-published in that run (the text of the `say` with that channel and moment id, in the channel's language). Nothing else can
+Optional, live runs only. `GET /api/tts?run=<hello.run>&ch=<say.ch>&m=<say.m>[&token=<session>]` returns `audio/mpeg` for one line the server
+published in that run (the text of the `say` with that channel and moment id, in the channel's language), in the voice of the person who
+says it (`say.who`: each of the 15 commentators of the nine languages has their own ElevenLabs voice, `tts/voices.py` `CAST`, the cast of
+the recorded insert; model `eleven_flash_v2_5`). On a public server `token` must be the session that started the run (its signature is
+checked, not its day, so a run that crosses midnight UTC keeps its voice), and a run voices at most two channels (the one watched plus
+one switch; the first lines asked for fix them). Nothing else can
 be asked for: there is no text parameter, an unknown run, channel or moment is `404 unknown_line`, and a replay run has no
 `run` at all. The client asks only when its voice actually starts a line (after the `say`/`voice` skip, stale and cut rules
 above), never for skipped or dropped lines, and stops the audio when a `voice` message cuts the line or a goal or red card
@@ -174,11 +190,20 @@ cuts in. The audio element's real duration, not the planned `e`, ends the line's
 
 | Status | Body `detail.code` | Meaning, client behaviour |
 | --- | --- | --- |
-| 200 | | mp3. Headers `X-Voice-Cached` (`1` when served from the disk cache, no credits), `X-Voice-Credits-Left`, `X-Voice-Credits-Spent` |
+| 200 | | mp3. Headers `X-Voice-Cached` (`1` when served from the disk cache, no credits), `X-Voice-Credits-Left`, `X-Voice-Credits-Spent`, `X-Voice-Name` (the ElevenLabs voice, for the "which voice" label) |
+| 401 | `session_required` | public server: no valid session token. Browser voice |
 | 402 | `tts_over_budget` | the credit budget cannot cover this line (checked before any request, never a partial spend). The client switches to the browser voice |
-| 404 | `unknown_line` | not a line of a run this server remembers (the last 16 runs). The browser voice reads this one line |
+| 402 | `tts_daily_limit` | today's credits (UTC day) are used. Browser voice until midnight UTC |
+| 402 | `tts_session_limit` | public server: this session's credits are used. Browser voice for the rest of the session |
+| 402 | `tts_ip_limit` | public server: this address's credits of today (UTC) are used. Browser voice until midnight UTC |
+| 404 | `unknown_line` | not a line of a run this server remembers (the last 16 runs), or a run of another session. The browser voice reads this one line |
+| 409 | `no_voice` | no voice exists for this line's language or speaker. The browser voice reads it (never a 500) |
+| 409 | `tts_channel_limit` | public server: this run already voices its two channels. The browser voice reads lines of any other channel |
 | 502 | `tts_unavailable` | the speech service failed. The browser voice reads the line; two failures in a row switch the page to the browser voice |
 | 503 | `tts_off` | no ElevenLabs key on this server. The browser voice speaks |
+
+Every answer above except 200 and 404 carries `detail.fallback: "browser"` and the header `X-Voice-Fallback: browser` (exposed to
+cross-origin pages): a page that sees it speaks the line with the browser voice and labels the voice "Browser voice".
 
 `GET /api/health` `tts.available` is `false` without a key or when the budget is spent; the UI then labels the voice "Browser voice".
 The key is never in a response, a log line or an error message. Model `eleven_flash_v2_5` is billed at 0.5 credit per
@@ -218,6 +243,117 @@ Two limits a client cannot raise, set by server flags; both off at 0:
 
 Replay is never limited. The model call budget (`--live-calls`) stays the last guard under both.
 
+**Insight evidence (`say.ins`).** No lookahead: every field is computed from events before the line (`commentary/patterns.py`).
+
+| `ins.kind` | Fields |
+| --- | --- |
+| `pattern` | `habit` (`short_after_win`: the side keeps winning the ball in its own half and every first pass after it goes short, no open-play ball 30 m or more across in the half), `side` (`H`/`A`), `team`, `half`, `zone` (`[x0, y0, x1, y1]`, the side's own half), `dots` (`[x, y]` of each ball win counted), `arrows` (`[x0, y0, x1, y1]` of the first pass after each win), `players` (player ids: the one who keeps winning it, when one does), `wins`, `short`, `across` (0), `widest_m` (the widest first pass sideways), `winner_wins` (optional), `ev` (event ids: the wins, then their first passes) |
+| `payoff` | `habit`, `side`, `half`, `arrow` (`[x0, y0, x1, y1]`, the first pass after the ball win that broke the habit), `zone` (the third of the pitch's width where it landed, full length), `players` (the ball winner and the receiver), `ev` (the win and the pass), `of` (moment id of the set-up), `setup_t` and `setup_clock` (when the set-up was detected) |
+
+A goal analysis carries `payoff` only when this broadcast said the set-up for the scoring side and half (a client can find it by `of`) and the
+goal's possession began with a ball win in its own half whose first pass went across. The story insert is one broadcast in two parts: a set-up
+in part 1 is paid off in part 2.
+
+```json
+{"k":"say","t":4234.8,"ch":1,"m":800004,"kind":"pattern_insight","voice":"analyst","text":"Ibsen keeps winning it, and the first pass is always short. Nothing across.",
+ "s":4234.8,"e":4241.1,"cut":0,"src":"analyst","who":"Daniel Price","cached":1,"w":1.8,"lat":0.302,
+ "ins":{"kind":"pattern","habit":"short_after_win","side":"H","team":"Wexmoor Athletic","half":2,"zone":[52.5,0.0,105.0,68.0],"dots":[[103.0,39.6],"..."],
+        "arrows":[[103.0,39.6,81.8,36.4],"..."],"players":["H3"],"wins":11,"short":11,"across":0,"widest_m":24.9,"ev":[956,"..."],"winner_wins":5}}
+```
+
+### `row` (enriched rows)
+
+Additive (2026-10-27), live runs with `fast=1` or `rows=1` only; clients that do not know it ignore it. The enriched rows of the match
+(`sim/micro/enrich.py`, the shape of `ui/public/insert/micro.json` `rows`: `eid, i, k, t, type, team` and per type `target, pass_type, height,
+body_part, technique, first_time, t_arr, ball_speed, pass_eid, player, x, y, touch, facing, pressure, assist_eid, placement, ...`; coordinates
+in metres, not decimetres) are sent **when the stream reaches each row's time `t`**, never earlier: a pass row at its kick (it names the
+target and the planned arrival `t_arr`, as the file does), the receipt at the arrival, a shot at the strike.
+
+```json
+{"k":"row","t":5465.2,"rows":[{"eid":29760,"i":1860,"k":0,"t":5465.2,"type":"pass","team":"H","target":"H8","pass_type":"short",
+ "height":"ground","body_part":"right_foot","technique":"straight","pressure":{"under":false},"first_time":false,"t_arr":5467.152,"ball_speed":44.8}],"w":34.203}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `t` | emission time; every row in it has `row.t <= t`. Rows of one instant come right after that instant's frame |
+| `w` | paced live only: wall seconds since the stream started |
+| `rows` | the rows that became known since the last `row` message, ordered by `t`, then `eid`. Each row is sent once. A run sends none after `until` |
+
+Catch-up with rows on: before `start` the stream sends only the frames of the last 15 match seconds (the newest one always; its stat
+deltas cover everything folded, so the state at `start` is the same as with the full catch-up) and one `row` message with the rows of
+those 15 seconds. Without rows the catch-up is unchanged: for the winner scene (start 5415) that is 1,363 frames, about 196 KB, sent
+at once; folded it is 1 frame, about 0.3 KB (the 15 s before 5415 hold only the ball going out and the goal kick being set up, which
+make no rows). The folded catch-up has no shot before `start`, so a page that reads the attack
+direction from shots takes it from `GET /api/scene` `attack` instead.
+
+### Public live server
+
+Additive (2026-10-27). A server started with `MATCHVOICE_PUBLIC=1` (docs/DEPLOY.md) runs live only for its whitelisted scenes, at speed 1,
+paced, for a browser session, under these caps (all counted in memory and reset by a restart; the daily ones roll over at 00:00 UTC):
+
+| Cap | Default (env) | Refusal |
+| --- | --- | --- |
+| scene whitelist: `match`, `start`, `until` exactly as `GET /api/scene` gives them; `speed=1`, paced, no `analyst_from`, no `seed` | | `bad_request` |
+| a valid session token (`token=`) | | `session_required` (`no_session_secret` when the server has no secret) |
+| live runs per session | 3 (`MATCHVOICE_SESSION_RUNS`) | `session_limit` |
+| live runs per client address per UTC day (behind the proxy: the rightmost `X-Forwarded-For` entry, the one the ingress appends, `MATCHVOICE_TRUSTED_HOPS=1`; a client-written entry is never counted) | 10 (`MATCHVOICE_IP_RUNS`) | `ip_limit` |
+| live runs at once | 3 (`MATCHVOICE_LIVE_CONCURRENT`) | `busy` |
+| live runs per UTC day, all visitors | 150 (`MATCHVOICE_LIVE_RUNS_PER_DAY`) | `no_runs_today` |
+| model calls per UTC day, core and world (also on a server that is not public) | 600 (`MATCHVOICE_DAILY_CALLS`) | `no_calls_today`; a call during a run past the cap falls back like a spent budget |
+| voice credits per UTC day, per session, per client address per UTC day | 3,000 (`MATCHVOICE_TTS_DAILY_CREDITS`), 900 (`MATCHVOICE_SESSION_CREDITS`), 1,500 (`MATCHVOICE_IP_CREDITS`) | `/api/tts` 402 with the browser fallback; the demo page starts a run in the browser voice when `/api/scene` shows fewer than 250 credits left on any of the three, so a cap does not strike in the middle of a run |
+| voiced channels per live run | 2 (`MATCHVOICE_RUN_VOICE_CHANNELS`) | `/api/tts` 409 `tts_channel_limit` with the browser fallback |
+
+A refused request costs nothing: every check runs before a run is counted. Replay is never limited. With `MATCHVOICE_ALLOWED_ORIGINS`
+set, a WebSocket from another origin (or without an `Origin` header) is refused before it is accepted: the handshake answers HTTP 403,
+which a browser sees as a failed connection (`onerror`, close code 1006, no `error` message; never 4003). An `/sse` request from another
+origin is HTTP 403 `origin_refused`, and CORS answers only those origins. The server's own origin (a page it serves itself, whose `Origin`
+host equals the request's `Host`) is always allowed.
+
+`GET /api/session[?token=<token>]`: a valid token comes back unchanged with what is left, anything else gets a new session.
+`{token, id, day, enforced, session_runs_left, session_runs, ip_runs_left, session_credits_left, ip_credits_left, busy}`
+(`ip_credits_left` additive 2026-10-27, null where the cap is off). The token is
+`<id>.<UTC day>.<signature>`, valid on its day and the next; the page keeps it in `sessionStorage`. A server that is not public answers
+`token: null, enforced: false` and needs none. A public server without a secret answers 503 `no_session_secret`.
+
+`GET /api/scene[?id=winner][&token=<token>]`: the scene a "New run" starts, from the simulation (no model call):
+
+```json
+{"id":"winner","match":"comeback-135","start":5415.0,"until":5490.0,"clock":"88","score":[1,1],"goal_t":null,"goal_window":[5462.0,5471.5],
+ "title":"The winner, 89 minutes","attack":{"H":0.0,"A":105.0},"session":true,"session_runs_left":3,"session_runs":3,"ip_runs_left":10,
+ "session_credits_left":900.0,"ip_credits_left":1500.0,"busy":false,"today":{"runs_left":150,"calls_left":600,"calls_per_day":600,"voice_credits_left":3000.0,"voice_credits_per_day":3000.0,
+ "world":true,"world_calls_left":600},"fresh":true}
+```
+
+`attack` (additive 2026-10-27): the x of the goal each side attacks during the scene (fixed per half; the home side attacks x = 105 in the
+first half, x = 0 in the second). A page draws the board from it instead of inferring the direction from shots, because the folded
+catch-up (rows on) carries no shot before `start`.
+
+The page starts it with `/ws?match=<match>&mode=live&speed=1&start=<start>&until=<until>&fast=1&token=<token>` (plus `world=1` for a
+viewer of channels 6 to 11).
+
+The winner scene is generated per run (additive 2026-10-27, `backend/matchvoice/sim/scene.py`). Everything up to Tamsworth's goal kick at
+5408.6 (score 1-1, clock 88) is the plain match. From the goal kick (taken 7 to 9 s later, inside the window) the server plays a new
+phase: Tamsworth build up from the back while Wexmoor press, Wexmoor win the ball (an interception in midfield, or a pressed ball back cut
+out near Tamsworth's box), then attack under Tamsworth's pressure and score the 2-1 inside `goal_window` (89'). How the goal comes
+(through ball, switch and cross, cutback, a one-two at the edge, a full back's cross) and who scores (Wexmoor's attackers and central
+midfielders; Gabriel Tavares about 30 percent of the time) change with the run's seed, so `goal_t` is `null` before a run and `goal_window`
+says where the goal will land. The seed is drawn by the server for every run (`secrets`) and announced in `hello.scene_seed` (additive) and
+in one log (`agent: facts`, `step: scene`, `msg` "Play generated for this run, seed N", `d.seed`). The seed identifies the play: the log
+line says nothing about it, but anyone with the source code can rebuild the whole scene from the seed (`Library.scene_bundle`), goal
+included, so the seed is an id for checks, not a secret. The variation is
+simulated when the run starts, as a full match always was; rows and events are still released only when the stream reaches them, with
+no lookahead the server would not have. In a generated scene the booth calls only the play from Wexmoor's ball win to the goal (no story,
+table or stats line), a carry counts as play from its first stride, and the ball that makes the chance (cross, cutback, through ball)
+is called ahead of a touch or a press. One wording choice there uses what the simulation already holds: a short pass that is cut out about a
+second later is not called "plays it on" (the interception's call has the moment); nothing is sent before its time. The goal call, the co-commentator's analysis and the lead's score line fall inside the window
+(at least 18.5 s after the latest possible goal), checked with the fake model over several seeds.
+
+`seed=<0..999999>` fixes the play of a generated scene, for tests and local checks: only on a server that is NOT public, and only with
+the exact `match`, `start` and `until` of a generated scene; anywhere else, or a value that is not a whole number up to six digits, is
+`bad_request`. The same seed gives the same events and rows. A public server answers any `seed` with `bad_request`. Every other live
+window of the same match (any other `start` or `until`) plays the plain match and has no `scene_seed`.
+
 ### `log`
 
 One step of the agent pipeline, for the live log panel.
@@ -228,7 +364,7 @@ One step of the agent pipeline, for the live log panel.
 | `at` | match time the step happened, never later than `t`. Logs of the newsroom arrive when its lines are ready, so they look back in time |
 | `agent` | `detector`, `analyst`, `verifier`, `publisher`, `director` or `facts` |
 | `w` | paced live only: wall seconds since the stream started, the real time of the step (`at` is the same instant in match time) |
-| `step` | `queued`, `writing` (live: model call started), `lookup` (live: answer found in the cache, no call), `analyst_wrote`, `verified`, `rejected`, `retry`, `fallback`, `ready`, `analyst_unavailable`, `analyst_error`, `timeout`, `cut`, `insight` |
+| `step` | `queued`, `writing` (live: model call started), `lookup` (live: answer found in the cache, no call), `analyst_wrote`, `verified`, `rejected`, `retry`, `fallback`, `ready`, `analyst_unavailable`, `analyst_error`, `timeout`, `cut`, `insight`, `pattern` (agent `detector`: a habit found in a quiet spell, `m` is the `pattern_insight` moment, `d` is its `say.ins`), `payoff` (agent `detector`: a goal broke a habit the broadcast pointed out, `m` is the goal analysis, `d` is its `say.ins`), `too_late` (agent `director`, `d.world: true`, additive 2026-10-27: a served live run's world booth skips a moment whose line would be too old to say by the time a call returns, so no call is made for it; the waiting moment with the highest priority is written first, a goal before older fragments) |
 | `m` | moment id or `null` |
 | `msg` | one readable line, safe to print as is |
 | `ch` | optional, set for per-channel steps (`cut`) |
@@ -273,6 +409,54 @@ time after the final whistle; lines that have not started by then are not said.
 `bad_request` (missing `match`, bad `mode`, `speed` or `paced`, a live run over the length cap or without `until` when the cap is set), `no_key` (live mode without an API key), `no_budget` (live mode
 without a call budget, or with the budget spent; the server starts with `--live-calls N`), `no_runs_today` (the daily cap of live runs is used up, see "Live limits"). WebSocket close codes: 4004, 4000, 4001 (also for `no_runs_today`).
 Over SSE the same problems are HTTP 404, 400, 429 (`no_runs_today`) and 409 (the rest) with `{"detail": {"code", "message"}}`.
+
+Additive codes (2026-10-27, see "Public live server"):
+
+| Code | WebSocket close | SSE HTTP | Meaning, page behaviour |
+| --- | --- | --- | --- |
+| `no_calls_today` | 4029 | 429 | today's model calls are used: say so, offer the recorded run |
+| `session_limit` | 4029 | 429 | this session's live runs are used |
+| `ip_limit` | 4029 | 429 | this address's live runs of today are used |
+| `busy` | 4029 | 503 | the concurrent runs are taken: try again shortly |
+| `session_required` | 4003 | 401 | no valid session token: fetch `/api/session` and retry once |
+| `no_session_secret` | 4001 | 409 | the server issues no sessions: recorded run only |
+| `no_world` | 4001 | 409 | `world=1` is not available: start without it (core channels) |
+| `origin_refused` | (handshake HTTP 403) | 403 | the page's origin is not allowed (`MATCHVOICE_ALLOWED_ORIGINS`): play the recorded run |
+
+A WebSocket refused for its `Origin` is refused at the handshake (HTTP 403) with no `error` message. A browser does not see 4003 there:
+it gets `onerror` and close code 1006, the same as a server that is offline. A page treats a close before `hello` with no `error` message
+as "not allowed or offline" and falls back to the recorded run; it must not read 4003 as `session_required` in that case (only an `error`
+message with `code` says which it is).
+
+### World channels (ids 6 to 11)
+
+Additive (2026-10-26). Six more channels, one level each, approved by the user: 6 `es/expert`, 7 `it/beginner`, 8 `pt/expert`,
+9 `nl/beginner`, 10 `tr/expert`, 11 `ja/beginner`. Only a live run whose server has the world booth lists them
+(`python -m matchvoice.server --world-calls N`, off by default; `export-story-insert` records them), so replays and every
+recording made before keep their six channels.
+
+- Every line of a world channel comes from the model, play-by-play included: the core channels speak templates at once, the world
+  channels have none. For each moment the English booth (channels 0 and 1) captions, one call of the world booth (a second Agent Framework
+  agent, `commentary/world.py`) writes the line of all six world channels. The calls run one after another. A recorded export (world_skip_late
+  off) calls the moments in the order the English booth called them. A served live run (every server started with `python -m
+  matchvoice.server`) calls the waiting moment with the highest priority first and skips, with a `too_late` log step and no call, any moment
+  whose line would be too old to say by the time the call returns. World viewers of a served run therefore get mainly the goals, the
+  analysis, the score lines and some context notes; most play-by-play before a goal is skipped. Every line passes the same verifier as the core analysis (numbers, scores, players, claims, traits, counts, language,
+  length, punctuation).
+- `say` on a world channel: `src` is `analyst` for every line (the model wrote it, whatever its `voice`), `cached` as usual, `who` the lead.
+  `kind` and `voice` are the moment's (`pbp` for play-by-play). A line that fails the verifier twice is not said: there is no template.
+- Scores are written 1-1 (es, it, pt, nl, tr) and 1対1 (ja); the goal call opens with the language's shout ("¡GOOOL!", "GOOOL!",
+  "GOAL!" or "Doelpunt!", "ゴール！"). Japanese writes player names in katakana; the verifier maps them to the roster (consonant skeleton).
+- `log` steps of the world booth carry `d.world: true`: `lookup` or `writing` (one per moment, "World booth looks up moment 163 for es, it,
+  pt, nl, tr, ja"), then `analyst_wrote`, `rejected`, `retry`, `verified` and `ready` ("Moment 163 ready on the world channels: 6 of 6 lines
+  by the analyst"). New step `dropped` (agent `publisher`, `d.keys`): the world lines that failed and are not said.
+- Latency (measured on the recorded export, which keeps the English booth's calling order; a served live run skips late moments instead,
+  see above): a world line exists only after its call. In the shipped story insert (re-exported from the answer cache) the world lines start
+  with the English booth's. Measured once with real calls (the paid export run of the story insert, paced at 1x on the wall clock, the same
+  runner as live): each call took 1.1 to 2.6 s (median 1.3 s); world captions came 1.2 to 4.4 s after the English caption of the same moment
+  (event to caption `lat` median 2.6 s, max 5.7 s, 58 lines); play-by-play fragments 1.2 to 1.6 s behind, still inside their 2 to 3.5 s life;
+  the analysis 3.0 s and the score line 4.2 s behind, because the calls queue. 58 of 60 lines were captioned. A quicker move than this
+  one, or a slower call, makes fragments go stale before their line exists (dropped, no `say`). This is one run, not a live load test.
 
 ## Static replay file
 
@@ -336,7 +520,13 @@ the recording):
 
 ## Compatibility
 
-`start`, `w`, `lat`, the `writing` step, the `facts` agent with the `insight` step, `GET /api/guided-live`, the `no_runs_today` code, the `live.runs_left` health fields, `hb`, `analyst_from`, the live `voice` message, `until`, `hello.run`, `hello.until`, `<arc>-<seed>` match ids and `/api/tts` were added to v1 this way.
+`start`, `w`, `lat`, the `writing` step, the `facts` agent with the `insight` step, `say.ins` with the `pattern_insight` kind and the `pattern` and `payoff` steps, `GET /api/guided-live`, the `no_runs_today` code, the `live.runs_left` health fields, `hb`, `analyst_from`, the live `voice` message, `until`, `hello.run`, `hello.until`, `<arc>-<seed>` match ids, `/api/tts`, the channel fields `level`, `solo`, `lead`, `co`, the world channels 6 to 11, `log.d.world` and the `dropped` step were added to v1 this way,
+and so were (2026-10-27) the `fast`, `world`, `rows` and `token` parameters, the `row` message, the `too_late` step, `/api/session`, `/api/scene`,
+the health objects `today` and `public`, the error codes `no_calls_today`, `session_limit`, `ip_limit`, `busy`, `session_required`,
+`no_session_secret`, `no_world` with close codes 4003 and 4029, the SSE code `origin_refused`, the `/api/scene` fields `attack` and
+`goal_window` (and `goal_t` null for a generated scene), the `seed` parameter, `hello.scene_seed`, the `scene` step of the `facts` agent, the
+`/api/session` field `ip_credits_left`, and the `/api/tts` codes `session_required`, `tts_daily_limit`, `tts_session_limit`, `tts_ip_limit`,
+`tts_channel_limit`, `no_voice` with `detail.fallback`.
 
 Additive changes (new optional fields, new `log.step` values, new code table entries at the end) keep `v: 1`.
 Clients ignore unknown fields and unknown message kinds. Anything else bumps `v`.
