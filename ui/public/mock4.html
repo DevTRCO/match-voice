@@ -1142,7 +1142,7 @@ function intelOut(c,k,quiet){
 }
 /* ---------- lane 2 in a live run: one item per model call, its steps filled in as the log arrives ---------- */
 const KINDW = {goal_analysis:"goal analysis", shot_goal:"goal call", score_line:"score line", pattern_insight:"set-up line", touch:"first touch", pass_kind:"pass call",
-  duel:"ball won", press_on:"press call", counter_note:"context line", player_note:"player note", story_note:"story", big_save_analysis:"save analysis", momentum:"momentum line"};
+  duel:"ball won", press_on:"press call", match_state:"where we are", counter_note:"context line", player_note:"player note", story_note:"story", big_save_analysis:"save analysis", momentum:"momentum line"};
 const kindW = k => KINDW[k] || String(k||"line").replace(/_/g," ");
 function liveJobs(){
   const jobs=new Map();
@@ -1375,9 +1375,13 @@ function tick(){
   if(WPP){ const a=w-WPP.w0;
     if(a>=1) once("wp1",()=>{ setWp(WPP.before.wp,"Before the goal"); $("wpg").classList.add("on"); insFit(); keepOut(); });
     if(a>=1.5) once("wp2",()=>setWp(WPP.after.wp,wpLabel(WPP.after)));
-    if(a>=5) once("bedback",()=>{ if(actx&&sound) bedGain.gain.setTargetAtTime(.08,actx.currentTime,1); });
+    if(a>=(D.isLive?8:5)) once("bedback",()=>{ if(actx&&sound) bedGain.gain.setTargetAtTime(D.isLive?.1:.08,actx.currentTime,1); });   // live: the crowd stays up a little longer
     if(a>=5.2) once("wp3",()=>{ $("wpg").classList.remove("on"); keepOut(); }); }
   if(INS && w>INS.w1 && $("insc").classList.contains("on")) insightOff();
+  // live: the crowd rises as the side that attacks gets the ball nearer the goal, before the goal only (the recorded run keeps its mix)
+  if(D.isLive && actx && sound && running && w<D.goalW){ const sd=D.goalSide||"H", bx=ballAt(w)[0], d=Math.abs(D.goalX(sd)-bx), on=possW(sd,w);
+    const g=+(.09+.12*on*clamp(1-(d-12)/50,0,1)).toFixed(3);
+    if(Math.abs(g-(tick.bed??-1))>.004){ tick.bed=g; bedGain.gain.setTargetAtTime(g,actx.currentTime,.8); } }
   if(INS && w>INS.w1+1) INS=null;
   if(how()) flowTick(w);
   if(!D.live && w>=D.LEN && w>=talkUntil) once("end",finish);
@@ -1496,7 +1500,7 @@ function goal(line){
   const swing = beforeWp&&after ? Math.max(...after.wp.map((v,i)=>Math.abs(v-beforeWp.wp[i]))) : 0;
   WPP = swing>=WP_SHOW ? {w0:flashW, before:beforeWp, after} : {w0:flashW, before:null, after:null, quiet:true};
   if(WPP.quiet){ done.add("wp1"); done.add("wp2"); done.add("wp3"); }
-  if(actx && sound){ roar=new Audio("audio/stadium-roar.mp3"); roar.volume=.3; roar.onended=()=>{ roar=null }; roar.play().catch(()=>{}); bedGain.gain.setTargetAtTime(.15,actx.currentTime,.2); }
+  if(actx && sound){ roar=new Audio("audio/stadium-roar.mp3"); roar.volume=D.isLive?.75:.3; roar.onended=()=>{ roar=null }; roar.play().catch(()=>{}); bedGain.gain.setTargetAtTime(D.isLive?.3:.15,actx.currentTime,.2); }
 }
 
 // end: three commentators in three other languages, levels mixed, one with another script where there is one
@@ -1823,11 +1827,13 @@ function positions(w){
   const out=[];
   const bySide={H:0,A:0};
   const ag=D.isLive && w>=D.goalW;   // live, after the goal: the spot at the goal already holds every run, none goes on
-  D.players.forEach(pl=>{ const k=bySide[pl.side]++; let [x,y]=targetOf(pl,k,w), act=0, go=0;
+  D.players.forEach(pl=>{ const k=bySide[pl.side]++; let [x,y]=targetOf(pl,k,w), act=0, go=0, free=false, pre=false, preWk=Infinity;
     if(!ag) for(const r of RUNS){ if(r.id!==pl.id) continue; const e=runAt(r,w); if(e>0){ x+=r.dx*e; y+=r.dy*e; if(r.go&&w<(r.go===2?r.w2:r.w1+.5)) go=1; } }   // the faster cap: the sprint of a break run, or a pass and go until it ends
     x=clamp(x,1,104); y=clamp(y,1.5,66.5);
-    for(const a of P.A[pl.id]||[]){ const wt=anchorW(a,w); if(wt<=0) continue; const [ax,ay]=a.dyn?carrierSpot(pl.side,Math.min(w,a.w2)):[a.x,a.y]; x+=(ax-x)*wt; y+=(ay-y)*wt; act=Math.max(act,wt); }
-    out.push({pl,x,y,act,go}); });
+    for(const a of P.A[pl.id]||[]){ const wt=anchorW(a,w); if(wt<=0) continue; const [ax,ay]=a.dyn?carrierSpot(pl.side,Math.min(w,a.w2)):[a.x,a.y]; x+=(ax-x)*wt; y+=(ay-y)*wt; act=Math.max(act,wt);
+      if(w<=a.w2+1e-6 && (a.dyn || a.wk==null || w>=a.wk)) free=true; else if(a.wk!=null && w<a.wk){ pre=true; preWk=Math.min(preWk,a.wk); } }   // on the ball, winning it, or a pass to him is under way (not the run before the kick)
+    out.push({pl,x,y,act,go,free,pre,preWk}); });
+  if(D.isLive && !ag) onside(out,w);   // before the spacing too, so players held on the line stand apart, not on one spot
   // spacing: shape players never sit on top of each other, and a teammate clears the space of the player on the ball
   // every push of a pass is worked out from the same positions and applied together, so the order of the pairs never matters
   for(let it=0;it<2;it++){ const mv=out.map(()=>[0,0]);
@@ -1850,8 +1856,48 @@ function positions(w){
     if(pr.by===undefined){ let bd0=1e9; pr.by=null; out.forEach(o=>{ if(o.pl.side===me.pl.side||o.pl.grp==="GK") return; const dd=Math.hypot(o.x-me.x,o.y-me.y); if(dd<bd0){bd0=dd;pr.by=o.pl.id;} }); }
     const best=out.find(o=>o.pl.id===pr.by)||null, bd=best?Math.hypot(best.x-me.x,best.y-me.y):1e9;
     if(best&&bd>2.2){ const k=wt*.85*(1-2.2/bd); best.x+=(me.x-best.x)*k; best.y+=(me.y-best.y)*k; } }
+  if(D.isLive && !ag) onside(out,w);   // and after: a push or a presser stepping out never leaves a dot past the line
   calm(out,w);
   return {out,rings};
+}
+// live data, offside: a player off the ball is never further up than the second-last opponent, the ball or the halfway line, whichever is
+// nearer the goal he attacks (level is onside; each player keeps his own ONSIDE_GAP to ONSIDE_GAP+ONSIDE_STAGGER behind it, so the
+// runners never stand in one flat file). The player on the ball and a receiver whose pass is under way are free, so a run in behind
+// waits on the line until the kick, then goes. The line is the more cautious of where the defenders are going and where they are
+// drawn, so a back line stepping up never leaves a dot past it.
+// Offside only counts at a pass of his own team: the hold works on the side with the ball, and eases in over ONSIDE_RAMP before the
+// next known pass of a side that has just won it. A player who has just played the ball may stay up to where he played it for
+// ONSIDE_FREE (a cutback passer is not yanked back off the byline), then eases back over ONSIDE_BACK, or faster for the next pass of his team.
+const ONSIDE_GAP = .6, ONSIDE_STAGGER = 1.6, ONSIDE_RAMP = 1.2, ONSIDE_FREE = 1, ONSIDE_BACK = 2.5;
+function onside(out,w){
+  const near = smW>=0 && w>=smW && w-smW<=.25 && D.partOf(w)===smP, b=ballAt(w);
+  const ease = t => smooth(clamp(t/ONSIDE_RAMP,0,1));
+  for(const T of ["H","A"]){ const s=D.goalX(T)>D.ownX(T)?1:-1, opp=[];
+    let nk=Infinity; for(const f of P.FL) if(!f.shot && f.to && f.team===T && f.wk>w && f.wk<nk) nk=f.wk;   // the next pass of T the page knows (rows and run cues)
+    for(const f of P.FLH||[]) if(f.team===T && f.wk>w && f.wk<nk) nk=f.wk;
+    const pre=ease(ONSIDE_RAMP-(nk-w)), hT=Math.max(possW(T,w),pre); if(hT<1e-3) continue;
+    for(const o of out){ if(o.pl.side===T) continue; const m=near&&SM.get(o.pl.id); opp.push(m ? Math.min(s*o.x,s*m.x) : s*o.x); }
+    opp.sort((p,q)=>q-p);
+    const L=Math.max(opp.length>1?opp[1]:-1e9, s*b[0], s*52.5)-ONSIDE_GAP;
+    const held=[], fixed=[];
+    for(const o of out){ if(o.pl.side!==T) continue; if(o.free){ fixed.push(o); continue; }
+      let l=L-ONSIDE_STAGGER*hash01(o.pl.n+(T==="H"?0:50),33), fp=null; for(const f of P.FL) if(!f.shot && f.by===o.pl.id && f.wk<=w && (!fp || f.wk>fp.wk)) fp=f;
+      o.rp=!!fp && w-fp.wk<ONSIDE_FREE+ONSIDE_BACK;
+      if(o.rp){   // just played the ball: no further up than where he played it, and no yank back
+        const k=Math.max(ease(ONSIDE_RAMP*(w-fp.wk-ONSIDE_FREE)/ONSIDE_BACK),pre); l+=Math.max(0,s*fp.sx+1.5-l)*(1-k); }
+      if(s*o.x>l) o.x-=s*(s*o.x-l)*hT; if(hT>.5 && s*o.x>l-2) held.push(o); }
+    // two players on the line side by side stand apart across the pitch (a push along the line keeps both onside); two who cross on
+    // it do not run through each other: one checks back behind the other (back is always onside). The receiver of the earlier pass
+    // keeps his run, and a player whose pass is under way is never in the way
+    const apart=(a,c,ka,side)=>{ const dx=c.x-a.x, dy=c.y-a.y; if(Math.hypot(dx,dy)>=4.2) return;
+      const wx=side ? 0 : 1-clamp(Math.abs(dy)/2.5,0,1);   // side: only across (the player on the ball comes past, nobody checks back)
+      if(wx<1){ const ny=(Math.sqrt(4.2*4.2-dx*dx)-Math.abs(dy))*(1-wx), u=dy>0?1:-1; a.y=clamp(a.y-u*ny*ka,1.5,66.5); c.y=clamp(c.y+u*ny*(1-ka),1.5,66.5); }
+      let [m,q]=ka>.5 || (ka===.5 && s*a.x<=s*c.x) ? [a,c] : [c,a]; if(m.pre||m.rp||m.free) [m,q]=[q,m];   // a runner and a passer keep their line
+      if(wx>0 && !(m.pre||m.rp||m.free)){ const g=Math.sqrt(4.2*4.2-dy*dy); m.x-=s*Math.max(0,s*m.x-s*q.x+g)*wx; } };
+    for(let i=0;i<held.length;i++){ const a=held[i];
+      for(let j=i+1;j<held.length;j++){ const c=held[j];
+        apart(a,c, a.pre&&c.pre ? (a.preWk>c.preWk ? 1 : a.preWk<c.preWk ? 0 : .5) : a.pre ? 0 : c.pre ? 1 : .5); }
+      for(const c of fixed) apart(a,c,1,true); } }
 }
 // no teleporting: a player moves at most at a sprint's pace from frame to frame; a player on the ball may move faster, to stay on the data
 // (live data: at most 20 percent faster and never over 10 m/s, also a player on a run of the break; a receiver who cannot make it meets the ball a step late)
@@ -2070,6 +2116,7 @@ function start(fromW=0){
     fetch("audio/stadium-bed.mp3").then(r=>r.arrayBuffer()).then(b=>actx.decodeAudioData(b)).then(buf=>{ const s=actx.createBufferSource(); s.buffer=buf; s.loop=true; s.connect(lp); s.start(0,40) }).catch(()=>{}); }catch(e){ actx=null } }
   if(actx){ actx.resume().then(()=>{ if(paused||!running) actx.suspend(); }); bedGain.gain.cancelScheduledValues(actx.currentTime); bedGain.gain.setTargetAtTime(sound?.09:0,actx.currentTime,.6); }
   if(roar){ roar.pause(); roar=null; }
+  tick.bed=null;
   paused=false; document.body.classList.remove("paused"); $("pp").setAttribute("aria-label","Pause");
   stopVoice(); reset(); SM.clear(); smW=-1;   // a new start is a new picture: no glide from the last one
   if(fromW>0){   // skip what came before: no voice, no cut; the lanes still fill
