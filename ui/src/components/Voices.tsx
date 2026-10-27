@@ -38,7 +38,7 @@ export function Voices({ onProof }: { onProof: () => void }) {
         const analyst = say.src === "analyst";
         setAttr(el, "data-src", analyst ? "analyst" : "template");
         const lat = say.lat === undefined ? "" : fmtDur(say.lat);
-        setText(el.querySelector<HTMLElement>(".vs"), analyst ? "Analyst · verified" : `Template${lat ? ` · ${lat}` : ""}`);
+        setText(el.querySelector<HTMLElement>(".vs"), analyst ? "Analyst, verified" : `Template${lat ? `, ${lat}` : ""}`);
         popAt.current[c.id] = now;
         el.dataset.pop = "1";
       } else {
@@ -57,7 +57,7 @@ export function Voices({ onProof }: { onProof: () => void }) {
         <article key={c.id} className="voice" ref={(el) => { cards.current[c.id] = el; }} data-picked={c.id === picked || undefined} data-src="" data-pop="0">
           <header>
             <button className="pick" onClick={() => player.setChannel(c.lang, c.style)} aria-pressed={c.id === picked} title="Hear this commentator">
-              <b>{c.lang.toUpperCase()}</b><span>{LABEL[c.lang]} · {STYLE[c.style]}</span>
+              <b>{c.lang.toUpperCase()}</b><span>{LABEL[c.lang]}, {STYLE[c.style]}</span>
             </button>
             <button className="vs" onClick={onProof} title="How every line is checked" />
           </header>

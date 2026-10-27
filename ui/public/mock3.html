@@ -323,7 +323,7 @@ const COMS = [
   {name:"Emre Aydın", lang:"tr", lvl:"expert"}, {name:"Yuki Tanaka", lang:"ja", lvl:"beginner"},
 ];
 const CH = ["en/beginner","en/expert","de/beginner","de/expert","fr/beginner","fr/expert"];
-const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z]+/g,"-");
+const slug = s => s.replace(/ı/g,"i").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z]+/g,"-");
 const initials = s => s.split(" ").map(w=>w[0]).join("");
 const face = c => `<img src="faces/${slug(c.name)}.jpg" alt="" onerror="this.remove()"><span class="ini">${initials(c.name)}</span>`;
 const mini = c => `<span class="mini">${initials(c.name)}<img src="faces/${slug(c.name)}.jpg" alt="" onerror="this.remove()"></span>`;
@@ -379,10 +379,10 @@ const LINES = [
   "GOAL for Wexmoor Athletic! Fontaine finds the net, it's 1-1!","GOAL! Fontaine buries it, and it's 1-1!",
   "TOR für Wexmoor Athletic! Fontaine netzt ein, es steht 1-1!","TOR! Fontaine macht ihn rein, 1-1!",
   "BUT pour Wexmoor Athletic ! Fontaine fait mouche, c'est 1-1 !","BUT ! Fontaine ne tremble pas, 1-1 !"]},
- {w:27.4, m:163, lead:false, kind:"analyst", src:"Analyst, fact-checked", lat:"3.6 s", dur:5.2, ev:23728, card:"Analyst", l:[
-  "That goal changes the whole feel of the game for Wexmoor Athletic.","That goal lifts Wexmoor Athletic's chance of a win to 36 percent.",
-  "Dieses Tor verändert das ganze Spiel für Wexmoor Athletic.","Die Siegchance von Wexmoor Athletic steigt mit diesem Tor auf 36 Prozent.",
-  "Ce but change la physionomie du match pour Wexmoor Athletic.","Ce but fait grimper les chances de victoire de Wexmoor Athletic à 36 %."]},
+ {w:27.4, m:163, lead:false, kind:"analyst", src:"Analyst, fact-checked", lat:"4.1 s", dur:5.2, ev:23728, card:"Analyst", l:[
+  "Wexmoor are level now, and that changes the whole feel of this game.","Wexmoor's chance of a win jumps to 36 percent, and Tamsworth have to start again.",
+  "Der Ausgleich verändert alles, Wexmoor glaubt jetzt wieder an den Sieg.","Wexmoor glaubt wieder an den Sieg, die Siegchance steigt auf 36 Prozent.",
+  "Wexmoor revient à égalité, et Tamsworth doit tout reprendre à zéro.","Wexmoor reprend confiance, ses chances de gagner grimpent à 36 %."]},
 ];
 const RAW = [
  {w:12.9,  ty:"Interception", sum:"H3 wins the ball", j:{eid:23664,t:4382.7,type:"interception",team:"H",player:"H3",pass_eid:23648,contest_s:3.839}},

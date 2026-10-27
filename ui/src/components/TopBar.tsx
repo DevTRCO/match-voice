@@ -62,7 +62,9 @@ export function TopBar({ onMute, onOpen }: { onMute: () => void; onOpen: (kind: 
           <button className="iconbtn" onClick={(e) => onOpen("game", e.currentTarget)} aria-haspopup="dialog" title="Open the full game log"><ExpandIcon /><span>Game</span></button>
           <button className="iconbtn" onClick={(e) => onOpen("agent", e.currentTarget)} aria-haspopup="dialog" title="Open the full agent log"><ExpandIcon /><span>Agents</span></button>
         </span>
-        <span className="fine" title="Both steps are read by the browser's own voice">Browser voice</span>
+        {player.step === 1 && player.lang === "en" && player.style === "expert"
+          ? <span className="fine" title="The recorded run has a baked ElevenLabs voice for English expert; the other commentators and the live step use the browser's own voice">ElevenLabs voice</span>
+          : <span className="fine" title="Read by the browser's own voice; only English expert in the recorded run has a baked ElevenLabs voice">Browser voice</span>}
         <button className="mute" aria-pressed={player.muted} onClick={onMute} title="Spoken commentary on or off. Captions stay. Shortcut: m">
           <SoundIcon off={player.muted} />
           <span>{player.muted ? "Sound off" : "Sound on"}</span>

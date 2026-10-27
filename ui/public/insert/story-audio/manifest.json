@@ -1,0 +1,1205 @@
+{
+ "files": {
+  "0-1189316": {
+   "caption": "Ibsen wins it back.",
+   "cost": 19.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Ibsen wins it back.",
+   "sha": "d950f269dd60eca7",
+   "voice": "TX3LPaxmHKxFdv7VOQHJ",
+   "who": "Owen Carter"
+  },
+  "0-1189569": {
+   "caption": "Over to Rasmussen.",
+   "cost": 18.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Over to Rasmussen.",
+   "sha": "26d1776e5ea9381c",
+   "voice": "TX3LPaxmHKxFdv7VOQHJ",
+   "who": "Owen Carter"
+  },
+  "0-1189576": {
+   "caption": "Takes it on the chest.",
+   "cost": 22.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Takes it on the chest.",
+   "sha": "8a6fcb0d91255974",
+   "voice": "TX3LPaxmHKxFdv7VOQHJ",
+   "who": "Owen Carter"
+  },
+  "0-1189697": {
+   "caption": "Long ball up to Tavares.",
+   "cost": 24.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Long ball up to Tavares.",
+   "sha": "519fe843bebd9101",
+   "voice": "TX3LPaxmHKxFdv7VOQHJ",
+   "who": "Owen Carter"
+  },
+  "0-1189713": {
+   "caption": "Now Fontaine!",
+   "cost": 23.0,
+   "energy": "rising",
+   "lang": "en",
+   "sent": "[excited] Now Fontaine!",
+   "sha": "b951c6d52b1fd816",
+   "voice": "TX3LPaxmHKxFdv7VOQHJ",
+   "who": "Owen Carter"
+  },
+  "0-162": {
+   "caption": "Goal! Kenji Fontaine! Wexmoor are level!",
+   "cost": 51.0,
+   "energy": "peak",
+   "lang": "en",
+   "sent": "[shouting] Goal! Kenji Fontaine! Wexmoor are level!",
+   "sha": "8858665df3540c02",
+   "voice": "TX3LPaxmHKxFdv7VOQHJ",
+   "who": "Owen Carter"
+  },
+  "0-163": {
+   "caption": "There it is. Ibsen wins it back, and this time it goes straight across to Rasmussen!",
+   "cost": 94.0,
+   "energy": "rising",
+   "lang": "en",
+   "sent": "[excited] There it is. Ibsen wins it back, and this time it goes straight across to Rasmussen!",
+   "sha": "e93b6630b1ba1179",
+   "voice": "onwK4e9ZLuTAKqWW03F9",
+   "who": "Daniel Price"
+  },
+  "0-3339167": {
+   "caption": "Don't write Wexmoor off. They've come from behind three times this season.",
+   "cost": 74.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Don't write Wexmoor off. They've come from behind three times this season.",
+   "sha": "61cb494deebf92d5",
+   "voice": "TX3LPaxmHKxFdv7VOQHJ",
+   "who": "Owen Carter"
+  },
+  "0-800004": {
+   "caption": "Ibsen keeps winning the ball, but every time it goes short. Nothing across.",
+   "cost": 75.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Ibsen keeps winning the ball, but every time it goes short. Nothing across.",
+   "sha": "2cba8e8c60a05907",
+   "voice": "onwK4e9ZLuTAKqWW03F9",
+   "who": "Daniel Price"
+  },
+  "0-900163": {
+   "caption": "One-all, and about twenty minutes left.",
+   "cost": 39.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "One-all, and about twenty minutes left.",
+   "sha": "ef732200b9408eca",
+   "voice": "TX3LPaxmHKxFdv7VOQHJ",
+   "who": "Owen Carter"
+  },
+  "1-1189316": {
+   "caption": "Ibsen cuts it out.",
+   "cost": 18.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Ibsen cuts it out.",
+   "sha": "51b28af0d9a65b0b",
+   "voice": "IKne3meq5aSn9XLyUdCD",
+   "who": "Charlie Hale"
+  },
+  "1-1189569": {
+   "caption": "Across to Rasmussen.",
+   "cost": 20.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Across to Rasmussen.",
+   "sha": "091ccc9720405182",
+   "voice": "IKne3meq5aSn9XLyUdCD",
+   "who": "Charlie Hale"
+  },
+  "1-1189576": {
+   "caption": "Chests it down.",
+   "cost": 15.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Chests it down.",
+   "sha": "0c84ce544989b214",
+   "voice": "IKne3meq5aSn9XLyUdCD",
+   "who": "Charlie Hale"
+  },
+  "1-1189697": {
+   "caption": "Long ball for Tavares.",
+   "cost": 22.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Long ball for Tavares.",
+   "sha": "d786a712768012a5",
+   "voice": "IKne3meq5aSn9XLyUdCD",
+   "who": "Charlie Hale"
+  },
+  "1-1189713": {
+   "caption": "Fontaine!",
+   "cost": 19.0,
+   "energy": "rising",
+   "lang": "en",
+   "sent": "[excited] Fontaine!",
+   "sha": "44d882e420a63490",
+   "voice": "IKne3meq5aSn9XLyUdCD",
+   "who": "Charlie Hale"
+  },
+  "1-162": {
+   "caption": "Oh, what a strike! Kenji Fontaine! Wexmoor are level!",
+   "cost": 64.0,
+   "energy": "peak",
+   "lang": "en",
+   "sent": "[shouting] Oh, what a strike! Kenji Fontaine! Wexmoor are level!",
+   "sha": "642f9ca593e6dac4",
+   "voice": "IKne3meq5aSn9XLyUdCD",
+   "who": "Charlie Hale"
+  },
+  "1-163": {
+   "caption": "There it is. Ibsen wins it, and this time it goes across, long and lofted.",
+   "cost": 84.0,
+   "energy": "rising",
+   "lang": "en",
+   "sent": "[excited] There it is. Ibsen wins it, and this time it goes across, long and lofted.",
+   "sha": "80ef1e6a64b0ac5d",
+   "voice": "onwK4e9ZLuTAKqWW03F9",
+   "who": "Daniel Price"
+  },
+  "1-3339167": {
+   "caption": "Wexmoor have taken points from losing positions three times this season.",
+   "cost": 72.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Wexmoor have taken points from losing positions three times this season.",
+   "sha": "88090f955430d63a",
+   "voice": "IKne3meq5aSn9XLyUdCD",
+   "who": "Charlie Hale"
+  },
+  "1-800004": {
+   "caption": "Ibsen keeps winning it, and every time it's short. Nothing across.",
+   "cost": 66.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "Ibsen keeps winning it, and every time it's short. Nothing across.",
+   "sha": "f9de0530127bc0ca",
+   "voice": "onwK4e9ZLuTAKqWW03F9",
+   "who": "Daniel Price"
+  },
+  "1-900163": {
+   "caption": "One-all, and twenty minutes or so to go.",
+   "cost": 40.0,
+   "energy": "calm",
+   "lang": "en",
+   "sent": "One-all, and twenty minutes or so to go.",
+   "sha": "f73657e1f63a6b69",
+   "voice": "IKne3meq5aSn9XLyUdCD",
+   "who": "Charlie Hale"
+  },
+  "10-1189316": {
+   "caption": "Ibsen kesti.",
+   "cost": 12.0,
+   "energy": "calm",
+   "lang": "tr",
+   "sent": "Ibsen kesti.",
+   "sha": "5c32b1b67ca86f92",
+   "voice": "nPczCjzI2devNBz1zQrb",
+   "who": "Emre Aydın"
+  },
+  "10-1189569": {
+   "caption": "Ibsen'den Rasmussen'e çapraz.",
+   "cost": 29.0,
+   "energy": "calm",
+   "lang": "tr",
+   "sent": "Ibsen'den Rasmussen'e çapraz.",
+   "sha": "a0b1d288cb769ffd",
+   "voice": "nPczCjzI2devNBz1zQrb",
+   "who": "Emre Aydın"
+  },
+  "10-1189576": {
+   "caption": "Göğsünde, Rasmussen.",
+   "cost": 20.0,
+   "energy": "calm",
+   "lang": "tr",
+   "sent": "Göğsünde, Rasmussen.",
+   "sha": "d534608c8c43c1bd",
+   "voice": "nPczCjzI2devNBz1zQrb",
+   "who": "Emre Aydın"
+  },
+  "10-1189697": {
+   "caption": "Tavares'e uzun top.",
+   "cost": 19.0,
+   "energy": "calm",
+   "lang": "tr",
+   "sent": "Tavares'e uzun top.",
+   "sha": "5029e7141a1c0144",
+   "voice": "nPczCjzI2devNBz1zQrb",
+   "who": "Emre Aydın"
+  },
+  "10-1189713": {
+   "caption": "Tavares'e, tek vuruş.",
+   "cost": 21.0,
+   "energy": "calm",
+   "lang": "tr",
+   "sent": "Tavares'e, tek vuruş.",
+   "sha": "50fca83982fa8465",
+   "voice": "nPczCjzI2devNBz1zQrb",
+   "who": "Emre Aydın"
+  },
+  "10-162": {
+   "caption": "GOOOL! Fontaine! Wexmoor eşitledi!",
+   "cost": 45.0,
+   "energy": "peak",
+   "lang": "tr",
+   "sent": "[shouting] GOOOL! Fontaine! Wexmoor eşitledi!",
+   "sha": "967e0441338b35d0",
+   "voice": "nPczCjzI2devNBz1zQrb",
+   "who": "Emre Aydın"
+  },
+  "10-163": {
+   "caption": "Söylemiştim! Ibsen topu kaptı, bu kez hemen Rasmussen'e çapraz pas.",
+   "cost": 77.0,
+   "energy": "rising",
+   "lang": "tr",
+   "sent": "[excited] Söylemiştim! Ibsen topu kaptı, bu kez hemen Rasmussen'e çapraz pas.",
+   "sha": "f205cc2871dfe4cb",
+   "voice": "nPczCjzI2devNBz1zQrb",
+   "who": "Emre Aydın"
+  },
+  "10-3339167": {
+   "caption": "Wexmoor bu sezon üç kez geriden gelip puan aldı.",
+   "cost": 48.0,
+   "energy": "calm",
+   "lang": "tr",
+   "sent": "Wexmoor bu sezon üç kez geriden gelip puan aldı.",
+   "sha": "bc00b30f7a1e91c5",
+   "voice": "nPczCjzI2devNBz1zQrb",
+   "who": "Emre Aydın"
+  },
+  "10-800004": {
+   "caption": "Wexmoor kendi yarısında topu kapıyor, hep kısa pas. Devreden beri çapraz top yok.",
+   "cost": 81.0,
+   "energy": "calm",
+   "lang": "tr",
+   "sent": "Wexmoor kendi yarısında topu kapıyor, hep kısa pas. Devreden beri çapraz top yok.",
+   "sha": "0fd63203e807c4c9",
+   "voice": "nPczCjzI2devNBz1zQrb",
+   "who": "Emre Aydın"
+  },
+  "10-900163": {
+   "caption": "Bir bir, yaklaşık yirmi dakika var.",
+   "cost": 35.0,
+   "energy": "calm",
+   "lang": "tr",
+   "sent": "Bir bir, yaklaşık yirmi dakika var.",
+   "sha": "7af2cbbc5456b0ca",
+   "voice": "nPczCjzI2devNBz1zQrb",
+   "who": "Emre Aydın"
+  },
+  "11-1189316": {
+   "caption": "イブセンがカット。",
+   "cost": 9.0,
+   "energy": "calm",
+   "lang": "ja",
+   "sent": "イブセンがカット。",
+   "sha": "0ef4b96448a5954d",
+   "voice": "cgSgspJ2msm6clMCkdW9",
+   "who": "Yuki Tanaka"
+  },
+  "11-1189569": {
+   "caption": "イブセンから反対側へ。",
+   "cost": 11.0,
+   "energy": "calm",
+   "lang": "ja",
+   "sent": "イブセンから反対側へ。",
+   "sha": "a8257580ecb25014",
+   "voice": "cgSgspJ2msm6clMCkdW9",
+   "who": "Yuki Tanaka"
+  },
+  "11-1189576": {
+   "caption": "ラスムッセン、胸で。",
+   "cost": 10.0,
+   "energy": "calm",
+   "lang": "ja",
+   "sent": "ラスムッセン、胸で。",
+   "sha": "ef282daed02e951a",
+   "voice": "cgSgspJ2msm6clMCkdW9",
+   "who": "Yuki Tanaka"
+  },
+  "11-1189697": {
+   "caption": "左のタバレスへ長いパス。",
+   "cost": 12.0,
+   "energy": "calm",
+   "lang": "ja",
+   "sent": "左のタバレスへ長いパス。",
+   "sha": "4b701d1af17aac78",
+   "voice": "cgSgspJ2msm6clMCkdW9",
+   "who": "Yuki Tanaka"
+  },
+  "11-1189713": {
+   "caption": "タバレスへ、ワンタッチ。",
+   "cost": 12.0,
+   "energy": "calm",
+   "lang": "ja",
+   "sent": "タバレスへ、ワンタッチ。",
+   "sha": "76f7bebce32b39a8",
+   "voice": "cgSgspJ2msm6clMCkdW9",
+   "who": "Yuki Tanaka"
+  },
+  "11-162": {
+   "caption": "ゴール！フォンテーヌ！同点！",
+   "cost": 25.0,
+   "energy": "peak",
+   "lang": "ja",
+   "sent": "[shouting] ゴール！フォンテーヌ！同点！",
+   "sha": "b5246b4627a8e2ad",
+   "voice": "cgSgspJ2msm6clMCkdW9",
+   "who": "Yuki Tanaka"
+  },
+  "11-163": {
+   "caption": "言った通りです！イブセンが奪って、今度はすぐ反対側のラスムッセンへ！",
+   "cost": 44.0,
+   "energy": "rising",
+   "lang": "ja",
+   "sent": "[excited] 言った通りです！イブセンが奪って、今度はすぐ反対側のラスムッセンへ！",
+   "sha": "019c444a499cd2cc",
+   "voice": "cgSgspJ2msm6clMCkdW9",
+   "who": "Yuki Tanaka"
+  },
+  "11-3339167": {
+   "caption": "今季、ウェクスモアは3度、負けていた試合から勝ち点を拾っています。",
+   "cost": 33.0,
+   "energy": "calm",
+   "lang": "ja",
+   "sent": "今季、ウェクスモアは3度、負けていた試合から勝ち点を拾っています。",
+   "sha": "aa150a8218b897ad",
+   "voice": "cgSgspJ2msm6clMCkdW9",
+   "who": "Yuki Tanaka"
+  },
+  "11-800004": {
+   "caption": "ウェクスモアは自陣で奪っても、いつも短いパス。後半、反対側へのボールは一度もありません。",
+   "cost": 44.0,
+   "energy": "calm",
+   "lang": "ja",
+   "sent": "ウェクスモアは自陣で奪っても、いつも短いパス。後半、反対側へのボールは一度もありません。",
+   "sha": "ed48bfc691d7cfde",
+   "voice": "cgSgspJ2msm6clMCkdW9",
+   "who": "Yuki Tanaka"
+  },
+  "11-900163": {
+   "caption": "1対1。残りはおよそ20分です。",
+   "cost": 16.0,
+   "energy": "calm",
+   "lang": "ja",
+   "sent": "1対1。残りはおよそ20分です。",
+   "sha": "8a01f9e2d9142575",
+   "voice": "cgSgspJ2msm6clMCkdW9",
+   "who": "Yuki Tanaka"
+  },
+  "2-1189316": {
+   "caption": "Ibsen geht dazwischen.",
+   "cost": 22.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "Ibsen geht dazwischen.",
+   "sha": "ec6bd76bbb7131bc",
+   "voice": "iQ5dS7juUUF7zgIVf8ET",
+   "who": "Felix Brandt"
+  },
+  "2-1189569": {
+   "caption": "Rüber zu Rasmussen...",
+   "cost": 21.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "Rüber zu Rasmussen...",
+   "sha": "a754ebe3e3a1f1b1",
+   "voice": "iQ5dS7juUUF7zgIVf8ET",
+   "who": "Felix Brandt"
+  },
+  "2-1189576": {
+   "caption": "...mit der Brust.",
+   "cost": 17.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "...mit der Brust.",
+   "sha": "63529f96759ce60d",
+   "voice": "iQ5dS7juUUF7zgIVf8ET",
+   "who": "Felix Brandt"
+  },
+  "2-1189697": {
+   "caption": "Lang nach vorne auf Tavares!",
+   "cost": 38.0,
+   "energy": "rising",
+   "lang": "de",
+   "sent": "[excited] Lang nach vorne auf Tavares!",
+   "sha": "9c6bd73218d017a3",
+   "voice": "iQ5dS7juUUF7zgIVf8ET",
+   "who": "Felix Brandt"
+  },
+  "2-1189713": {
+   "caption": "Fontaine!",
+   "cost": 19.0,
+   "energy": "rising",
+   "lang": "de",
+   "sent": "[excited] Fontaine!",
+   "sha": "bad0022a0e44faa4",
+   "voice": "iQ5dS7juUUF7zgIVf8ET",
+   "who": "Felix Brandt"
+  },
+  "2-162": {
+   "caption": "Tooor! Fontaine! Der Ausgleich für Wexmoor!",
+   "cost": 54.0,
+   "energy": "peak",
+   "lang": "de",
+   "sent": "[shouting] Tooor! Fontaine! Der Ausgleich für Wexmoor!",
+   "sha": "2a757f4cd03ff014",
+   "voice": "iQ5dS7juUUF7zgIVf8ET",
+   "who": "Felix Brandt"
+  },
+  "2-163": {
+   "caption": "Genau das meinte ich! Ibsen holt den Ball, und diesmal geht's sofort auf die andere Seite.",
+   "cost": 100.0,
+   "energy": "rising",
+   "lang": "de",
+   "sent": "[excited] Genau das meinte ich! Ibsen holt den Ball, und diesmal geht's sofort auf die andere Seite.",
+   "sha": "f6b88081c6309cdf",
+   "voice": "DEZHhPbmb8LVZmWufkCh",
+   "who": "Kim Berger"
+  },
+  "2-3339167": {
+   "caption": "Wexmoor hat diese Saison schon dreimal einen Rückstand aufgeholt.",
+   "cost": 65.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "Wexmoor hat diese Saison schon dreimal einen Rückstand aufgeholt.",
+   "sha": "5fc4702f7816888e",
+   "voice": "iQ5dS7juUUF7zgIVf8ET",
+   "who": "Felix Brandt"
+  },
+  "2-800004": {
+   "caption": "Ibsen holt die Bälle immer wieder, aber dann geht es immer nur kurz.",
+   "cost": 68.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "Ibsen holt die Bälle immer wieder, aber dann geht es immer nur kurz.",
+   "sha": "65f54a36032bd07f",
+   "voice": "DEZHhPbmb8LVZmWufkCh",
+   "who": "Kim Berger"
+  },
+  "2-900163": {
+   "caption": "1:1. Noch knapp zwanzig Minuten.",
+   "cost": 41.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "Eins zu eins. Noch knapp zwanzig Minuten.",
+   "sha": "05cb58634e69ca66",
+   "voice": "iQ5dS7juUUF7zgIVf8ET",
+   "who": "Felix Brandt"
+  },
+  "3-1189316": {
+   "caption": "Ibsen geht dazwischen.",
+   "cost": 22.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "Ibsen geht dazwischen.",
+   "sha": "e87705970d71ba91",
+   "voice": "vGWWh1bodhwwi4yHd6qZ",
+   "who": "Jonas Weber"
+  },
+  "3-1189569": {
+   "caption": "Rasmussen...",
+   "cost": 12.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "Rasmussen...",
+   "sha": "07cf76354fa80b2b",
+   "voice": "vGWWh1bodhwwi4yHd6qZ",
+   "who": "Jonas Weber"
+  },
+  "3-1189576": {
+   "caption": "...mit der Brust.",
+   "cost": 17.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "...mit der Brust.",
+   "sha": "841b151faa6a06bb",
+   "voice": "vGWWh1bodhwwi4yHd6qZ",
+   "who": "Jonas Weber"
+  },
+  "3-1189697": {
+   "caption": "Und lang auf Tavares!",
+   "cost": 31.0,
+   "energy": "rising",
+   "lang": "de",
+   "sent": "[excited] Und lang auf Tavares!",
+   "sha": "ac64f9b678a49573",
+   "voice": "vGWWh1bodhwwi4yHd6qZ",
+   "who": "Jonas Weber"
+  },
+  "3-1189713": {
+   "caption": "Fontaine!",
+   "cost": 19.0,
+   "energy": "rising",
+   "lang": "de",
+   "sent": "[excited] Fontaine!",
+   "sha": "3a100cba72cdab0d",
+   "voice": "vGWWh1bodhwwi4yHd6qZ",
+   "who": "Jonas Weber"
+  },
+  "3-162": {
+   "caption": "Tooor! Fontaine! Was für ein Hammer!",
+   "cost": 47.0,
+   "energy": "peak",
+   "lang": "de",
+   "sent": "[shouting] Tooor! Fontaine! Was für ein Hammer!",
+   "sha": "b4ebad6c12f7805d",
+   "voice": "vGWWh1bodhwwi4yHd6qZ",
+   "who": "Jonas Weber"
+  },
+  "3-163": {
+   "caption": "Genau das meinte ich. Ibsen holt ihn, und diesmal sofort rüber.",
+   "cost": 73.0,
+   "energy": "rising",
+   "lang": "de",
+   "sent": "[excited] Genau das meinte ich. Ibsen holt ihn, und diesmal sofort rüber.",
+   "sha": "791ee8703e1052d2",
+   "voice": "DEZHhPbmb8LVZmWufkCh",
+   "who": "Kim Berger"
+  },
+  "3-3339167": {
+   "caption": "Dreimal hat Wexmoor diese Saison nach Rückstand noch gepunktet. Und heute?",
+   "cost": 74.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "Dreimal hat Wexmoor diese Saison nach Rückstand noch gepunktet. Und heute?",
+   "sha": "73c94a51386ec61e",
+   "voice": "vGWWh1bodhwwi4yHd6qZ",
+   "who": "Jonas Weber"
+  },
+  "3-800004": {
+   "caption": "Ibsen holt die Bälle, und dann immer kurz. Nie rüber.",
+   "cost": 53.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "Ibsen holt die Bälle, und dann immer kurz. Nie rüber.",
+   "sha": "dfe368a40a1df4c4",
+   "voice": "DEZHhPbmb8LVZmWufkCh",
+   "who": "Kim Berger"
+  },
+  "3-900163": {
+   "caption": "1:1. Und jetzt ist hier wieder alles drin.",
+   "cost": 51.0,
+   "energy": "calm",
+   "lang": "de",
+   "sent": "Eins zu eins. Und jetzt ist hier wieder alles drin.",
+   "sha": "add229a2dde0edaa",
+   "voice": "vGWWh1bodhwwi4yHd6qZ",
+   "who": "Jonas Weber"
+  },
+  "4-1189316": {
+   "caption": "Ibsen récupère.",
+   "cost": 15.0,
+   "energy": "calm",
+   "lang": "fr",
+   "sent": "Ibsen récupère.",
+   "sha": "13747ebcdadec9f4",
+   "voice": "bIHbv24MWmeRgasZH58o",
+   "who": "Théo Laurent"
+  },
+  "4-1189569": {
+   "caption": "Rasmussen, de l'autre côté.",
+   "cost": 27.0,
+   "energy": "calm",
+   "lang": "fr",
+   "sent": "Rasmussen, de l'autre côté.",
+   "sha": "cd71178f3af84727",
+   "voice": "bIHbv24MWmeRgasZH58o",
+   "who": "Théo Laurent"
+  },
+  "4-1189576": {
+   "caption": "Il contrôle de la poitrine.",
+   "cost": 27.0,
+   "energy": "calm",
+   "lang": "fr",
+   "sent": "Il contrôle de la poitrine.",
+   "sha": "3bb285ce928b1555",
+   "voice": "bIHbv24MWmeRgasZH58o",
+   "who": "Théo Laurent"
+  },
+  "4-1189697": {
+   "caption": "Long ballon pour Tavares !",
+   "cost": 35.0,
+   "energy": "rising",
+   "lang": "fr",
+   "sent": "[excited] Long ballon pour Tavares!",
+   "sha": "9f8609cd81fb16f0",
+   "voice": "bIHbv24MWmeRgasZH58o",
+   "who": "Théo Laurent"
+  },
+  "4-1189713": {
+   "caption": "Fontaine !",
+   "cost": 19.0,
+   "energy": "rising",
+   "lang": "fr",
+   "sent": "[excited] Fontaine!",
+   "sha": "f6e040511fd1f5d2",
+   "voice": "bIHbv24MWmeRgasZH58o",
+   "who": "Théo Laurent"
+  },
+  "4-162": {
+   "caption": "BUT ! BUT de Fontaine ! Wexmoor égalise !",
+   "cost": 51.0,
+   "energy": "peak",
+   "lang": "fr",
+   "sent": "[shouting] BUUUT! But de Fontaine! Wexmoor égalise!",
+   "sha": "6b6159e58ece8892",
+   "voice": "bIHbv24MWmeRgasZH58o",
+   "who": "Théo Laurent"
+  },
+  "4-163": {
+   "caption": "Voilà ! Ibsen récupère, et cette fois, ça part de l'autre côté !",
+   "cost": 72.0,
+   "energy": "rising",
+   "lang": "fr",
+   "sent": "[excited] Voilà! Ibsen récupère, et cette fois, ça part de l'autre côté!",
+   "sha": "0eff782e552d369c",
+   "voice": "pqHfZKP75CvOlQylNhV4",
+   "who": "Sacha Morel"
+  },
+  "4-3339167": {
+   "caption": "Wexmoor est mené. Mais attention : trois fois cette saison, ils sont revenus.",
+   "cost": 76.0,
+   "energy": "calm",
+   "lang": "fr",
+   "sent": "Wexmoor est mené. Mais attention. trois fois cette saison, ils sont revenus.",
+   "sha": "79c6a66485e30439",
+   "voice": "bIHbv24MWmeRgasZH58o",
+   "who": "Théo Laurent"
+  },
+  "4-800004": {
+   "caption": "Ibsen récupère le ballon, mais après, toujours court. Jamais de l'autre côté.",
+   "cost": 77.0,
+   "energy": "calm",
+   "lang": "fr",
+   "sent": "Ibsen récupère le ballon, mais après, toujours court. Jamais de l'autre côté.",
+   "sha": "7b7b7b0f40b7ea57",
+   "voice": "pqHfZKP75CvOlQylNhV4",
+   "who": "Sacha Morel"
+  },
+  "4-900163": {
+   "caption": "Un partout, et il reste une vingtaine de minutes.",
+   "cost": 49.0,
+   "energy": "calm",
+   "lang": "fr",
+   "sent": "Un partout, et il reste une vingtaine de minutes.",
+   "sha": "781e366a99a0d4b6",
+   "voice": "bIHbv24MWmeRgasZH58o",
+   "who": "Théo Laurent"
+  },
+  "5-1189316": {
+   "caption": "Ibsen intercepte !",
+   "cost": 27.0,
+   "energy": "rising",
+   "lang": "fr",
+   "sent": "[excited] Ibsen intercepte!",
+   "sha": "4d5dd802ab219b57",
+   "voice": "JBFqnCBsd6RMkjVDRZzb",
+   "who": "Hugo Martin"
+  },
+  "5-1189569": {
+   "caption": "Transversale pour Rasmussen.",
+   "cost": 28.0,
+   "energy": "calm",
+   "lang": "fr",
+   "sent": "Transversale pour Rasmussen.",
+   "sha": "b5f528d60de05846",
+   "voice": "JBFqnCBsd6RMkjVDRZzb",
+   "who": "Hugo Martin"
+  },
+  "5-1189576": {
+   "caption": "Contrôle poitrine...",
+   "cost": 20.0,
+   "energy": "calm",
+   "lang": "fr",
+   "sent": "Contrôle poitrine...",
+   "sha": "72e7b9542fb0572a",
+   "voice": "JBFqnCBsd6RMkjVDRZzb",
+   "who": "Hugo Martin"
+  },
+  "5-1189697": {
+   "caption": "Ballon long pour Tavares !",
+   "cost": 35.0,
+   "energy": "rising",
+   "lang": "fr",
+   "sent": "[excited] Ballon long pour Tavares!",
+   "sha": "a80ca668faad1033",
+   "voice": "JBFqnCBsd6RMkjVDRZzb",
+   "who": "Hugo Martin"
+  },
+  "5-1189713": {
+   "caption": "Fontaine !",
+   "cost": 19.0,
+   "energy": "rising",
+   "lang": "fr",
+   "sent": "[excited] Fontaine!",
+   "sha": "1140df6b75882f37",
+   "voice": "JBFqnCBsd6RMkjVDRZzb",
+   "who": "Hugo Martin"
+  },
+  "5-162": {
+   "caption": "BUUUT ! Fontaine ! Quelle frappe !",
+   "cost": 42.0,
+   "energy": "peak",
+   "lang": "fr",
+   "sent": "[shouting] BUUUT! Fontaine! Quelle frappe!",
+   "sha": "a922ac94b4a1156e",
+   "voice": "JBFqnCBsd6RMkjVDRZzb",
+   "who": "Hugo Martin"
+  },
+  "5-163": {
+   "caption": "Voilà ! Ibsen récupère, et cette fois, transversale tout de suite.",
+   "cost": 75.0,
+   "energy": "rising",
+   "lang": "fr",
+   "sent": "[excited] Voilà! Ibsen récupère, et cette fois, transversale tout de suite.",
+   "sha": "ed845499db713a2e",
+   "voice": "pqHfZKP75CvOlQylNhV4",
+   "who": "Sacha Morel"
+  },
+  "5-3339167": {
+   "caption": "Wexmoor sait revenir au score : déjà trois fois cette saison.",
+   "cost": 60.0,
+   "energy": "calm",
+   "lang": "fr",
+   "sent": "Wexmoor sait revenir au score. déjà trois fois cette saison.",
+   "sha": "a4ec527c342cb846",
+   "voice": "JBFqnCBsd6RMkjVDRZzb",
+   "who": "Hugo Martin"
+  },
+  "5-800004": {
+   "caption": "Ibsen récupère, et derrière, toujours court. Jamais de transversale.",
+   "cost": 68.0,
+   "energy": "calm",
+   "lang": "fr",
+   "sent": "Ibsen récupère, et derrière, toujours court. Jamais de transversale.",
+   "sha": "cf69bad18866dcdc",
+   "voice": "pqHfZKP75CvOlQylNhV4",
+   "who": "Sacha Morel"
+  },
+  "5-900163": {
+   "caption": "Un partout. Le match est relancé, il reste une vingtaine de minutes.",
+   "cost": 68.0,
+   "energy": "calm",
+   "lang": "fr",
+   "sent": "Un partout. Le match est relancé, il reste une vingtaine de minutes.",
+   "sha": "c0286704fcf6e5c8",
+   "voice": "JBFqnCBsd6RMkjVDRZzb",
+   "who": "Hugo Martin"
+  },
+  "6-1189316": {
+   "caption": "Intercepta Ibsen.",
+   "cost": 17.0,
+   "energy": "calm",
+   "lang": "es",
+   "sent": "Intercepta Ibsen.",
+   "sha": "e548291e6fea40ec",
+   "voice": "EXAVITQu4vr4xnSDxMaL",
+   "who": "Lucía Romero"
+  },
+  "6-1189569": {
+   "caption": "Ibsen cambia a Rasmussen.",
+   "cost": 25.0,
+   "energy": "calm",
+   "lang": "es",
+   "sent": "Ibsen cambia a Rasmussen.",
+   "sha": "9e846d6d3c670784",
+   "voice": "EXAVITQu4vr4xnSDxMaL",
+   "who": "Lucía Romero"
+  },
+  "6-1189576": {
+   "caption": "Rasmussen, de pecho.",
+   "cost": 20.0,
+   "energy": "calm",
+   "lang": "es",
+   "sent": "Rasmussen, de pecho.",
+   "sha": "39e96f6b64e1af02",
+   "voice": "EXAVITQu4vr4xnSDxMaL",
+   "who": "Lucía Romero"
+  },
+  "6-1189697": {
+   "caption": "Rasmussen, largo a Tavares.",
+   "cost": 27.0,
+   "energy": "calm",
+   "lang": "es",
+   "sent": "Rasmussen, largo a Tavares.",
+   "sha": "0bcfb78fb7a04718",
+   "voice": "EXAVITQu4vr4xnSDxMaL",
+   "who": "Lucía Romero"
+  },
+  "6-1189713": {
+   "caption": "Tavares, de primeras.",
+   "cost": 21.0,
+   "energy": "calm",
+   "lang": "es",
+   "sent": "Tavares, de primeras.",
+   "sha": "b0fca55d08533435",
+   "voice": "EXAVITQu4vr4xnSDxMaL",
+   "who": "Lucía Romero"
+  },
+  "6-162": {
+   "caption": "¡GOOOL! ¡Fontaine! ¡Empata el Wexmoor!",
+   "cost": 49.0,
+   "energy": "peak",
+   "lang": "es",
+   "sent": "[shouting] ¡GOOOL! ¡Fontaine! ¡Empata el Wexmoor!",
+   "sha": "3fd5aa642a35ec8a",
+   "voice": "EXAVITQu4vr4xnSDxMaL",
+   "who": "Lucía Romero"
+  },
+  "6-163": {
+   "caption": "¡Lo que les decía! Ibsen la recupera y esta vez, cambio de orientación al instante para Rasmussen.",
+   "cost": 108.0,
+   "energy": "rising",
+   "lang": "es",
+   "sent": "[excited] ¡Lo que les decía! Ibsen la recupera y esta vez, cambio de orientación al instante para Rasmussen.",
+   "sha": "8c73cde738c08bc1",
+   "voice": "EXAVITQu4vr4xnSDxMaL",
+   "who": "Lucía Romero"
+  },
+  "6-3339167": {
+   "caption": "Tercera vez esta temporada que el Wexmoor suma puntos tras ir por detrás.",
+   "cost": 73.0,
+   "energy": "calm",
+   "lang": "es",
+   "sent": "Tercera vez esta temporada que el Wexmoor suma puntos tras ir por detrás.",
+   "sha": "2f4a2bd308731239",
+   "voice": "EXAVITQu4vr4xnSDxMaL",
+   "who": "Lucía Romero"
+  },
+  "6-800004": {
+   "caption": "Wexmoor recupera en campo propio y luego siempre en corto. Ni un balón cruzado desde el descanso.",
+   "cost": 97.0,
+   "energy": "calm",
+   "lang": "es",
+   "sent": "Wexmoor recupera en campo propio y luego siempre en corto. Ni un balón cruzado desde el descanso.",
+   "sha": "dc46d9571fe3da10",
+   "voice": "EXAVITQu4vr4xnSDxMaL",
+   "who": "Lucía Romero"
+  },
+  "6-900163": {
+   "caption": "Uno a uno, y quedan unos veinte minutos.",
+   "cost": 40.0,
+   "energy": "calm",
+   "lang": "es",
+   "sent": "Uno a uno, y quedan unos veinte minutos.",
+   "sha": "dba2628af3eeb1ca",
+   "voice": "EXAVITQu4vr4xnSDxMaL",
+   "who": "Lucía Romero"
+  },
+  "7-1189316": {
+   "caption": "Ibsen intercetta.",
+   "cost": 17.0,
+   "energy": "calm",
+   "lang": "it",
+   "sent": "Ibsen intercetta.",
+   "sha": "5ad0cbbca71d45fd",
+   "voice": "XrExE9yKIg1WjnnlVkGX",
+   "who": "Giulia Conti"
+  },
+  "7-1189569": {
+   "caption": "Ibsen, dall'altra parte.",
+   "cost": 24.0,
+   "energy": "calm",
+   "lang": "it",
+   "sent": "Ibsen, dall'altra parte.",
+   "sha": "7b946ad510b6afb0",
+   "voice": "XrExE9yKIg1WjnnlVkGX",
+   "who": "Giulia Conti"
+  },
+  "7-1189576": {
+   "caption": "Di petto, Rasmussen.",
+   "cost": 20.0,
+   "energy": "calm",
+   "lang": "it",
+   "sent": "Di petto, Rasmussen.",
+   "sha": "b01ddf1abb40e250",
+   "voice": "XrExE9yKIg1WjnnlVkGX",
+   "who": "Giulia Conti"
+  },
+  "7-1189697": {
+   "caption": "Lungo per Tavares, a sinistra.",
+   "cost": 30.0,
+   "energy": "calm",
+   "lang": "it",
+   "sent": "Lungo per Tavares, a sinistra.",
+   "sha": "0cca48c7246466e7",
+   "voice": "XrExE9yKIg1WjnnlVkGX",
+   "who": "Giulia Conti"
+  },
+  "7-1189713": {
+   "caption": "Tavares, di prima.",
+   "cost": 18.0,
+   "energy": "calm",
+   "lang": "it",
+   "sent": "Tavares, di prima.",
+   "sha": "bc176f1f36f19eb2",
+   "voice": "XrExE9yKIg1WjnnlVkGX",
+   "who": "Giulia Conti"
+  },
+  "7-162": {
+   "caption": "GOOOL! Fontaine! Pareggio del Wexmoor!",
+   "cost": 49.0,
+   "energy": "peak",
+   "lang": "it",
+   "sent": "[shouting] GOOOL! Fontaine! Pareggio del Wexmoor!",
+   "sha": "3889637a59bd4958",
+   "voice": "XrExE9yKIg1WjnnlVkGX",
+   "who": "Giulia Conti"
+  },
+  "7-163": {
+   "caption": "L'avevo detto! Ibsen recupera palla e stavolta subito dall'altra parte, a Rasmussen.",
+   "cost": 94.0,
+   "energy": "rising",
+   "lang": "it",
+   "sent": "[excited] L'avevo detto! Ibsen recupera palla e stavolta subito dall'altra parte, a Rasmussen.",
+   "sha": "2c1eb812ee307dcd",
+   "voice": "XrExE9yKIg1WjnnlVkGX",
+   "who": "Giulia Conti"
+  },
+  "7-3339167": {
+   "caption": "Il Wexmoor ha già rimontato tre volte quest'anno, dopo essere stato sotto.",
+   "cost": 74.0,
+   "energy": "calm",
+   "lang": "it",
+   "sent": "Il Wexmoor ha già rimontato tre volte quest'anno, dopo essere stato sotto.",
+   "sha": "0f22da76925d701b",
+   "voice": "XrExE9yKIg1WjnnlVkGX",
+   "who": "Giulia Conti"
+  },
+  "7-800004": {
+   "caption": "Il Wexmoor recupera palla nella sua metà campo, ma poi passa sempre corto. Dal riposo nessun pallone dall'altra parte.",
+   "cost": 118.0,
+   "energy": "calm",
+   "lang": "it",
+   "sent": "Il Wexmoor recupera palla nella sua metà campo, ma poi passa sempre corto. Dal riposo nessun pallone dall'altra parte.",
+   "sha": "b028f95f666a66af",
+   "voice": "XrExE9yKIg1WjnnlVkGX",
+   "who": "Giulia Conti"
+  },
+  "7-900163": {
+   "caption": "1-1, e mancano una ventina di minuti.",
+   "cost": 43.0,
+   "energy": "calm",
+   "lang": "it",
+   "sent": "Uno a uno, e mancano una ventina di minuti.",
+   "sha": "04e474675d7a2529",
+   "voice": "XrExE9yKIg1WjnnlVkGX",
+   "who": "Giulia Conti"
+  },
+  "8-1189316": {
+   "caption": "Ibsen rouba.",
+   "cost": 12.0,
+   "energy": "calm",
+   "lang": "pt",
+   "sent": "Ibsen rouba.",
+   "sha": "96257db433a001aa",
+   "voice": "cjVigY5qzO86Huf0OWal",
+   "who": "Rafael Souza"
+  },
+  "8-1189569": {
+   "caption": "Ibsen inverte para Rasmussen.",
+   "cost": 29.0,
+   "energy": "calm",
+   "lang": "pt",
+   "sent": "Ibsen inverte para Rasmussen.",
+   "sha": "4c701656fa67700d",
+   "voice": "cjVigY5qzO86Huf0OWal",
+   "who": "Rafael Souza"
+  },
+  "8-1189576": {
+   "caption": "No peito, Rasmussen.",
+   "cost": 20.0,
+   "energy": "calm",
+   "lang": "pt",
+   "sent": "No peito, Rasmussen.",
+   "sha": "3688b23084312d84",
+   "voice": "cjVigY5qzO86Huf0OWal",
+   "who": "Rafael Souza"
+  },
+  "8-1189697": {
+   "caption": "Lançamento longo para Tavares.",
+   "cost": 30.0,
+   "energy": "calm",
+   "lang": "pt",
+   "sent": "Lançamento longo para Tavares.",
+   "sha": "615283227e7edfea",
+   "voice": "cjVigY5qzO86Huf0OWal",
+   "who": "Rafael Souza"
+  },
+  "8-1189713": {
+   "caption": "Tavares, de primeira.",
+   "cost": 21.0,
+   "energy": "calm",
+   "lang": "pt",
+   "sent": "Tavares, de primeira.",
+   "sha": "d5296fe4b24e1806",
+   "voice": "cjVigY5qzO86Huf0OWal",
+   "who": "Rafael Souza"
+  },
+  "8-162": {
+   "caption": "GOOOL! Fontaine! Empata o Wexmoor!",
+   "cost": 45.0,
+   "energy": "peak",
+   "lang": "pt",
+   "sent": "[shouting] GOOOL! Fontaine! Empata o Wexmoor!",
+   "sha": "329995596bd47fde",
+   "voice": "cjVigY5qzO86Huf0OWal",
+   "who": "Rafael Souza"
+  },
+  "8-163": {
+   "caption": "Não falei? Ibsen rouba e, dessa vez, inversão na hora para Rasmussen.",
+   "cost": 79.0,
+   "energy": "rising",
+   "lang": "pt",
+   "sent": "[excited] Não falei? Ibsen rouba e, dessa vez, inversão na hora para Rasmussen.",
+   "sha": "06ed4481cdbc0fa3",
+   "voice": "cjVigY5qzO86Huf0OWal",
+   "who": "Rafael Souza"
+  },
+  "8-3339167": {
+   "caption": "Terceira vez na temporada que o Wexmoor soma pontos depois de ficar atrás.",
+   "cost": 74.0,
+   "energy": "calm",
+   "lang": "pt",
+   "sent": "Terceira vez na temporada que o Wexmoor soma pontos depois de ficar atrás.",
+   "sha": "2ff280530bbfef03",
+   "voice": "cjVigY5qzO86Huf0OWal",
+   "who": "Rafael Souza"
+  },
+  "8-800004": {
+   "caption": "O Wexmoor rouba no seu campo e sempre passa curto. Nenhuma inversão desde o intervalo.",
+   "cost": 86.0,
+   "energy": "calm",
+   "lang": "pt",
+   "sent": "O Wexmoor rouba no seu campo e sempre passa curto. Nenhuma inversão desde o intervalo.",
+   "sha": "a8ceeaf68de577b5",
+   "voice": "cjVigY5qzO86Huf0OWal",
+   "who": "Rafael Souza"
+  },
+  "8-900163": {
+   "caption": "Um a um, e faltam uns vinte minutos.",
+   "cost": 36.0,
+   "energy": "calm",
+   "lang": "pt",
+   "sent": "Um a um, e faltam uns vinte minutos.",
+   "sha": "899422a54ddd9493",
+   "voice": "cjVigY5qzO86Huf0OWal",
+   "who": "Rafael Souza"
+  },
+  "9-1189316": {
+   "caption": "Ibsen onderschept.",
+   "cost": 18.0,
+   "energy": "calm",
+   "lang": "nl",
+   "sent": "Ibsen onderschept.",
+   "sha": "7c13aa7b4f90d448",
+   "voice": "pFZP5JQG7iQjIQuC4Bku",
+   "who": "Sanne de Vries"
+  },
+  "9-1189569": {
+   "caption": "Ibsen speelt naar de andere kant.",
+   "cost": 33.0,
+   "energy": "calm",
+   "lang": "nl",
+   "sent": "Ibsen speelt naar de andere kant.",
+   "sha": "943abec797941b2f",
+   "voice": "pFZP5JQG7iQjIQuC4Bku",
+   "who": "Sanne de Vries"
+  },
+  "9-1189576": {
+   "caption": "Op de borst, Rasmussen.",
+   "cost": 23.0,
+   "energy": "calm",
+   "lang": "nl",
+   "sent": "Op de borst, Rasmussen.",
+   "sha": "64708bd193ee9c35",
+   "voice": "pFZP5JQG7iQjIQuC4Bku",
+   "who": "Sanne de Vries"
+  },
+  "9-1189697": {
+   "caption": "Lang naar Tavares, links.",
+   "cost": 25.0,
+   "energy": "calm",
+   "lang": "nl",
+   "sent": "Lang naar Tavares, links.",
+   "sha": "945dd6cfc726d9df",
+   "voice": "pFZP5JQG7iQjIQuC4Bku",
+   "who": "Sanne de Vries"
+  },
+  "9-1189713": {
+   "caption": "Tavares, direct door.",
+   "cost": 21.0,
+   "energy": "calm",
+   "lang": "nl",
+   "sent": "Tavares, direct door.",
+   "sha": "f019472add6adaf1",
+   "voice": "pFZP5JQG7iQjIQuC4Bku",
+   "who": "Sanne de Vries"
+  },
+  "9-162": {
+   "caption": "GOAL! Fontaine! Wexmoor maakt gelijk!",
+   "cost": 48.0,
+   "energy": "peak",
+   "lang": "nl",
+   "sent": "[shouting] GOAL! Fontaine! Wexmoor maakt gelijk!",
+   "sha": "0aeb94a188dd47d5",
+   "voice": "pFZP5JQG7iQjIQuC4Bku",
+   "who": "Sanne de Vries"
+  },
+  "9-163": {
+   "caption": "Zie je, dat zei ik! Ibsen wint de bal en nu meteen naar de andere kant, naar Rasmussen.",
+   "cost": 97.0,
+   "energy": "rising",
+   "lang": "nl",
+   "sent": "[excited] Zie je, dat zei ik! Ibsen wint de bal en nu meteen naar de andere kant, naar Rasmussen.",
+   "sha": "29a06628efd82af4",
+   "voice": "pFZP5JQG7iQjIQuC4Bku",
+   "who": "Sanne de Vries"
+  },
+  "9-3339167": {
+   "caption": "Wexmoor heeft dit seizoen al drie keer een achterstand omgebogen.",
+   "cost": 65.0,
+   "energy": "calm",
+   "lang": "nl",
+   "sent": "Wexmoor heeft dit seizoen al drie keer een achterstand omgebogen.",
+   "sha": "0e5f6cfb11fa7fe7",
+   "voice": "pFZP5JQG7iQjIQuC4Bku",
+   "who": "Sanne de Vries"
+  },
+  "9-800004": {
+   "caption": "Wexmoor wint de bal op eigen helft, maar speelt daarna altijd kort. Sinds de rust nooit naar de andere kant.",
+   "cost": 108.0,
+   "energy": "calm",
+   "lang": "nl",
+   "sent": "Wexmoor wint de bal op eigen helft, maar speelt daarna altijd kort. Sinds de rust nooit naar de andere kant.",
+   "sha": "2b0d3536cab7961e",
+   "voice": "pFZP5JQG7iQjIQuC4Bku",
+   "who": "Sanne de Vries"
+  },
+  "9-900163": {
+   "caption": "1-1, en nog zo'n twintig minuten te gaan.",
+   "cost": 45.0,
+   "energy": "calm",
+   "lang": "nl",
+   "sent": "Één-één, en nog zo'n twintig minuten te gaan.",
+   "sha": "071a124817ca4b3f",
+   "voice": "pFZP5JQG7iQjIQuC4Bku",
+   "who": "Sanne de Vries"
+  }
+ },
+ "model": "eleven_v4"
+}

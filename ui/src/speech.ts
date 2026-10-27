@@ -123,9 +123,20 @@ function start(line: Pending): void {
   else startBrowser(line);
 }
 
+const DE_NUM = ["null", "eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn"];
+
+/** The spoken form of a caption for the browser voice: German writes a score 1:1 and says "eins zu eins" (the server's
+ * shape_for_tts does the same for ElevenLabs); a system voice would read "1:1" as a ratio or a time of day. */
+export function spokenForm(text: string, lang: string): string {
+  if (lang !== "de") return text;
+  return text.replace(/\b(\d{1,2}):(\d{1,2})\b/g, (all, a: string, b: string) =>
+    +a <= 10 && +b <= 10 ? `${DE_NUM[+a]} zu ${DE_NUM[+b]}` : all);
+}
+
 function startBrowser(line: Pending): void {
   if (!synth) { finish(session); return; }
-  const { text, lang } = line;
+  const { lang } = line;
+  const text = spokenForm(line.text, lang);
   const cps = measuredCps[lang] ?? 12.5;
   const natural = text.length / cps;
   // The slot may be half gone if the line had to wait; never squeeze it beyond MAX_RATE.

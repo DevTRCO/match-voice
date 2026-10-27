@@ -40,7 +40,7 @@ export function ProofModal({ onClose }: { onClose: () => void }) {
               <ol className="plist">
                 {proof.attacks.map((a, i) => (
                   <li key={a.code} style={{ ["--d" as string]: `${i * 0.9 + 0.2}s` }} data-ok="false">
-                    <div className="atk"><em>{a.label} · {CH[a.ch]}</em><del>{a.text}</del></div>
+                    <div className="atk"><em>{a.label}, {CH[a.ch]}</em><del>{a.text}</del></div>
                     <div className="why2"><i aria-hidden="true">✕</i><code>{a.violations[0].code}</code><span>{a.violations[0].detail}</span></div>
                     <div className="fb"><b>Template takes over</b><span>{a.fallback}</span></div>
                   </li>

@@ -106,12 +106,12 @@ export function Stage({ onProof }: { onProof: () => void }) {
       h.wba?.style.setProperty("flex-grow", String(wp[2]));
       setText(h.wph, `${teams0[0].short} ${ph}%`);
       setText(h.wpa, `${pa}% ${teams0[1].short}`);
-      setText(h.wpd, `win probability · draw ${pd}%`);
+      setText(h.wpd, `win probability, draw ${pd}%`);
     }
     const c = cut.current; // the story insert jumps ahead: say so, like a broadcast cut
     if (sim.framed && c.t && sim.t - c.t > 20 && player.phase === "playing") {
       const mins = Math.round((sim.t - c.t) / 60);
-      c.at = now; c.text = `${mins <= 1 ? "A minute" : `${mins} minutes`} later  ·  ${sim.clock}'`;
+      c.at = now; c.text = `${mins <= 1 ? "A minute" : `${mins} minutes`} later, ${sim.clock}'`;
     }
     c.t = sim.framed ? sim.t : 0;
     const cutOn = now - c.at < 2600;
@@ -120,7 +120,7 @@ export function Stage({ onProof }: { onProof: () => void }) {
     const f = sim.flash;
     const on = !!f && f.kind === "goal" && now - f.at < 3400 && player.phase === "playing";
     if (h.goal && (h.goal.dataset.on === "1") !== on) h.goal.dataset.on = on ? "1" : "0";
-    if (on && f) setText(h.goalsub, `${f.clock}'  ·  ${sim.score[0]}\u2013${sim.score[1]}`);
+    if (on && f) setText(h.goalsub, `${f.clock}', ${sim.score[0]}\u2013${sim.score[1]}`);
   });
 
   const teams = sim.hello?.match.teams;
