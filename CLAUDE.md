@@ -604,6 +604,22 @@ at the start. Measured with a live-arrival emulator (8 seeds, 115 passes, board 
 than 1 m in 0.1% of player frames (the opening second only). Devserver runs en 1430x769 and ja 390x844: run starts 1.1 s after the click, 2-1, no errors.
 852 tests green, 1 xfail. Deployed (image 20261027-1603, revision encara-live--0000005, SWA): a real en run started 2.0 s after the click (session, scene, socket, 1 s buffer), 2-1, no errors, 21 ElevenLabs lines, /api/tts median about 0.48 s, 19 of 21 under 1 s, max 1.06 s.
 
+Booth memory, offside, live voice energy (2026-10-27 evening, founder: "the commentators lack the brain of earlier facts", "watch out for offside",
+"the voices are not hyped enough"; 0 model calls, 0 ElevenLabs credits in the build):
+- Memory: `FactEngine.so_far` gives every live core and world prompt a "match so far" block (minute, score, every goal with minute, scorer and the score
+  it made, how it got here, red cards, late). The model only had the score after the goal and "it was level" before. `PROMPT_VERSION` v9,
+  `WORLD_PROMPT_VERSION` w3. Verifier: earlier scorers and minutes count as facts only in goal calls, analyses, score lines and the scene line; a goal
+  minute must go with its scorer (`history_mismatch`); opener and goalless phrases after earlier goals are rejected. New scene-setting line
+  `match_state` (id 850000) after the first call of a mid-match live run ("Eighty-eight minutes gone, one-all, and Wexmoor have fought back from a goal
+  down."), world copy from its own call, dropped when stale. Recordings opt out (`rejoin=False`). Tests in `test_match_memory.py`.
+- Offside: the page's live motion holds every player off the ball behind the drawn offside line until his pass is played (`onside(out,w)` in
+  `positions()`); `sim/scene.py` only picks pass ends an onside runner can reach. 40 seeds: receivers offside at the kick 43 -> 0, other attackers
+  214 -> 0, goal moves 39 of 80 -> 0; runs in behind kept (32), receiver accuracy and speed cap unchanged, recorded run byte-identical.
+- Voice (live only, the recorded run is unchanged): `MATCHVOICE_TTS_DELIVERY=1` on the container app (shaped text, per-energy Flash settings, peak
+  lines hyped: "GOOOAL!"); `Runner._scene_energy`: in a generated scene, late and level, every play-by-play call is at least rising, the final ball
+  (cross, cut-back, through) and shots are peak. Page (live only): the crowd bed rises from 0.09 to about 0.21 as the attacking side nears goal,
+  goal roar 0.75 with the bed at 0.3 for 8 s.
+
 Next, in order:
 6. Record the video from docs/VIDEO.md.
 
