@@ -1,6 +1,6 @@
 # Data model: the rich synthetic match layer
 
-Status: design, nothing built. Author: architect pass, 2026-10-21; adversarial review (Opus) the same day, its fixes are folded in and listed in
+Status: partly built. Roles, traits and tactics (sections 1 and 2) are in `backend/matchvoice/schema.py`, `backend/matchvoice/sim/profile.py` and `backend/matchvoice/sim/tactics.py`; the enriched event layer (section 4) is in `backend/matchvoice/sim/micro/enrich.py` and `data/matches/*/enriched.jsonl`; the tracking frames of section 3 are not built, the rest is design. Author: architect pass, 2026-10-21; adversarial review (Opus) the same day, its fixes are folded in and listed in
 section 11 with the measurements behind them. Inputs: `docs/COMMENTATOR.md` (broadcast profile, 726 halves),
 `docs/research/DATA-FEEDS.md` (field catalogue of public feed specs), `docs/research/AUDIT.md` (blast radius in this repo), and the code
 (`sim/engine.py`, `commentary/moments.py`, `pipeline/protocol.py`, `pipeline/runner.py`, `commentary/analyst.py`). The build order, gates and budget

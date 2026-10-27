@@ -1,12 +1,11 @@
 # Deploy
 
-The static demo is deployed to Azure Static Web Apps (section A). GitHub Pages and Container Apps are prepared and not
-deployed. Three targets: GitHub Pages (prepared in the repository), Azure Static Web Apps, Azure Container Apps. Pages or A for the public demo, B only if you want the
-live mode on the same URL.
+Live: the demo page on Azure Static Web Apps (A) and the live server on Azure Container Apps (B, app `encara-live`, Central US,
+one replica, deployed 2026-10-27). GitHub Pages is prepared and not used.
 
 ## GitHub Pages (static demo, prepared, not switched on)
 
-`.github/workflows/pages.yml` runs on every push to `main` (and by hand): `npm ci` and `npm run build:static` in `ui/`,
+`.github/workflows/pages.yml` runs only when started by hand (`workflow_dispatch`): `npm ci` and `npm run build:static` in `ui/`,
 a check that `index.html` and `insert/story.json` are there and no design mock is, then it uploads `ui/dist-static` and
 deploys it with `actions/deploy-pages`. The site would be `https://devtrco.github.io/match-voice/`.
 
@@ -15,8 +14,7 @@ deploys it with `actions/deploy-pages`. The site would be `https://devtrco.githu
   `python3 -m http.server` under `/match-voice/` and at `/`, loaded in a headless Chrome: no console errors, no failed
   request, Play runs the story insert (68' to 71', score 0-1 to 1-1, the eight baked en/expert mp3 files fetched).
 - `ui/public/mock*.html` are design mocks for the dev server. The static build removes them (`dropMocks` in
-  `ui/vite.config.ts`) and the workflow fails if one is left. The server build (`npm run build`) still contains them; delete
-  them from `ui/public` before the repository goes public.
+  `ui/vite.config.ts`) and the workflow fails if one is left. The server build (`npm run build`) still contains them.
 - `staticwebapp.config.json` is copied into the build; Pages ignores it.
 
 To switch it on: repository Settings, Pages, Source "GitHub Actions". **GitHub Pages on a private repository needs a
@@ -64,17 +62,17 @@ npx @azure/static-web-apps-cli deploy dist-static --deployment-token "$TOKEN" --
 az staticwebapp show -n matchvoice-demo -g matchvoice-rg --query defaultHostname -o tsv
 ```
 
-## B. Container Apps: the public live server ("New run", docs/live/PLAN.md)
+## B. Container Apps: the public live server ("Generate run", docs/live/PLAN.md)
 
-Prepared, not deployed. One container serves the API for the page on Static Web Apps: `/api/session`, `/api/scene`, `/ws`,
+Deployed 2026-10-27 as `encara-live`. One container serves the API for the page on Static Web Apps: `/api/session`, `/api/scene`, `/ws`,
 `/api/tts`, `/api/health`. The page stays on Static Web Apps and calls the API by absolute URL (CORS and the WebSocket Origin
 check allow only `MATCHVOICE_ALLOWED_ORIGINS`). Decisions: region **centralus** (known good for this subscription), **ACR Basic**
-built with **`az acr build`** (the local Docker daemon is broken), **min = max = 1 replica** (every cap is counted in memory: one
+with the image built locally by **`docker buildx`** and pushed (ACR Tasks, so `az acr build`, are not allowed on this subscription), **min = max = 1 replica** (every cap is counted in memory: one
 replica keeps them true, a second one would split them and `/api/tts` would not find runs of the other), 0.5 vCPU, 1 GiB, probes on
 `/api/health`, keys as Container Apps secrets referenced with `secretref:`, never printed.
 
 What the image holds (`.dockerignore` keeps `video/`, `data/corpus`, `docs`, the stray root `*.json` and every `.env` out of the
-build context, so `az acr build` uploads a few MB, not 1.6 GB): the server, `data/matches` (comeback-135 is on disk), `data/replays`,
+build context, so the build context is a few MB, not 1.6 GB): the server, `data/matches` (comeback-135 is on disk), `data/replays`,
 `data/cache/analyst` (not read when `MATCHVOICE_LIVE_FRESH=1`), and `ui/dist` without the design mocks. Python packages are installed
 with `-c constraints.txt`, the versions of the tested `.venv` (`backend/scripts/constraints.py` regenerates it). `MATCHVOICE_TRUSTED_HOPS=1`
 is set in the image: behind the ingress the per-IP caps count the rightmost `X-Forwarded-For` entry, the address Envoy appends. Envoy
@@ -90,7 +88,9 @@ az provider register -n Microsoft.App --wait
 az provider register -n Microsoft.ContainerRegistry --wait
 az provider register -n Microsoft.OperationalInsights --wait
 az acr create -n $ACR -g $RG -l $LOC --sku Basic --admin-enabled false -o none   # about 5 USD per month
-TAG=$(date +%Y%m%d-%H%M); az acr build -r $ACR -t match-voice:$TAG .
+az acr login -n $ACR
+TAG=$(date +%Y%m%d-%H%M); docker buildx build --platform linux/amd64 -t $ACR.azurecr.io/match-voice:$TAG --push .
+# where ACR Tasks are allowed: az acr build -r $ACR -t match-voice:$TAG .
 az containerapp env create -n $ENV -g $RG -l $LOC --logs-destination none -o none
 az containerapp create -n $APP -g $RG --environment $ENV \
   --image $ACR.azurecr.io/match-voice:$TAG --registry-server $ACR.azurecr.io --registry-identity system \
@@ -109,7 +109,7 @@ az containerapp update -n $APP -g $RG -o none --set-env-vars \
   MATCHVOICE_PUBLIC=1 MATCHVOICE_LIVE_FRESH=1 \
   MATCHVOICE_ALLOWED_ORIGINS=https://happy-bush-012530710.5.azurestaticapps.net,http://localhost:5173 \
   MATCHVOICE_LIVE_CALLS=4000 MATCHVOICE_DAILY_CALLS=600 MATCHVOICE_LIVE_RUNS_PER_DAY=150 MATCHVOICE_LIVE_MAX_SECONDS=75 \
-  MATCHVOICE_SESSION_RUNS=3 MATCHVOICE_IP_RUNS=10 MATCHVOICE_LIVE_CONCURRENT=3 \
+  MATCHVOICE_SESSION_RUNS=1 MATCHVOICE_IP_RUNS=10 MATCHVOICE_LIVE_CONCURRENT=3 \
   MATCHVOICE_TTS_CREDITS=45000 MATCHVOICE_TTS_DAILY_CREDITS=3000 MATCHVOICE_SESSION_CREDITS=900 \
   MATCHVOICE_IP_CREDITS=1500 MATCHVOICE_RUN_VOICE_CHANNELS=2 MATCHVOICE_WORLD_CALLS=0
 az containerapp show -n $APP -g $RG --query properties.configuration.ingress.fqdn -o tsv
@@ -131,7 +131,7 @@ option. `az containerapp show` output carries no secret values.
 | `MATCHVOICE_DAILY_CALLS` | [600] | model calls per UTC day, core and world booth together |
 | `MATCHVOICE_LIVE_RUNS_PER_DAY` | [150] | live runs per UTC day, all visitors |
 | `MATCHVOICE_LIVE_MAX_SECONDS` | [75] | longest live run in match seconds |
-| `MATCHVOICE_SESSION_RUNS` | [3] | live runs per browser session |
+| `MATCHVOICE_SESSION_RUNS` | `1` [3] | live runs per browser session (public server: 1) |
 | `MATCHVOICE_IP_RUNS` | [10] | live runs per client address per UTC day |
 | `MATCHVOICE_LIVE_CONCURRENT` | [3] | live runs at once |
 | `MATCHVOICE_TTS_CREDITS` | [300] | lifetime ElevenLabs credits, counted from the ledger in `data/cache/tts` (ephemeral in the container: a restart refills it) |
@@ -163,8 +163,11 @@ heartbeats every 0.25 s. The page must connect with `wss://`.
 
 **Redeploy:**
 ```
-TAG=$(date +%Y%m%d-%H%M); az acr build -r $ACR -t match-voice:$TAG . && az containerapp update -n $APP -g $RG --image $ACR.azurecr.io/match-voice:$TAG -o none
+TAG=$(date +%Y%m%d-%H%M); docker buildx build --platform linux/amd64 -t $ACR.azurecr.io/match-voice:$TAG --push . && az containerapp update -n $APP -g $RG --image $ACR.azurecr.io/match-voice:$TAG -o none
 ```
+
+Where ACR Tasks are allowed, `az acr build -r $ACR -t match-voice:$TAG .` replaces the buildx step. The live app uses
+`ACR=encaramv630916`.
 
 **Counters reset on every restart and every new revision** (the daily calls, runs, sessions, IP counts and the voice ledger), and old
 and new revisions overlap for a moment. That is the price of keeping them in memory; Azure Files on `data/cache` would keep the voice

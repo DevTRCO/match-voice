@@ -5,13 +5,14 @@ apps. Commentary is usually produced in a few languages and at one level, becaus
 commentators. encara turns a stream of match events into spoken commentary in nine languages, for beginners or experts.
 Before any line the model wrote goes out, a checker compares every name and number in it with the match data.
 
-- Demo (static, no key, no sign-in): https://happy-bush-012530710.5.azurestaticapps.net
-- Demo video (under 2 minutes): VIDEO_URL
+[![The encara demo](docs/img/demo.jpg)](https://happy-bush-012530710.5.azurestaticapps.net)
+
+- Demo (no key, no sign-in): https://happy-bush-012530710.5.azurestaticapps.net. Generate run on the same page
+  commentates a new scene live on Azure Container Apps.
+- Demo video (under 2 minutes): https://www.youtube.com/watch?v=4TRUr6I2D6E. The video was recorded before the page got
+  its three steps at the top. The match, the commentators and the lines are the same.
 - Built for the Microsoft x Premier League "Inside the Game: Developer Hackathon", category Best Multi-Agent System.
   Solo entry by Vu Minh Tran.
-
-<!-- TODO(founder): add a screenshot of the current purple demo page (docs/img/demo.jpg) here. The images in docs/img
-are from the earlier light green UI and are not linked on purpose. -->
 
 All names and match data are fictional ([details](#fictional-names-and-synthetic-data)).
 
@@ -25,8 +26,13 @@ About one minute, no key, no install.
 4. Watch for the "Pattern spotted" card when the co-commentator names Wexmoor's habit, then for the switch and the
    equaliser at 71', when the co-commentator refers back to it.
 5. Pick another commentator and hear the same moment in another language.
+6. Click "How does it work". The same run replays with the raw feed, what the spotter found and each line's path from
+   data to voice.
+7. Click "Generate run" for a new scene of the same match, commentated live on Azure. One generated run per browser
+   session, and a small number a day; when they are used up the page says so.
 
-Everything on the page comes from a recorded live run of the pipeline (see [Limitations](#limitations)).
+Demo and How does it work replay a recorded live run of the pipeline; Generate run is live (see
+[Limitations](#limitations)).
 
 ## What it does
 
@@ -66,13 +72,36 @@ Spotter -> Analyst -> Verifier -> (one retry with the reason) -> Publisher -> on
 | Publisher | Agent Framework executor, plain code | Releases lines that pass. A rejected line goes back to the Analyst once with the reason. If it fails again, English, German and French fall back to a template line; the six world languages say nothing. |
 | Director | plain code, one per channel, [`director.py`](backend/matchvoice/commentary/director.py) | Decides what is said, when and in which wording. Keeps quiet spells for stories, lets goals interrupt, drops a line that arrives too late. |
 
-Only the Analyst uses a model. The other agents are plain code on purpose, so that facts, timing and release decisions
-are deterministic and can be tested.
+Only the Analyst calls a model, in two booths: one for English, German and French, one for six more languages. The other
+agents are plain code on purpose, so that facts, timing and release decisions are deterministic and can be tested.
 
 The agents share state. When the Spotter flags a habit, the Analyst writes the set-up line and the booth stores what
 each channel said. At the goal, the Spotter checks whether the goal broke the habit and gives the Analyst the pay-off
 facts together with the stored set-up lines, so the callback refers to what was actually said. The Verifier returns a
 reason code such as `claim_unsupported` or `player_unsupported`, and the Analyst gets that reason on its retry.
+
+### How the agents share state
+
+| State | Written by | Read by | Code |
+| --- | --- | --- | --- |
+| Match so far: score, every goal with minute and scorer, red cards | Fact engine | Analyst (in every live prompt), Verifier (match history) | `FactEngine.so_far`, [`engine.py:188`](backend/matchvoice/facts/engine.py#L188); added to the prompt at [`runner.py:712`](backend/matchvoice/pipeline/runner.py#L712) |
+| Set-up lines: the habit and what each channel said about it | Spotter, then the channels' captions | Analyst at the goal that breaks the habit | `booth['setups']`, [`runner.py:698`](backend/matchvoice/pipeline/runner.py#L698) (written) and [`runner.py:751`](backend/matchvoice/pipeline/runner.py#L751) (read) |
+| Habits fired, so a habit is pointed out once per side and half | Spotter | Spotter | `booth['fired']`, [`runner.py:392`](backend/matchvoice/pipeline/runner.py#L392) |
+| Recent lines: the last lines each channel showed or spoke | Directors | Analyst | `WriteRequest.recent`, [`newsroom.py:39`](backend/matchvoice/commentary/newsroom.py#L39); filled at [`runner.py:888`](backend/matchvoice/pipeline/runner.py#L888) |
+| Rejection reasons per channel | Verifier | Analyst on its retry | `WriteRequest.feedback`, [`newsroom.py:36`](backend/matchvoice/commentary/newsroom.py#L36) |
+
+This is how a line at 71 minutes can refer back to what the booth said at 68 minutes.
+
+### When something fails
+
+| Failure | What happens | Code | Test |
+| --- | --- | --- | --- |
+| The verifier rejects a line | One retry of the failing channels only, with the reason | [`newsroom.py:148`](backend/matchvoice/commentary/newsroom.py#L148), retry edge [`newsroom.py:205`](backend/matchvoice/commentary/newsroom.py#L205) | `test_newsroom.py:36` |
+| The retry fails too | A template line (English, German, French) or silence (the six world languages) | [`newsroom.py:182`](backend/matchvoice/commentary/newsroom.py#L182) | `test_newsroom.py:52` |
+| Model error, empty answer or call budget used up | Straight to the fallback with no retry; the failed prompt's cache entry is discarded | [`newsroom.py:99`](backend/matchvoice/commentary/newsroom.py#L99) | `test_newsroom.py:62`, `test_newsroom.py:69`, `test_empty_answer.py` |
+| A moment's job times out (90 s) | Template lines for that moment; the stream keeps running | [`runner.py:902`](backend/matchvoice/pipeline/runner.py#L902) | none |
+| A line arrives too late | Its director drops it | [`director.py:122`](backend/matchvoice/commentary/director.py#L122) | `test_live_captions.py:87`, `test_live_captions.py:143` |
+| The voice service fails | The page reads the line with the browser voice | [`mock4.html:952`](ui/public/mock4.html#L952) | none |
 
 Play-by-play in English, German and French comes from templates filled with fact-engine values, so it is on screen in
 milliseconds.
@@ -110,7 +139,9 @@ matches; the six world languages are not in the evaluation yet.
 | --- | --- |
 | Microsoft Agent Framework (`agent-framework-core`) | The newsroom workflow: Analyst, Verifier and Publisher executors, a conditional retry edge and a publish edge ([`newsroom.py`](backend/matchvoice/commentary/newsroom.py)). |
 | Azure Static Web Apps (Free plan) | Hosts the public demo, deployed 2026-10-26 ([docs/DEPLOY.md](docs/DEPLOY.md)). |
-| Azure Container Apps | A path for the live server is documented with a `Dockerfile` and `az` commands in [docs/DEPLOY.md](docs/DEPLOY.md). It is not deployed. |
+| Azure Container Apps | The live server behind Generate run: WebSocket stream, model calls and voice, one replica in Central US, keys as Container Apps secrets, per-session, per-address and daily limits ([docs/DEPLOY.md](docs/DEPLOY.md)). |
+| Azure Container Registry | The server image. |
+| MCP server | Seven tools over stdio, including the newsroom's own verifier ([docs/MCP.md](docs/MCP.md)). |
 
 The model is Claude by Anthropic, connected through the Agent Framework's Anthropic package. Azure OpenAI is not used.
 
@@ -118,10 +149,9 @@ The model is Claude by Anthropic, connected through the Agent Framework's Anthro
 
 - **All data is synthetic.** The truth file that scores key moments comes from the same simulator, and nothing here has
   run on real match data.
-- **The public demo is a recording.** The pipeline ran paced at match speed with the model answers taken from its answer
-  cache, which an earlier paid run had filled. It was saved as it streamed. The model's latency is not in the demo's
-  timing, because cached answers arrive at once. The page labels it as recorded. Real-time commentary needs a key and
-  the local server.
+- **Demo and How does it work replay a recording.** The pipeline ran at match speed with model answers from an earlier
+  paid run, so model latency is not in that timing. Generate run is live: the server on Azure simulates a new scene and
+  makes real model and voice calls, within a small daily budget.
 - **No language has been checked by a native speaker.** Some lines are known to be weak, for example the Spanish wording
   for a switch of play. Some build-up lines in the recording state a wrong detail that the verifier did not catch.
   Italian, Dutch and Japanese put Tavares on the left, and Turkish and Japanese say the first-time pass went to Tavares,
@@ -132,8 +162,8 @@ The model is Claude by Anthropic, connected through the Agent Framework's Anthro
 - **Most core-language lines are templates** (see Evidence). That keeps play-by-play instant, and it limits variety.
 - **No tracking data.** Events only, so the pitch shows the ball and the player on it. Moments that need positions of all
   22 players (line breaks, runs in behind) have wordings and never fire.
-- **Voices.** The demo uses stock ElevenLabs voices, and nobody has compared them with native speech. Speaking times for
-  the six world languages are estimates.
+- **Voices.** The demo uses ElevenLabs voices (premade and Voice Library), and nobody has compared them with native
+  speech. Speaking times for the six world languages are estimates.
 - **Density gates that fail** are listed in [docs/DENSITY.md](docs/DENSITY.md); the main one is that too many segments
   name a player.
 
@@ -154,7 +184,7 @@ cd dist-static && python3 -m http.server 8080  # open http://localhost:8080
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
+pip install -e ".[dev]" -c constraints.txt   # constraints.txt pins the versions the tests ran on
 (cd ui && npm ci && npm run build)             # the server serves ui/dist
 MATCHVOICE_NO_DOTENV=1 python -m matchvoice.server --port 8000
 ```
@@ -180,18 +210,20 @@ marked as cached; `--live-fresh` makes every analyst line a real call. A live ru
 random match.
 
 Live runs on the server use the core layers: templates, the Analyst, the Verifier and the Publisher. The habit detector
-and the dense play-by-play run when the story insert is recorded (`python -m matchvoice.pipeline export-story-insert`),
-and not yet in the server's live mode. With `--world-calls` the six world languages are in the WebSocket and SSE
-stream; the guided page shows English, German and French only.
+and the dense play-by-play run when the story insert is recorded (`python -m matchvoice.pipeline export-story-insert`)
+and in fast live runs. With `--world-calls` the six world languages are in the WebSocket and SSE
+stream. The demo page shows all nine languages; the older local guided page in `ui/src` shows English, German and French
+only.
 
-The live run in the guided page speaks with the browser voice. The server also has an ElevenLabs endpoint (`/api/tts`,
-`eleven_flash_v2_5`, English, German and French) for lines a live run published. It needs `ELEVENLABS_API_KEY` and has
-its own credit cap (`--tts-credits`, default 300). The guided page does not call it.
+The live run in the local guided page speaks with the browser voice. The server also has an ElevenLabs endpoint
+(`/api/tts`, `eleven_flash_v2_5`, all nine languages) for lines a live run published. It needs `ELEVENLABS_API_KEY` and has
+its own credit cap (`--tts-credits`, default 300). The demo page's Generate run voices the chosen channel through it with
+Flash v2.5 and falls back to the browser voice.
 
 ### Tests
 
 ```bash
-python -m pytest -q        # 770 passed, 1 xfailed on 2026-10-26, no key, about 3 minutes
+python -m pytest -q        # 899 passed, 1 xfailed on 2026-10-27, no key, about 6 minutes
 ```
 
 ### MCP server
@@ -238,9 +270,12 @@ docs/             architecture, protocol, evaluation, deploy, MCP, pitch, video 
 
 - **Code:** MIT, see [LICENSE](LICENSE).
 - **Language model:** Claude Haiku 5.5 by Anthropic, through the Microsoft Agent Framework.
-- **Voices:** ElevenLabs Eleven v4 with the voices Charlie, Liam, Marcus, Leo, George, Will, Daniel, Anna, Bill, Sarah,
-  Matilda, Eric, Lily, Brian and Jessica. The audio in `ui/public/insert/story-audio` was generated with them.
-- **Crowd sound:** `ui/public/audio` is a licence-free (CC0) community recording from Freesound, low-passed and looped.
+- **Libraries:** Microsoft Agent Framework (`agent-framework-core`, `agent-framework-anthropic`), FastAPI, React and Vite;
+  on the demo page driver.js 1.3.1 and flag-icons 7.2.3 (both MIT, loaded from jsDelivr).
+- **Voices:** ElevenLabs, Eleven v4 for the recorded demo and Flash v2.5 for live runs, with the voices Charlie, Liam,
+  Marcus, Leo, George, Will, Daniel, Anna, Bill, Sarah, Matilda, Eric, Lily, Brian and Jessica. The audio in `ui/public/insert/story-audio` was generated with them.
+- **Crowd sound:** `ui/public/audio` (`stadium-bed.mp3`, `stadium-roar.mp3`) is a community recording from Freesound,
+  low-passed and looped.
 - **Commentator faces:** `ui/public/faces` were generated with OpenAI gpt-image-2.5 and show people who do not exist.
 - **Fonts:** Schibsted Grotesk, Barlow Condensed and JetBrains Mono, all under the SIL Open Font License 1.1.
 

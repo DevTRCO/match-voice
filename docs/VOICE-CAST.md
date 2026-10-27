@@ -5,7 +5,7 @@ Sources, collected 2026-10-25 with zero credits: `GET /v1/voices` (the account's
 library, 10 generated), `GET /v1/shared-voices` (the public library, for the "add a voice" option) and `GET /v1/user/subscription`
 (read only: starter tier, 10 of 10 voice slots used, 11,300 of 33,800 characters used this period, so about 22,500 credits left).
 
-The people come from `ui/public/mock3.html`; ages are read from the placeholder faces in `ui/public/faces`.
+The people were first drafted in an earlier design page that has since been removed; the cast is now in `ui/public/mock4.html`. Ages are read from the placeholder faces in `ui/public/faces`.
 Previews are the `preview_url` the API returns: free samples the service made, not our text. Links on `api.us.elevenlabs.io`
 carry a timestamp and may stop working after a few days; the `storage.googleapis.com` links are stable. Listen before deciding.
 

@@ -1,11 +1,9 @@
-# Builds the static demo (recorded insert, no server, no key) and publishes ui/dist-static to GitHub Pages.
-# Pages must be enabled with "Source: GitHub Actions" in the repository settings. On a private repository that needs a
-# paid plan; otherwise the repository has to be public. See docs/DEPLOY.md.
+# Optional: publishes the static demo to GitHub Pages when run by hand. The public demo is on Azure Static Web Apps (docs/DEPLOY.md).
+# Builds the static demo (recorded insert, no server, no key) and publishes ui/dist-static. Pages must be enabled with
+# "Source: GitHub Actions" in the repository settings.
 name: Pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

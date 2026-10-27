@@ -566,7 +566,7 @@ body:not(.paused):not(.idle):not(.how) .ctrl .booth.lure::after{content:"";posit
           <h2 id="endh">Hear the same goal with another commentator</h2>
           <div class="alts" id="alts"></div>
           <div class="row"><button id="endre">Watch again</button><button id="endnew" hidden>New run</button><button id="endrec" hidden>Recorded run</button></div>
-          <p class="recn" id="endn">Recorded from a real run of the engine. The agents wrote and checked every line; this page replays it at match pace.</p>
+          <p class="recn" id="endn">Recorded from a real run of the engine. Every line the model wrote passed the verifier first. This page replays the run at match pace.</p>
           <p class="recn" id="endnr" hidden aria-live="polite"></p>
         </div></div>
       </div></div>
@@ -1420,7 +1420,7 @@ const REC_TXT = {
 // seconds the board is behind the generator: DELAY by design, more after a pause (the generator does not wait)
 const lagS = () => { if(!LIVE.tHello || !D || !D.live) return DELAY; return Math.max(DELAY, Math.round((performance.now()-LIVE.tHello)/1000 - nowW())); };
 function lagBadge(){ if(REC_ON!=="now") return; const n=lagS(); if(n!==LIVE.lagShown){ LIVE.lagShown=n; fitRec(); } }
-const REC_LABEL = "Recorded from a real run of the engine. The agents wrote and checked every line; this page replays it at match pace.";
+const REC_LABEL = "Recorded from a real run of the engine. Every line the model wrote passed the verifier first. This page replays the run at match pace.";
 function setRec(st){ const el=$("rec"); REC_ON=st; el.classList.toggle("ana",st==="ana"); el.classList.toggle("live",st==="live"||st==="now"); fitRec(); }
 // the long words when they fit, the short ones on a narrow picture: never within 8 px of the score bug; run again on every resize
 function fitRec(){ if(REC_ON==null){ keepOut(); return; } const el=$("rec"), t=REC_TXT[REC_ON](); el.title=t.title; el.textContent=t.long;
@@ -1436,7 +1436,7 @@ function tease(){ if(!D || D.isLive) return;
   const st=D.LINES.find(l=>l.kind==="insight"), ct=D.cuts[0];
   if(!st){ $("startp").textContent="Press Play"; $("recn").textContent=""; return; }
   $("startp").textContent = ct ? "One match, two scenes" : "";
-  $("recn").innerHTML = `Recorded from a real run of the engine.<span class="rl"> The agents wrote and checked every line; this page replays it at match pace.</span>`;
+  $("recn").innerHTML = `Recorded from a real run of the engine.<span class="rl"> Every line the model wrote passed the verifier first. This page replays the run at match pace.</span>`;
   renderPick();
 }
 /* ---------- the picker on the start screen: built once per booth list, then only its state changes (focus stays where it is) ---------- */
