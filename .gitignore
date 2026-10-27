@@ -13,3 +13,15 @@ data/cache/*
 ui/dist/
 ui/dist-static/
 data/corpus/
+
+# stray answer-cache files written to the repo root by local runs
+/[0-9a-f]*.json
+*.log
+# video: media, renders and the founder's raw recordings stay local (the film goes to YouTube)
+video/founder/
+video/out/
+video/shots/
+video/capture/real/
+video/capture/sheets/
+video/remotion/public/
+video/remotion/out/
