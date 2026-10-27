@@ -168,12 +168,14 @@ def test_the_world_score_line_says_no_time_left_in_the_last_minutes():
 
 
 # ---------- the line that sets the scene ----------
-WANT = {"en/beginner": "It's one-all, late on, and Wexmoor have fought back from a goal down.",
-        "en/expert": "Eighty-eight minutes gone, one-all, and Wexmoor have fought back from a goal down.",
-        "de/beginner": "Es steht eins zu eins, kurz vor Schluss, und Wexmoor hat einen Rückstand aufgeholt.",
-        "de/expert": "Achtundachtzig Minuten gespielt, eins zu eins, und Wexmoor hat einen Rückstand aufgeholt.",
-        "fr/beginner": "Un partout en fin de match, et Wexmoor est revenu au score.",
-        "fr/expert": "Quatre-vingt-huit minutes de jeu, un partout, et Wexmoor est revenu au score."}
+# the short wording: the minute (or the stage) and the score, so the play is called again within a few seconds; how the score got here is in
+# every prompt's match-so-far block, not spoken
+WANT = {"en/beginner": "It's one-all, late on.",
+        "en/expert": "Eighty-eight minutes gone, one-all.",
+        "de/beginner": "Es steht eins zu eins, kurz vor Schluss.",
+        "de/expert": "Achtundachtzig Minuten gespielt, eins zu eins.",
+        "fr/beginner": "Un partout en fin de match.",
+        "fr/expert": "Quatre-vingt-huit minutes de jeu, un partout."}
 
 
 def test_every_channel_sets_the_scene_after_the_restart_call(scene):

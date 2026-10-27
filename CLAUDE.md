@@ -620,6 +620,14 @@ Booth memory, offside, live voice energy (2026-10-27 evening, founder: "the comm
   (cross, cut-back, through) and shots are peak. Page (live only): the crowd bed rises from 0.09 to about 0.21 as the attacking side nears goal,
   goal roar 0.75 with the bed at 0.3 for 8 s.
 
+Live timing fix (2026-10-27 night, founder: "das meiste commentary ist zu langsam", screenshot: score line spoken +13.4 s after the goal; 0 model
+calls, 0 ElevenLabs credits): measured with the fake model at 4 s latency against 82a4004. (1) The scene-setting line took the long wording
+with "how the score got here" (7 s behind the 8 s goal kick explainer), so the first play call came 5 s later than before: `match_state`
+now takes the short wording ("Es steht eins zu eins, kurz vor Schluss."); the history stays in every prompt's match-so-far block. (2) The
+score line came after the co line (call, co, score: +10.6 s): in a generated live scene it is pushed with the goal (`Runner._score_first`,
+priority 75, `params.first`) and the director holds the co line behind it, so call, score, co line (+4.1 s; co line +0.7 s later). Recorded
+runs keep call, co, score. Page: the flow band says "once the analysis is ready" only when the score line really waited.
+
 Next, in order:
 6. Record the video from docs/VIDEO.md.
 

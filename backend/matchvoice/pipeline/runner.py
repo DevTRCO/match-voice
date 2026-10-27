@@ -53,6 +53,7 @@ HEARTBEAT_S = 0.25  # wall seconds of silence before a live stream sends a heart
 DRAIN_S = 20.0  # viewer seconds the commentary may run on after the final whistle
 SCORE_LINE_BASE = 900_000  # derived id of the lead's score line after a goal analysis (skeleton range, under the fast layer's 1,000,000)
 SCORE_LINE = {"priority": 60, "ttl": 30.0, "voice_wait": 20.0}  # after the co-commentator's line (70) and before any context note (30 to 45)
+SCORE_FIRST_PRIORITY = 75  # a generated live scene: the score line goes before the co line (70), still under the goal call
 WORLD_CONTEXT_WAIT_S = 6.0  # world channels: a context line (the story) may wait this long for the voice (the core lead waits 3 s for the co)
 SHORT_IN_PLAY = frozenset({"tackle_won", "sprint", "shot_blocked"})  # skeleton play-by-play that takes its shortest wording while the ball is in play (fast layer on)
 WORLD_CALL_GUESS_S = 3.0  # world_skip_late: the expected length of a world call until one has been measured in this run
@@ -733,7 +734,7 @@ class Runner:
             side = "H" if h > a else "A"
             facet = "lead_back" if eng.was_behind[side] else "lead"
         phase = "added" if extra else "first" if eng.period == 1 else "late" if int(minute) >= 80 else "second"
-        params = {"facet": facet, "n": int(minute), "goals_h": h, "goals_a": a, "phase": phase, "dead": True, "window": -1, "long": True}
+        params = {"facet": facet, "n": int(minute), "goals_h": h, "goals_a": a, "phase": phase, "dead": True, "window": -1}
         if side is not None:
             params |= {"team": short[side], "other": short["A" if side == "H" else "H"]}
         if int(minute) >= 80:
@@ -807,11 +808,18 @@ class Runner:
         self.pubs[m.id] = pub
         self._push(m)
         heapq.heappush(self._done, (m.ready_t, m.id, m, pub))
-        if m.kind == "goal_analysis":
+        if m.kind == "goal_analysis" and not self._score_first(m):
             self._push_score_line(m)
 
-    def _push_score_line(self, m: Moment) -> None:
+    def _score_first(self, m: Moment) -> bool:
+        """A generated live scene says the score right after the goal call, while the analyst writes, then the co line: not call, co line,
+        score, which put the score 10 s or more after the goal."""
+        return self.mode == "live" and self.bundle.variant is not None and m.kind == "goal_analysis"
+
+    def _push_score_line(self, m: Moment, first: bool = False) -> None:
         line = score_line_for(m, self.meta, self.bundle.duration)
+        if first:  # ahead of the co line (director: the co line waits for it)
+            line = replace(line, priority=SCORE_FIRST_PRIORITY, params={**line.params, "first": True})
         self._moment_t[line.id] = m.t
         self._push(line)
 
@@ -819,6 +827,8 @@ class Runner:
         self._moment_t[m.id] = m.t
         if m.kind == "goal_analysis":
             self._attach_payoff(m, ft)
+            if self._score_first(m):
+                self._push_score_line(m, first=True)
         if self.mode == "live" and not _is_model_moment(m) and m.priority < LIVE_URGENT:
             m.ttl = min(m.ttl, LIVE_PBP_TTL_S)  # template lines (also analyst-voice ones like shot_milestone) that would start late are dropped, not queued
         if not _is_model_moment(m):

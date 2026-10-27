@@ -1548,7 +1548,7 @@ function stampsOf(line, ch){
   if(line.kind==="insight"||line.kind==="story") note[0] = "quiet spell, no new event";
   // the world booth starts a moment once the English booth has captioned it
   if(world && !scoreLine && line.kind!=="analyst" && model && t[1]-t[0]>=.3) note[1] = "after the English caption";
-  if(scoreLine) note[1] = "once the analysis is ready";
+  if(scoreLine && t[1]-t[0]>=.3) note[1] = "once the analysis is ready";   // a live scene says the score at once, before the analysis
   // a first touch: the receipt is the data, the call waits to see the receiver keep the ball
   if(line.settle){ t[0]=Math.min(t[0], cap-lat); t[1]=Math.max(t[1], t[0]+line.settle); note[1] = `waited ${fmtLat(line.settle)} to see him keep it`; }
   t=t.map((x,i)=>Math.max(x, i?t[i-1]:-1e9));   // a step never comes before the one ahead of it

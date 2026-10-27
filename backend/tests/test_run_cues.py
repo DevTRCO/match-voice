@@ -72,3 +72,17 @@ def test_peak_hype_stretches_the_live_goal_call():
     from matchvoice.commentary.delivery import hype_for_tts
     assert hype_for_tts("Goal! Kenji Fontaine! Wexmoor are in front!", "en", "peak", "eleven_flash_v2_5").startswith("GOOOAL! Kenji")
     assert hype_for_tts("Goal kick for Tamsworth.", "en", "peak", "eleven_flash_v2_5").startswith("Goal kick")
+
+
+@pytest.mark.parametrize("seed", [3, 41])
+def test_a_generated_scene_says_the_score_before_the_co_line(tmp_path, seed):
+    """Call, score, co line: the score comes in the gap while the analyst writes, not 10 s after the goal behind the co line."""
+    live = LiveConfig(fake_llm(delay=0.5), CallBudget(60), "fake", tmp_path)
+    r = Runner(LIB.scene_bundle(WIN, seed), "live", 1.0, False, live, WIN.start, None, WIN.until, fast=True, rows=True)
+    msgs = asyncio.run(r.collect())
+    for ch in range(6):
+        says = {m["m"]: m for m in msgs if m["k"] == "say" and m["ch"] == ch}
+        voice = {m["m"]: m for m in msgs if m["k"] == "voice" and m["ch"] == ch}
+        start = lambda kind: next((voice.get(mid) or s)["s"] for mid, s in says.items() if s["kind"] == kind)
+        goal, score, co = start("shot_goal"), start("score_line"), start("goal_analysis")
+        assert goal < score < co and score - goal < 6.0, (ch, goal, score, co)

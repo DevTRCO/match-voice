@@ -36,7 +36,7 @@ CALL_TYPES = ("switch", "long", "first_time")  # WORDS["pass_call"]: the pass ty
 SILENT_LAYERS = ("fast", "context")  # captioned when the voice takes them, never at arrival: a fragment replaced before it is voiced is not a skip
 # A breath of crowd between two voices after a goal (docs/INSERT-SCRIPT.md 7.2): the co line waits this long after the lead's call has ended,
 # and the lead's score line this long after the co line. Viewer seconds, (kind spoken last, kind about to start) -> pause.
-BREATH_S = {("shot_goal", "goal_analysis"): 0.7, ("goal_analysis", "score_line"): 0.4,
+BREATH_S = {("shot_goal", "goal_analysis"): 0.7, ("goal_analysis", "score_line"): 0.4, ("shot_goal", "score_line"): 0.4, ("score_line", "goal_analysis"): 0.4,
             ("pattern_insight", "story_note"): 0.3, ("story_note", "pattern_insight"): 0.5}  # a quiet spell: the lead and the co-commentator take turns (0.3: the story still starts inside its 3 s voice wait behind the longest set-up)
 
 
@@ -137,8 +137,10 @@ class ChannelDirector:
         """The breath after a goal, and the pace rules of the dense layers: fast lines are spaced, context lines are capped and wait for a quiet moment."""
         if t < self._breath_at(m) - 1e-9:
             return False
-        if m.kind == "score_line" and any(q.kind == "goal_analysis" for q in self._queue):
+        if m.kind == "score_line" and not m.params.get("first") and any(q.kind == "goal_analysis" for q in self._queue):
             return False  # call, co line, score: the score waits for the co line while it is still to come (it may be held by its breath)
+        if m.kind == "goal_analysis" and any(q.kind == "score_line" and q.params.get("first") for q in self._queue):
+            return False  # a generated live scene: call, score, co line
         if m.kind == "match_state" and any(q is not m and q.ready_t < m.ready_t and q.layer != "context" for q in self._queue):
             return False  # a live run that joined a running match: the call it came in with (the goal kick) goes first, then where we are
         if not self.dense:
