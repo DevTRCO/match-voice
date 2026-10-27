@@ -119,6 +119,8 @@ export const timeline: Timeline = {
       plates: [{fromS: 0.2, durS: 2.8, name: 'Daniel Price', role: 'Co-commentator, English', face: 'daniel-price'}],
     },
     // 6. Scene 2: the card, then the long ball, first time, goal, "Pattern broken", the pay-off
+    // the jump from 68' to 71' needs saying (founder 2026-10-28); the page's scene card right after says how long, so this card does not
+    {id: '5c-bridge', type: 'text', durS: 3.6, lines: ['Then Wexmoor win the ball again. Watch where it goes.']},
     {id: '6a-scene2-card', type: 'shot', src: 'shots/S3_scene2_goal_enx.mp4', inS: 2.4, outS: 3.7},
     {
       id: '6b-scene2-goal',
@@ -170,6 +172,8 @@ export const timeline: Timeline = {
       // rejected line on "plain code checks", the reason on "numbers", the accepted line on "one retry" (C 8.58, 10.08, 12.68)
       atS: [0.4833, 1.9833, 4.5833],
     },
+    // the split needs its premise first (founder 2026-10-28)
+    {id: '8-intro', type: 'text', durS: 3.4, lines: ['Same moment, two styles: expert or newcomer.']},
     {
       // 8. same moment, two levels (Rasmussen chests it down, 70:07): both lines exact, boards moving. The expert line is heard.
       id: '8-split',
@@ -211,7 +215,7 @@ export const timeline: Timeline = {
       outS: 6.2,
       subs: [{startS: 0.33, endS: 6.12, text: 'So I want every fan to have a commentator who goes mad for their team, in their language.'}],
     },
-    {id: '11-end', type: 'end', durS: 4.5},
+    {id: '11-end', type: 'end', durS: 6.0},
   ],
 };
 
@@ -226,6 +230,10 @@ const startOf = (id: string): number => {
   throw new Error(`no segment ${id}`);
 };
 const END = startOf('11-end');
+const lift = (id: string, durS: number): [number, number][] => {
+  const a = startOf(id);
+  return [[a, PAGE_MIX.bed], [a + 0.6, 0.25], [a + durS - 0.4, 0.25], [a + durS, PAGE_MIX.bed]];
+};
 timeline.global.push({
   src: BED,
   atS: 0,
@@ -234,6 +242,8 @@ timeline.global.push({
   fadeOutS: 1.5,
   env: [
     [0, PAGE_MIX.bed],
+    ...lift('5c-bridge', 3.6),
+    ...lift('8-intro', 3.4),
     [END - 0.3, PAGE_MIX.bed],
     [END + 0.3, 0.25],
   ],

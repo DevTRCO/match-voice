@@ -16,6 +16,7 @@ done
 for f in "$R"/ui/public/insert/story-audio/*.mp3; do ln -f "$f" "$P/audio/story-audio/"; done
 for f in "$R"/ui/public/faces/*.jpg; do ln -f "$f" "$P/faces/"; done
 ln -f "$R/ui/public/audio/stadium-roar.mp3" "$P/audio/stadium-roar.mp3"
+mkdir -p "$P/img" && ln -f "$R/docs/img/demo.jpg" "$P/img/demo.jpg"   # the end card shows the current demo page
 for f in "$R"/video/shots/*.mp4; do
   [ -f "$f" ] && ln -f "$f" "$P/shots/"
 done
