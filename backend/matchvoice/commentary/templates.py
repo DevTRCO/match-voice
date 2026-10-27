@@ -33,24 +33,39 @@ T: dict[str, dict[str, dict[str, list[str]]]] = {
         },
     },
     "shot_goal": {
-        # the goal call: shouted first, short enough that the analyst's follow-up is voiced right behind it (about 4 s at most)
+        # the goal call: the shout, the scorer at once, then what it means (`meaning`: level, in front, the opener) or, for a strike from
+        # outside the box, the hit (`strike_call`). No score: the lead says it after the co-commentator's line (`score_line`). The full name on the
+        # goal is the British habit (`player_full`); German says the name twice when there is nothing else to add.
         "en": {
-            "beginner": ["GOAL! {player}!", "It's in! {player} scores for {team}!",
-                         "GOAL for {team}! {player} finds the net, it's {score}!"],
-            "expert": ["GOAL! {player}!", "{player} scores, {score}.",
-                       "GOAL! {player} buries it, and it's {score}!"],
+            "beginner": ["GOAL! {player}!", "It's in! {player}!", "Goal! {player_full}! {meaning}!"],
+            "expert": ["GOAL! {player}!", "{player} scores for {team}!", "Goal! {player_full}! {meaning}!",
+                       "Oh, {strike_call}! {player_full}!", "Oh, {strike_call}! {player_full}! {meaning}!"],
         },
         "de": {
-            "beginner": ["TOR! {player}!", "Und der ist drin! {player} trifft für {team}!",
-                         "TOR für {team}! {player} netzt ein, es steht {score}!"],
-            "expert": ["TOR! {player}!", "{player} trifft, {score}.",
-                       "TOR! {player} macht ihn rein, {score}!"],
+            "beginner": ["TOR! {player}!", "Der ist drin! {player}!", "Tooor! {player}! {meaning}!"],
+            "expert": ["TOR! {player}!", "Tooor! {player}! {player}!", "Tooor! {player}! {meaning}!", "Tooor! {player}! {strike_call}!"],
         },
         "fr": {
-            "beginner": ["BUT ! {player} !", "Et c'est dedans ! {player} marque pour {team} !",
-                         "BUT pour {team} ! {player} fait mouche, c'est {score} !"],
-            "expert": ["BUT ! {player} !", "{player} marque, {score}.",
-                       "BUT ! {player} ne tremble pas, {score} !"],
+            "beginner": ["BUT ! {player} !", "Et c'est dedans ! {player} !", "BUT ! BUT de {player} ! {meaning} !"],
+            "expert": ["BUT ! {player} !", "BUUUT ! {player} ! {meaning} !", "BUUUT ! {player} ! {strike_call} !"],
+        },
+    },
+    "score_line": {
+        # the lead, back to play after the co-commentator's line: the score once, in its spoken form (German writes 1:1, en and fr write
+        # the words), and the time left (`left`, true to the clock: "twenty minutes or so" at 71') or, for the de/fr expert, what it means
+        # (`state_call`). Without a time (the last minutes, added time) the score stands alone.
+        "en": {
+            "beginner": ["It's {score_words}.", "{Score_words}, and about {left} left.",
+                         "It's {score_words}, with about {left_ht} to go to half-time."],
+            "expert": ["{Score_words}.", "{Score_words}, and {left} or so to go.", "{Score_words}, and {left_ht} or so to half-time."],
+        },
+        "de": {
+            "beginner": ["{score}.", "{score}. Noch {left}.", "{score}, noch {left_ht} bis zur Pause."],
+            "expert": ["{score}.", "{score}, noch {left}.", "{score}. {state_call}."],
+        },
+        "fr": {
+            "beginner": ["{Score_words} !", "{Score_words}, et il reste {left}.", "{Score_words} ! Encore {left_ht} avant la pause."],
+            "expert": ["{Score_words}.", "{Score_words}, il reste {left}.", "{Score_words}. {state_call}, il reste {left}."],
         },
     },
     "shot_saved": {
@@ -248,30 +263,30 @@ T: dict[str, dict[str, dict[str, list[str]]]] = {
     # analyst moments, used as fallback when the model is unavailable or its line is rejected
     "goal_analysis": {
         "en": {
-            "beginner": ["That changes things for {team}.", "That goal changes the whole feel of the game for {team}."],
-            "expert": ["The game swings towards {team}.", "That goal lifts {team}'s chance of a win to {win_after} percent."],
+            "beginner": ["Huge moment for {team}.", "{player} keeps calm and finishes it, a big moment for {team}."],
+            "expert": ["The game swings towards {team}.", "{player} makes no mistake, and the game swings towards {team}."],
         },
         "de": {
-            "beginner": ["Das verändert die Partie für {team}.", "Dieses Tor verändert das ganze Spiel für {team}."],
-            "expert": ["Das Spiel kippt zugunsten von {team}.", "Die Siegchance von {team} steigt mit diesem Tor auf {win_after} Prozent."],
+            "beginner": ["Riesenmoment für {team}.", "{player} bleibt ruhig und trifft, ein Riesenmoment für {team}."],
+            "expert": ["Das Spiel kippt Richtung {team}.", "{player} bleibt cool, und das Spiel kippt Richtung {team}."],
         },
         "fr": {
-            "beginner": ["Ce but change tout pour {team}.", "Ce but change la physionomie du match pour {team}."],
-            "expert": ["Le match penche du côté de {team}.", "Ce but fait grimper les chances de victoire de {team} à {win_after} %."],
+            "beginner": ["Énorme moment pour {team}.", "{player} ne tremble pas, un énorme moment pour {team}."],
+            "expert": ["Le match bascule du côté de {team}.", "{player} est clinique, et le match bascule pour {team}."],
         },
     },
     "momentum": {
         "en": {
             "beginner": ["{team} are on top right now.", "{team} are really pushing now, and the pressure is building."],
-            "expert": ["{team} are pressing the issue.", "{team} have taken control, {shots_n} in the last five minutes."],
+            "expert": ["{team} are pressing the issue.", "{team} have taken control, and the chances are starting to come."],
         },
         "de": {
             "beginner": ["{team} ist gerade klar am Drücker.", "{team} drückt jetzt, und der Druck wächst."],
-            "expert": ["{team} hat das Spiel im Griff.", "{team} übernimmt, {shots_n} in den letzten fünf Minuten."],
+            "expert": ["{team} hat das Spiel im Griff.", "{team} übernimmt jetzt, und die Chancen kommen."],
         },
         "fr": {
             "beginner": ["{team} domine en ce moment.", "{team} met la pression, et ça se sent."],
-            "expert": ["{team} a pris le match en main.", "{team} a pris le contrôle, {shots_n} sur les cinq dernières minutes."],
+            "expert": ["{team} a pris le match en main.", "{team} a pris le contrôle, et les occasions arrivent."],
         },
     },
     "big_save_analysis": {
@@ -290,16 +305,36 @@ T: dict[str, dict[str, dict[str, list[str]]]] = {
     },
     "big_chance_analysis": {
         "en": {
-            "beginner": ["{player} should have scored there.", "A huge chance goes begging for {player}. That one will hurt."],
-            "expert": ["{player} misses a big one.", "{player} should have scored there. That one will hurt."],
+            "beginner": ["{player} should have scored there.", "A huge chance goes begging for {player}. That one will hurt.",
+                         "{player} will be kicking {himself} over that one."],
+            "expert": ["{player} misses a big one.", "{player} should have scored there. That one will hurt.",
+                       "{player} should have scored there, and {he} knows it."],
         },
         "de": {
-            "beginner": ["Da muss {player} treffen.", "Eine Riesenchance für {player}, und der Ball ist nicht drin. Das tut weh."],
-            "expert": ["{player} lässt eine ganz dicke liegen.", "Da muss {player} treffen. Eine dicke Chance, und der Ball ist nicht drin."],
+            "beginner": ["Da muss {player} treffen.", "Eine Riesenchance für {player}, und der Ball ist nicht drin. Das tut weh.",
+                         "Da hätte {player} treffen müssen, das weiß {er} auch."],
+            "expert": ["{player} lässt eine ganz dicke liegen.", "Da muss {player} treffen. Eine dicke Chance, und der Ball ist nicht drin.",
+                       "Den muss {er} machen, {player}. Eine ganz dicke Chance."],
         },
         "fr": {
-            "beginner": ["{player} devait marquer.", "Énorme occasion pour {player}, et le ballon n'est pas rentré. Ça va faire mal."],
-            "expert": ["{player} manque l'immanquable.", "{player} devait marquer, et l'occasion est gâchée."],
+            "beginner": ["{player} devait marquer.", "Énorme occasion pour {player}, et le ballon n'est pas rentré. Ça va faire mal.",
+                         "{player} va s'en vouloir, {il} avait l'occasion."],
+            "expert": ["{player} manque l'immanquable.", "{player} devait marquer, et l'occasion est gâchée.",
+                       "{player} devait marquer, et {il} le sait."],
+        },
+    },
+    "pattern_insight": {  # the co-commentator's fallback when the model is unavailable: the habit, no count (commentary/patterns.py)
+        "en": {
+            "beginner": ["{short} win it back, then it always goes short.", "{player} keeps winning it back, but every time it goes short. Never across."],
+            "expert": ["Won back, then short, every time.", "{player} keeps winning it, then it goes short. Never across."],
+        },
+        "de": {
+            "beginner": ["{short} holt die Bälle, dann immer kurz.", "{player} holt die Bälle, aber dann geht es immer kurz. Nie rüber."],
+            "expert": ["Ballgewinn, dann kurz, jedes Mal.", "{player} holt die Bälle, dann immer kurz. Wo ist die Verlagerung?"],
+        },
+        "fr": {
+            "beginner": ["{short} récupère, mais derrière, toujours court.", "{player} récupère le ballon, mais c'est toujours court. Jamais de l'autre côté."],
+            "expert": ["Récupération, et derrière, toujours court.", "{player} récupère ballon sur ballon, mais derrière, toujours court. Pas une transversale."],
         },
     },
     "shot_milestone": {
@@ -380,21 +415,21 @@ T: dict[str, dict[str, dict[str, list[str]]]] = {
         "en": {
             "beginner": ["{player} has it now.", "It's {player} on the ball.", "{Dir_word} to {player}.", "{player} {note}.", "{player} gets on the ball.",
                          "{player} gets it from {kicker}.", "{player} is {third_word}.", "{player} is {wing_word}.",
-                         "{bare}.", "{bare}, {back_word}."],
+                         "{bare_plain}.", "{bare}, {back_word}."],
             "expert": ["{player}.", "{player} has it.", "{Dir_word} to {player}.", "{player} {note}.", "{player} on the ball.", "{player}, from {kicker}.",
                        "{player} {third_word}.", "{player}, {wing_word}.", "{bare}.", "{bare}, {back_word}."],
         },
         "de": {
             "beginner": ["{player} hat den Ball jetzt.", "Jetzt hat {player} den Ball.", "{Dir_word} auf {player}.", "{player} {note}.", "{player} kommt an den Ball.",
                          "{player} bekommt ihn von {kicker}.", "{player} steht {third_word}.", "{player} steht {wing_word}.",
-                         "{bare}.", "{bare}, {back_word}."],
+                         "{bare_plain}.", "{bare}, {back_word}."],
             "expert": ["{player}.", "{player} hat ihn.", "{Dir_word} auf {player}.", "{player} {note}.", "{player} am Ball.", "{player}, zugespielt von {kicker}.",
                        "{player} {third_word}.", "{player}, {wing_word}.", "{bare}.", "{bare}, {back_word}."],
         },
         "fr": {
             "beginner": ["{player} a le ballon maintenant.", "C'est {player} qui a le ballon.", "{Dir_word} pour {player}.", "{player} {note}.", "{player} touche le ballon.",
                          "{player}, servi par {kicker}.", "{player} est {third_word}.", "{player} est {wing_word}.",
-                         "{bare}.", "{bare}, {back_word}."],
+                         "{bare_plain}.", "{bare}, {back_word}."],
             "expert": ["{player}.", "{player} a le ballon.", "{Dir_word} pour {player}.", "{player} {note}.", "{player} au ballon.", "{player}, servi par {kicker}.",
                        "{player} {third_word}.", "{player}, {wing_word}.", "{bare}.", "{bare}, {back_word}."],
         },
@@ -411,12 +446,12 @@ T: dict[str, dict[str, dict[str, list[str]]]] = {
                          "{player}, {pressed_word}, plays it on.", "{player} {driven_word}.", "{Pressed_word}, plays it on.", "Played on {pressed_word}.", "Moved on {pressed_word}.", "Passed on {pressed_word}.",
                          "Released {pressed_word}.", "{driven_bare}.", "{driven_alt}.",
                          "{Pass_done} {pass_prep} {target}.", "{player} {pass_verb} {pass_prep} {target}.", "{Pass_word} {pass_prep} {target}.", "{Pass_prep} {target}.",
-                         "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}."],
+                         "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}.", "{pass_call_plain}"],
             "expert": ["{player} plays it on.", "{player} moves it on.", "{player} moves it along.", "{player} knocks it along.", "{player} recycles it.",
                        "{player}, {pressed_word}, plays it on.", "{player} {driven_word}.", "{Pressed_word}, plays it on.", "Played on {pressed_word}.", "Moved on {pressed_word}.", "Passed on {pressed_word}.",
                          "Released {pressed_word}.", "{driven_bare}.", "{driven_alt}.",
                        "{Pass_done} {pass_prep} {target}.", "{player} {pass_verb} {pass_prep} {target}.", "{Pass_word} {pass_prep} {target}.", "{Pass_prep} {target}.",
-                       "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}."],
+                       "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}.", "{pass_call}"],
         },
         "de": {
             "beginner": ["{player} spielt ab.", "{player} gibt ihn weiter.", "{player} leitet ihn weiter.", "{player} spielt ihn weiter.", "{player} schickt ihn weiter.",
@@ -424,12 +459,12 @@ T: dict[str, dict[str, dict[str, list[str]]]] = {
                          "{player}, {pressed_word}, spielt ab.", "{player} {driven_word}.", "{Pressed_word} weitergespielt.", "Abgespielt {pressed_word}.", "Weitergegeben {pressed_word}.", "Losgeworden {pressed_word}.",
                          "{driven_bare}.", "{driven_alt}.",
                          "{Pass_done} {pass_prep} {target}.", "{player} {pass_verb} {pass_prep} {target}.", "{Pass_word} {pass_prep} {target}.", "{Pass_prep} {target}.",
-                         "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}."],
+                         "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}.", "{pass_call_plain}"],
             "expert": ["{player} spielt ab.", "{player} gibt ihn weiter.", "{player} leitet ihn weiter.", "{player} lässt ihn laufen.", "{player} hält ihn in Bewegung.",
                        "{player}, {pressed_word}, spielt ab.", "{player} {driven_word}.", "{Pressed_word} weitergespielt.", "Abgespielt {pressed_word}.", "Weitergegeben {pressed_word}.", "Losgeworden {pressed_word}.",
                          "{driven_bare}.", "{driven_alt}.",
                        "{Pass_done} {pass_prep} {target}.", "{player} {pass_verb} {pass_prep} {target}.", "{Pass_word} {pass_prep} {target}.", "{Pass_prep} {target}.",
-                       "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}."],
+                       "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}.", "{pass_call}"],
         },
         "fr": {
             "beginner": ["{player} la joue.", "{player} fait circuler.", "{player} relance le jeu.", "{player} passe le ballon.", "{player} transmet le ballon.",
@@ -437,12 +472,12 @@ T: dict[str, dict[str, dict[str, list[str]]]] = {
                          "{player}, {pressed_word}, la joue.", "{player} {driven_word}.", "{Pressed_word}, la joue.", "Joué {pressed_word}.", "Passé {pressed_word}.", "Relancé {pressed_word}.",
                          "{driven_bare}.", "{driven_alt}.",
                          "{Pass_done} {pass_prep} {target}.", "{player} {pass_verb} {pass_prep} {target}.", "{Pass_word} {pass_prep} {target}.", "{Pass_prep} {target}.",
-                         "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}."],
+                         "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}.", "{pass_call_plain}"],
             "expert": ["{player} la joue.", "{player} fait circuler.", "{player} relance le jeu.", "{player} distribue.", "{player} joue simple.",
                        "{player}, {pressed_word}, la joue.", "{player} {driven_word}.", "{Pressed_word}, la joue.", "Joué {pressed_word}.", "Passé {pressed_word}.", "Relancé {pressed_word}.",
                          "{driven_bare}.", "{driven_alt}.",
                        "{Pass_done} {pass_prep} {target}.", "{player} {pass_verb} {pass_prep} {target}.", "{Pass_word} {pass_prep} {target}.", "{Pass_prep} {target}.",
-                       "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}."],
+                       "{player} {pass_verb}.", "{Pass_done}.", "{Pass_word}.", "{Pass_done} {lane_word}.", "{pass_call}"],
         },
     },
     "carry": {
@@ -478,16 +513,16 @@ T: dict[str, dict[str, dict[str, list[str]]]] = {
     },
     "duel": {
         "en": {
-            "beginner": ["{winner} {note}.", "{bare}, by {winner}.", "{bare}.", "Good defending."],
-            "expert": ["{winner} {note}.", "{bare}, by {winner}.", "{bare}.", "Good defending."],
+            "beginner": ["{winner} has it.", "{winner} {plain}.", "{bare}.", "Good defending."],
+            "expert": ["{winner} has it.", "{winner} {note}.", "{bare}.", "Good defending."],
         },
         "de": {
-            "beginner": ["{winner} {note}.", "{bare} von {winner}.", "{bare}.", "Gut verteidigt."],
-            "expert": ["{winner} {note}.", "{bare} von {winner}.", "{bare}.", "Gut verteidigt."],
+            "beginner": ["{winner} ist da.", "{winner} {plain}.", "{bare}.", "Gut verteidigt."],
+            "expert": ["{winner} ist da.", "{winner} {note}.", "{bare}.", "Gut verteidigt."],
         },
         "fr": {
-            "beginner": ["{winner} {note}.", "{bare} par {winner}.", "{bare}.", "Belle défense."],
-            "expert": ["{winner} {note}.", "{bare} par {winner}.", "{bare}.", "Belle défense."],
+            "beginner": ["{winner} est là !", "{winner} {plain}.", "{bare}.", "Belle défense."],
+            "expert": ["{winner} est là !", "{winner} {note} !", "{bare}.", "Belle défense."],
         },
     },
     "press_on": {
@@ -622,7 +657,7 @@ T: dict[str, dict[str, dict[str, list[str]]]] = {
         "de": {"beginner": ["{note}."], "expert": ["{note}."]},
         "fr": {"beginner": ["{note}."], "expert": ["{note}."]},
     },
-    "story_note": {  # the dossier: expert gets the fact, beginner gets it with a word of why it matters
+    "story_note": {  # the dossier, read by the lead in a quiet spell: expert gets the fact, beginner gets it with a word of why it matters
         "en": {"beginner": ["{bare}."], "expert": ["{note}."]},
         "de": {"beginner": ["{bare}."], "expert": ["{note}."]},
         "fr": {"beginner": ["{bare}."], "expert": ["{note}."]},
@@ -640,7 +675,8 @@ T: dict[str, dict[str, dict[str, list[str]]]] = {
 }
 
 # Placeholders that carry a player's name. A wording with one of them names a player (name rationing, docs/DATA-MODEL.md 7.1).
-NAME_KEYS = ("player", "target", "defender", "winner", "presser", "runner", "taker", "attacker", "receiver", "keeper", "kicker", "assist", "chain_text")
+NAME_KEYS = ("player", "target", "defender", "winner", "presser", "runner", "taker", "attacker", "receiver", "keeper", "kicker", "assist", "chain_text",
+             "pass_call", "pass_call_plain")  # the caller's pass fragments carry their target
 
 # Words that fill the fast and context templates, one table per code. Helper tables (dir, side, pass, ...) become `<name>_word`
 # params, a table named like a kind with a `facet` param becomes the clause `{note}` (and `{bare}` when a `<kind>_bare` table
@@ -662,7 +698,7 @@ WORDS: dict[str, dict[str, dict[str, str]]] = {
                "cut_back": "cut-back", "clearance": "clearance"},
         "de": {"switch": "Seitenwechsel", "through": "Steilpass", "cross": "Flanke", "long": "langer Ball", "lay_off": "Ablage", "back": "Rückpass", "first_time": "Direktpass", "short": "kurzer Pass",
                "cut_back": "Zurücklegen", "clearance": "Befreiungsschlag"},
-        "fr": {"switch": "renversement", "through": "passe en profondeur", "cross": "centre", "long": "long ballon", "lay_off": "remise",
+        "fr": {"switch": "renversement", "through": "passe en profondeur", "cross": "centre", "long": "ballon long", "lay_off": "remise",
                "back": "passe en retrait", "first_time": "passe en une touche",
                "short": "passe courte", "cut_back": "remise en retrait", "clearance": "dégagement"},
     },
@@ -680,7 +716,7 @@ WORDS: dict[str, dict[str, dict[str, str]]] = {
     "pass_done": {  # the kick as a fragment, what the ball does when it leaves the foot (no verdict, no outcome)
         "en": {"switch": "Switched", "through": "Slipped through", "cross": "Whipped in", "long": "Hit long", "lay_off": "Laid off",
                "back": "Played back", "first_time": "One touch", "short": "Played short", "cut_back": "Cut back", "clearance": "Cleared"},
-        "de": {"switch": "Verlagert", "through": "Durchgesteckt", "cross": "Geflankt", "long": "Lang geschlagen", "lay_off": "Abgelegt",
+        "de": {"switch": "Verlagert", "through": "Durchgesteckt", "cross": "Geflankt", "long": "Der lange Ball", "lay_off": "Abgelegt",
                "back": "Zurückgespielt", "first_time": "Direkt gespielt", "short": "Kurz gespielt", "cut_back": "Zurückgelegt", "clearance": "Weggeschlagen"},
         "fr": {"switch": "Jeu renversé", "through": "Mis en profondeur", "cross": "Centré", "long": "Joué long", "lay_off": "Remis",
                "back": "Renvoyé en retrait", "first_time": "Une touche", "short": "Joué court", "cut_back": "Remis en retrait", "clearance": "Dégagé"},
@@ -705,22 +741,65 @@ WORDS: dict[str, dict[str, dict[str, str]]] = {
         "de": {"control": "nimmt ihn an", "chest": "nimmt ihn mit der Brust an", "head": "köpft ihn weiter"},
         "fr": {"control": "contrôle le ballon", "chest": "amortit de la poitrine", "head": "dévie de la tête"},
     },
-    "touch_bare": {  # the same without the name: only said for a ball worth a word (a chested ball, a header, a ball taken with the back to goal)
-        "en": {"control": "Taken down", "chest": "Chested down", "head": "Headed on"},
-        "de": {"control": "Angenommen", "chest": "Brustannahme", "head": "Weitergeköpft"},
-        "fr": {"control": "Contrôlé", "chest": "Amorti de la poitrine", "head": "Dévié de la tête"},
+    "touch_bare": {  # the same without the name: only said for a ball worth a word (a chested ball, a header, a ball taken with the back to goal).
+        # Spoken over the picture in the present tense, never a caption noun ("Brustannahme"); German and French finish the name of the slot before
+        "en": {"control": "Takes it down", "chest": "Chests it down", "head": "Heads it on"},
+        "de": {"control": "...nimmt ihn an", "chest": "...mit der Brust", "head": "...köpft ihn weiter"},
+        "fr": {"control": "Contrôle...", "chest": "Contrôle poitrine...", "head": "Déviation de la tête..."},
+    },
+    "touch_bare_plain": {  # the beginner's words for it
+        "en": {"control": "Gets it under control", "chest": "Takes it on the chest", "head": "Heads it on"},
+        "de": {"control": "...nimmt ihn an", "chest": "...mit der Brust", "head": "...köpft ihn weiter"},
+        "fr": {"control": "Contrôle du ballon", "chest": "Contrôle de la poitrine", "head": "De la tête"},
+    },
+    "touch_bare_plain_pron": {  # the beginner's words when the squad's gender is known: the real chain "il contrôle de la poitrine" (DE-FR 8.2)
+        "en": {"control": "Gets it under control", "chest": "Takes it on the chest", "head": "Heads it on"},
+        "de": {"control": "...nimmt ihn an", "chest": "...mit der Brust", "head": "...köpft ihn weiter"},
+        "fr": {"control": "{Il} contrôle le ballon", "chest": "{Il} contrôle de la poitrine", "head": "{Il} le prolonge de la tête"},
+    },
+    "pass_call": {  # the caller on a pass of this type, expert (a whole fragment with its end; the energy rises on the last balls of a move:
+        # a long ball and a first-time ball take the first "!"). German names the switch and lets the picture work: "Rasmussen..."
+        # The first-time ball is the name alone: the shot often follows inside 1.4 s and cuts the caller off, and a cut must not break the name
+        # ("First time, Fon-"); the co-commentator names the technique afterwards
+        "en": {"switch": "Across to {target}.", "long": "Long ball for {target}.", "first_time": "{target}!"},
+        "de": {"switch": "{target}...", "long": "Und lang auf {target}!", "first_time": "{target}!"},
+        "fr": {"switch": "Transversale pour {target}.", "long": "Ballon long pour {target} !", "first_time": "{target} !"},
+    },
+    "pass_call_plain": {  # the same for a beginner: the picture word instead of the technique
+        "en": {"switch": "Over to {target}.", "long": "Long ball up to {target}.", "first_time": "Now {target}!"},
+        "de": {"switch": "Rüber zu {target}...", "long": "Lang nach vorne auf {target}!", "first_time": "{target}!"},
+        "fr": {"switch": "{target}, de l'autre côté.", "long": "Long ballon pour {target} !", "first_time": "{target} !"},
+    },
+    "goal_meaning": {  # what a goal means, said in the call right after the scorer (facet from the score before and after)
+        "en": {"equaliser": "{short} are level", "go_ahead": "{short} are in front", "opener": "{short} lead", "more": "{short} have another",
+               "back": "{short} pull one back"},
+        "de": {"equaliser": "Der Ausgleich für {short}", "go_ahead": "{short} geht in Führung", "opener": "Die Führung für {short}",
+               "more": "{short} legt nach", "back": "{short} verkürzt"},
+        "fr": {"equaliser": "{short} égalise", "go_ahead": "{short} passe devant", "opener": "{short} ouvre le score", "more": "{short} enfonce le clou",
+               "back": "{short} réduit le score"},
+    },
+    "goal_strike": {  # a strike from outside the box, in the call
+        "en": {"strike": "what a strike"}, "de": {"strike": "Was für ein Hammer"}, "fr": {"strike": "Quelle frappe"},
+    },
+    "score_state": {  # the lead's back-to-play sentence after the score, expert de and fr (the beginner gets the time left)
+        "en": {"equaliser": "Game on", "go_ahead": "{other} have to come out now", "opener": "{short} have the lead", "more": "{short} pull clear",
+               "back": "{short} have a way back"},
+        "de": {"equaliser": "Und jetzt ist hier wieder alles drin", "go_ahead": "Und jetzt muss {other} kommen", "opener": "Die Führung für {short}",
+               "more": "{short} legt nach", "back": "{short} ist wieder dran"},
+        "fr": {"equaliser": "Le match est relancé", "go_ahead": "{short} passe devant", "opener": "{short} ouvre le score",
+               "more": "{short} creuse l'écart", "back": "{short} revient au score"},
     },
     "pass_prep": {  # the preposition that takes the target of a pass of this type: "goes long for X", "switches it to X"
         "en": {"switch": "to", "through": "to", "cross": "for", "long": "for", "lay_off": "to", "back": "to", "first_time": "to", "short": "to",
                "cut_back": "for", "clearance": "to"},
         "de": {"switch": "auf", "through": "auf", "cross": "auf", "long": "auf", "lay_off": "auf", "back": "zu", "first_time": "auf", "short": "zu",
                "cut_back": "auf", "clearance": "auf"},
-        "fr": {"switch": "vers", "through": "pour", "cross": "pour", "long": "vers", "lay_off": "pour", "back": "vers", "first_time": "pour", "short": "pour",
+        "fr": {"switch": "pour", "through": "pour", "cross": "pour", "long": "pour", "lay_off": "pour", "back": "pour", "first_time": "pour", "short": "pour",
                "cut_back": "pour", "clearance": "vers"},
     },
     "extra": {  # what the kick or the receipt shows besides its type: closed down, hit hard and low, received facing the own goal
         "en": {"pressed": "under pressure", "driven": "drives it", "back": "back to goal", "driven_bare": "Hit hard and low", "driven_alt": "Driven in low and hard"},
-        "de": {"pressed": "unter Druck", "driven": "spielt ihn scharf", "back": "mit dem Rücken zum Tor", "driven_bare": "Scharf gespielt", "driven_alt": "Flach und hart gespielt"},
+        "de": {"pressed": "unter Druck", "driven": "spielt ihn scharf", "back": "Rücken zum Tor", "driven_bare": "Scharf gespielt", "driven_alt": "Flach und hart gespielt"},
         "fr": {"pressed": "sous pression", "driven": "joue sèchement", "back": "dos au but", "driven_bare": "Joué sèchement", "driven_alt": "Joué fort et à ras de terre"},
     },
     "nth": {
@@ -736,8 +815,13 @@ WORDS: dict[str, dict[str, dict[str, str]]] = {
     },
     "duel": {
         "en": {"interception": "cuts it out", "aerial": "wins the header", "ground": "wins the duel"},
-        "de": {"interception": "fängt ihn ab", "aerial": "gewinnt das Kopfballduell", "ground": "gewinnt den Zweikampf"},
+        "de": {"interception": "geht dazwischen", "aerial": "gewinnt das Kopfballduell", "ground": "gewinnt den Zweikampf"},
         "fr": {"interception": "intercepte", "aerial": "gagne le duel aérien", "ground": "gagne son duel"},
+    },
+    "duel_plain": {  # the beginner's verb
+        "en": {"interception": "wins it back", "aerial": "wins it in the air", "ground": "wins it back"},
+        "de": {"interception": "geht dazwischen", "aerial": "gewinnt das Kopfballduell", "ground": "holt sich den Ball"},
+        "fr": {"interception": "récupère", "aerial": "gagne le duel aérien", "ground": "récupère le ballon"},
     },
     "duel_bare": {
         "en": {"interception": "Cut out", "aerial": "Won in the air", "ground": "Won it"},
@@ -1047,8 +1131,8 @@ WORDS: dict[str, dict[str, dict[str, str]]] = {
             "form_winless": "{team} are without a win in their last five",
             "coach": "{coach} is in year {n_word} in charge of {team}",
             "coach_new": "{coach} is in a first season in charge of {team}",
-            "comebacks": "{team} have already come from behind to take points {n_word} times this season",
-            "comebacks_once": "{team} have come from behind to take points once already this season",
+            "comebacks": "{team} have taken points from losing positions {n_word} times this season.",
+            "comebacks_once": "{team} have taken points from a losing position once already this season.",
             "home_run": "{team} are unbeaten in {n_word} home games here at {venue}",
             "last_meeting": "Last season this fixture finished {score_words}, and {player} scored that day",
             "last_meeting_0": "Last season this fixture finished {score_words}",
@@ -1065,8 +1149,8 @@ WORDS: dict[str, dict[str, dict[str, str]]] = {
             "form_winless": "{team} wartet seit fünf Spielen auf einen Sieg",
             "coach": "{coach} ist seit {n_word} Jahren Trainer bei {team}",
             "coach_new": "{coach} ist in der ersten Saison Trainer bei {team}",
-            "comebacks": "{team} hat in dieser Saison schon {n_word} Mal nach Rückstand gepunktet",
-            "comebacks_once": "{team} hat in dieser Saison schon einmal nach Rückstand gepunktet",
+            "comebacks": "{N_word}mal hat {team} diese Saison nach Rückstand noch gepunktet. Und heute?",
+            "comebacks_once": "Einmal hat {team} diese Saison schon nach Rückstand noch gepunktet. Und heute?",
             "home_run": "{team} ist seit {n_word} Heimspielen hier im {venue} ungeschlagen",
             "last_meeting": "In der letzten Saison endete dieses Duell {score_words}, und {player} hat damals getroffen",
             "last_meeting_0": "In der letzten Saison endete dieses Duell {score_words}",
@@ -1083,8 +1167,8 @@ WORDS: dict[str, dict[str, dict[str, str]]] = {
             "form_winless": "{team} n'a plus gagné depuis cinq matchs",
             "coach": "{coach} est à la tête de {team} depuis {n_word} ans",
             "coach_new": "{coach} vit sa première saison à la tête de {team}",
-            "comebacks": "{team} a déjà pris des points après avoir été mené {n_word} fois cette saison",
-            "comebacks_once": "{team} a déjà pris des points après avoir été mené une fois cette saison",
+            "comebacks": "{team} sait revenir au score : déjà {n_word} fois cette saison.",
+            "comebacks_once": "{team} sait revenir au score : déjà une fois cette saison.",
             "home_run": "{team} reste sur {n_word} matchs sans défaite ici, à {venue}",
             "last_meeting": "La saison dernière, ce match s'était terminé sur le score de {score_words}, avec un but de {player}",
             "last_meeting_0": "La saison dernière, ce match s'était terminé sur le score de {score_words}",
@@ -1103,8 +1187,8 @@ WORDS: dict[str, dict[str, dict[str, str]]] = {
             "form_winless": "{team} have not won any of their last five league games, so confidence could be low",
             "coach": "The coach of {team}, {coach}, has been in the job for {n_word} years now",
             "coach_new": "{team} have a new coach this season, {coach}",
-            "comebacks": "Do not write {team} off yet, they have come from behind to take points {n_word} times this season",
-            "comebacks_once": "Do not write {team} off yet, they have come from behind to take points once already this season",
+            "comebacks": "Don't write {team} off. They've come from behind {n_word} times this season.",
+            "comebacks_once": "Don't write {team} off. They've come from behind once already this season.",
             "home_run": "{team} like it here, they have not lost any of their last {n_word} home games",
             "last_meeting": "When these two met last season it ended {score_words}, and {player} was one of the scorers",
             "last_meeting_0": "When these two met last season it ended {score_words}",
@@ -1121,8 +1205,8 @@ WORDS: dict[str, dict[str, dict[str, str]]] = {
             "form_winless": "{team} hat keines der letzten fünf Ligaspiele gewonnen, das Selbstvertrauen dürfte fehlen",
             "coach": "Der Trainer von {team}, {coach}, ist schon {n_word} Jahre im Amt",
             "coach_new": "{team} hat in dieser Saison einen neuen Trainer, {coach}",
-            "comebacks": "{team} sollte man nicht abschreiben, die Mannschaft hat schon {n_word} Mal nach Rückstand gepunktet",
-            "comebacks_once": "{team} sollte man nicht abschreiben, die Mannschaft hat schon einmal nach Rückstand gepunktet",
+            "comebacks": "{team} hat diese Saison schon {n_word}mal einen Rückstand aufgeholt.",
+            "comebacks_once": "{team} hat diese Saison schon einmal einen Rückstand aufgeholt.",
             "home_run": "{team} fühlt sich hier wohl und hat die letzten {n_word} Heimspiele nicht verloren",
             "last_meeting": "Beim letzten Duell der beiden stand es am Ende {score_words}, und {player} hat getroffen",
             "last_meeting_0": "Beim letzten Duell der beiden stand es am Ende {score_words}",
@@ -1139,8 +1223,8 @@ WORDS: dict[str, dict[str, dict[str, str]]] = {
             "form_winless": "{team} n'a gagné aucun de ses cinq derniers matchs, la confiance peut manquer",
             "coach": "L'entraîneur de {team}, {coach}, est en poste depuis {n_word} ans",
             "coach_new": "{team} a un nouvel entraîneur cette saison, {coach}",
-            "comebacks": "Attention à {team}, qui a déjà pris des points {n_word} fois cette saison après avoir été mené",
-            "comebacks_once": "Attention à {team}, qui a déjà pris des points une fois cette saison après avoir été mené",
+            "comebacks": "{team} est mené. Mais attention : {n_word} fois cette saison, ils sont revenus.",
+            "comebacks_once": "{team} est mené. Mais attention : une fois déjà cette saison, ils sont revenus.",
             "home_run": "{team} se sent bien ici, aucune défaite lors des {n_word} derniers matchs à domicile",
             "last_meeting": "La dernière fois, ce match s'était terminé sur le score de {score_words}, et {player} avait marqué",
             "last_meeting_0": "La dernière fois, ce match s'était terminé sur le score de {score_words}",

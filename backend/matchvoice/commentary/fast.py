@@ -49,10 +49,17 @@ TOUCH_DIR_M = 8.0
 THIRD_X = (PITCH_L / 3, 2 * PITCH_L / 3)  # thirds of the pitch in the attacking frame: own, middle, final
 QUIET_SLOTS_S = (4.0, 10.0, 16.0)  # nothing has happened for this long and the ball is not dead (a saved shot, a ball in the air for a restart): room for a context line
 SIDES = ("left", "centre", "right")
-GOAL_QUIET_S = 9.0  # after a goal the voice has the call and the analysis to get through: the first context slot comes after both
+GOAL_QUIET_S = 17.0  # after a goal the voice has the call, the co-commentator's line and the lead's score line to get through, with a breath before each of the last two (director.BREATH_S): the first context slot comes after all three
 ROUTINE_PASS = ("short",)  # a routine pass is the kicker ("X plays it on.") and then the receiver ("Inside to Y."), each name once, with what the kick shows when it shows something, never mechanics (COMMENTATOR.md: ball movement is 2.7% of what a commentator says)
 SPELL_S = 240.0  # first touch after a spell longer than this
 CORNER_WINDOW_S = 300.0
+SCENE_TOUCH_GAP_S = 0.3  # a generated live scene: a receipt is not called when the next action (the shot) comes within this long of the call
+SCENE_FINAL_TYPES = ("cross", "cut_back", "through")  # a generated live scene: the ball that makes the chance is called ahead of a touch or a press
+SCENE_FINAL_PRIO = 38
+SCENE_FINAL_WAIT_S = 1.5  # and it waits for the line on air to end
+SCENE_CARRY_GAP_S = 8.0  # a generated live scene's attack: at most one carry line in this long
+SCENE_SETTLE_S = 0.8  # a generated live scene: a receipt is called once the receiver has kept the ball this long
+SCENE_HEAD_SETTLE_S = 1.2  # a generated live scene: a header is called once nothing followed it for this long (a headed finish comes sooner)
 TOUCH_SETTLE_S = 0.5  # a receipt is called once the receiver has kept the ball this long: a first-time pass, a carry or a shot sooner voids it (the next fragment is that action)
 NAME_GAP_S = 6.0  # a player named by a fragment is not named again by the next one within this long: his own routine kick after the receipt that named him is not called
 PLAY_NOTE_GAP_S = 120.0  # one-fact player notes while the ball is in play at most this often (match seconds)
@@ -133,6 +140,7 @@ CONTEXT: dict[str, Spec] = {  # priority 30 to 45, ttl 8 s, voice wait 3 s
     "story_note": Spec(44, 8.0, 3.0, 7),  # the dossier: what the booth knows before kick-off, for a quiet spell
 }
 RATIONED = ("touch", "pass_kind", "carry", "duel")
+LEAD_CONTEXT = ("story_note",)  # context kinds the lead says: in a quiet spell the caller reads the club's record off his notes (docs/INSERT-SCRIPT.md)
 STORY_GAP_S = 150.0  # one dossier story per this many match seconds at most
 STORY_ROOM = (600.0, 13)  # and only while the context layer has said fewer than 13 lines in the last 10 minutes: a story takes room, it does not add a ticker line
 STORY_FROM_S = 120.0
@@ -229,8 +237,13 @@ class _Rec:
 class Layers:
     """One pass over a match. Use `build_layers`."""
 
-    def __init__(self, meta: MatchMeta, events: list[Event], rows: list[dict]):
+    def __init__(self, meta: MatchMeta, events: list[Event], rows: list[dict], scene_at: float | None = None):
         self.meta, self.events, self.rows = meta, events, rows
+        # a generated live scene (sim/scene.py) from this match second on: a carry is play from its first stride, and from a ball won back in
+        # play until the next stoppage the booth calls the attack only (no story, table or stats line in the winning move)
+        self.scene_at = scene_at
+        self.attack_on = False
+        self.carry_said = -1e9  # time of the last carry line
         self.players: dict[str, Player] = {p.id: p for t in meta.teams.values() for p in t.players}
         self.names = {pid: surname(p.name) for pid, p in self.players.items()}
         full = {s: meta.teams[s].name for s in ("H", "A")}
@@ -346,6 +359,8 @@ class Layers:
         for r in self.rows:
             t = r["t"] + (r["duration_s"] if r["type"] == "carry" and "duration_s" in r else 0.0)  # a carry is known at its end
             recs.append(_Rec(round(t, 3), r["eid"], "row", r))  # milliseconds, as the moments carry them: one order for both
+            if r["type"] == "carry" and self.scene_at is not None and r["t"] >= self.scene_at:  # a scene: the run is visible from its first stride
+                recs.append(_Rec(round(r["t"], 3), r["eid"], "stride", r))
         recs.sort()
         return recs
 
@@ -355,6 +370,9 @@ class Layers:
                 self.settle(rec.t, keep=True)
                 self.flush(rec.t, keep=True)
                 self.on_pressure(rec.payload)
+                continue
+            if rec.kind == "stride":  # a carry under way is play: a quiet-spell slot after it is void (the carry itself is called at its end)
+                self.flush(rec.t)
                 continue
             self.settle(rec.t)
             self.flush(rec.t)  # whatever is left was due at or after this record, so something happened first: void
@@ -381,24 +399,28 @@ class Layers:
 
     # ---------- emit ----------
     def _emit(self, specs: dict[str, Spec], base: int, kind: str, t: float, key: int, params: dict, ev_i: int, layer: str,
-              flight: float = 0.0) -> Moment | None:
+              flight: float = 0.0, prio: int | None = None, wait: float = 0.0) -> Moment | None:
         spec = specs[kind]
         mid = base + 8 * key + spec.slot
         if mid in self.used:
             return None
         self.used.add(mid)
-        m = Moment(id=mid, t=round(t, 3), clock=self.clock_at(t), kind=kind, voice="pbp" if layer == "fast" else "analyst",
-                   priority=spec.priority, ttl=max(spec.ttl, flight), params=params, evidence=[ev_i], layer=layer,
-                   voice_wait=max(spec.wait, flight))
+        lead = layer == "fast" or kind in LEAD_CONTEXT  # the lead calls the play and reads the dossier; the co-commentator has the rest of the context
+        m = Moment(id=mid, t=round(t, 3), clock=self.clock_at(t), kind=kind, voice="pbp" if lead else "analyst",
+                   priority=prio or spec.priority, ttl=max(spec.ttl, flight + wait), params=params, evidence=[ev_i], layer=layer,
+                   voice_wait=max(spec.wait, flight) + wait)
         self.out.append(m)
         return m
 
-    def fast(self, kind: str, t: float, eid: int, team: str, params: dict, ev_i: int, flight: float = 0.0) -> bool | None:
+    def fast(self, kind: str, t: float, eid: int, team: str, params: dict, ev_i: int, flight: float = 0.0, prio: int | None = None,
+             wait: float = 0.0) -> bool | None:
         """Name rationing (7.1). A fragment of a rationed kind names a player unless it may go without (`bare_ok`: the ball itself is worth a
         word) and the fragment before it, of the same team, was named: at most one name-less fragment in a row while one team keeps the ball.
         `name_said`: he was named a moment ago, so the wording goes without him, outside the rationing.
         Returns whether it names a player, or None when nothing was built."""
         params = {**params, "team": self.team_name[team], "team_code": team}
+        if self.meta.teams[team].gender:  # the squad's gender is known: a fragment may say "il" (render_params, PRONOUNS)
+            params["squad"] = self.meta.teams[team].gender
         bare_ok = params.pop("bare_ok", False)
         if kind in RATIONED:
             named = not bare_ok or self.last_fast is None or self.last_fast[0] != team or self.bare_run >= NAMED_EVERY - 1
@@ -412,7 +434,7 @@ class Layers:
             named = True
             self.bare_run = 0
             self.last_fast = (team, named)
-        if self._emit(FAST, FAST_BASE, kind, t, eid, params, ev_i, "fast", flight) is None:
+        if self._emit(FAST, FAST_BASE, kind, t, eid, params, ev_i, "fast", flight, prio, wait) is None:
             return None
         if named:
             for key in ("player", "target", "winner", "presser", "taker"):
@@ -426,7 +448,7 @@ class Layers:
         due = self.touch_due
         if due is None:
             return
-        if due[0] < now:
+        if due[0] < now - (SCENE_TOUCH_GAP_S if self.scene_at is not None and due[0] >= self.scene_at else 0.0):
             self.touch_due = None
             t, eid, team, params, ev_i, where = due
             self.fast("touch", t, eid, team, params | self.place_at_zone(t, *where), ev_i)
@@ -482,6 +504,7 @@ class Layers:
     def stop(self, t: float, eid: int, team: str, pid: str | None, goal: bool = False) -> None:
         """Play has stopped at `t`: a slot every DEAD_STEP_S from t + 1 s is offered if nothing happens before it. After a goal the side that
         conceded gets no player note (no clean-sheet trivia about its keeper right after the goal)."""
+        self.attack_on = False
         long_team = max(("H", "A"), key=lambda side: self.streak[side])
         if self.streak[long_team] >= SPELL_MIN_PASSES and not goal and not self.streak_told[long_team]:  # the move that has just ended is worth a sentence in the dead ball
             self.news.append({"t": t, "facet": "spell_end", "team": long_team, "n": self.streak[long_team], "long_only": True})
@@ -547,7 +570,9 @@ class Layers:
                             params["driven"] = True
                     else:  # `lane` is where the kick starts (the flank it leaves from), never the path of the ball; a typed pass is finished when the ball lands
                         params |= {"pass_type": ptype, "lane": self.side_of(team, e.period, x0, y0), "bare_ok": ptype in BARE_PASS}
-                    if ptype in ROUTINE_PASS:
+                    if self.scene_at is not None and t >= self.scene_at and e.outcome == "incomplete" and ptype in ROUTINE_PASS:
+                        pass  # a scene: a short pass that is cut out is not called "plays it on"; the interception's call has the moment
+                    elif ptype in ROUTINE_PASS:
                         # a routine kick whose kicker was named a moment ago (his receipt just did) is not called: it would name him twice or say nothing the
                         # listener lacks. The receipt names the receiver and never the kicker again.
                         self.split_kicks.add(r["eid"])
@@ -556,7 +581,9 @@ class Layers:
                         elif ("pressed" in params or "driven" in params) and t - self.shown_at >= SHOWN_GAP_S:  # what the kick shows, without his name, now and then
                             if self.fast("pass_kind", t, r["eid"], team, params | {"name_said": True}, ev_i, flight) is not None:
                                 self.shown_at = t
-                    elif self.fast("pass_kind", t, r["eid"], team, params, ev_i, flight) and "target" in params:
+                    elif self.fast("pass_kind", t, r["eid"], team, params, ev_i, flight,
+                                   *((SCENE_FINAL_PRIO, SCENE_FINAL_WAIT_S) if self.scene_at is not None and t >= self.scene_at and ptype in SCENE_FINAL_TYPES
+                                     else (None, 0.0))) and "target" in params:
                         self.kicked.add(r["eid"])  # a pass named with its target ("Long ball for Tavares"): the receipt need not name him again
             if e.outcome == "out" and not r.get("implicit"):  # the ball leaves at its arrival: a dead ball from then on
                 self.stop(r["t_arr"], r["eid"], team, actor)
@@ -590,16 +617,23 @@ class Layers:
                     del params["dir"]
                 elif kicker is not None and r["pass_eid"] not in self.split_kicks and self.named_at.get(self.names[kicker], -1e9) <= t - NAME_GAP_S:  # a split kick named the kicker: he is not named again
                     params["kicker"] = self.names[kicker]
-                self.touch_due = (t + TOUCH_SETTLE_S, r["eid"], team, params, ev_i, (team, g[4], r["x"], r["y"]))
+                settle_s = TOUCH_SETTLE_S
+                if self.scene_at is not None and t >= self.scene_at:  # a scene: a quick ball on is the news (a cross, a cutback), and a headed
+                    settle_s = SCENE_HEAD_SETTLE_S if r["touch"] == "head" else SCENE_SETTLE_S  # finish is called as the goal, never as "heads it on"
+                self.touch_due = (t + settle_s, r["eid"], team, params, ev_i, (team, g[4], r["x"], r["y"]))
             self.pending = [_Slot(t + CONTEXT_FIRST_HOLD_S, False, r["eid"], pid, team),
                             _Slot(t + SECOND_HOLD_S, False, r["eid"], pid, team, long=True)]
         elif ty == "carry":
             actor = r.get("player") or e.player
             self.touch_player(actor, team, t)
-            if r.get("progress_m", 0.0) >= CARRY_MIN_PROGRESS_M and (ev_i not in self.taken or r.get("implicit")):
+            rationed = self.attack_on and t - self.carry_said < SCENE_CARRY_GAP_S  # a scene's attack: one carry line, the voice stays free for the ball in
+            if r.get("progress_m", 0.0) >= CARRY_MIN_PROGRESS_M and (ev_i not in self.taken or r.get("implicit")) and not rationed:
+                self.carry_said = t
                 said = self.named_at.get(self.names[actor], -1e9) > t - NAME_GAP_S
                 self.fast("carry", t, r["eid"], team, {"player": self.names[actor], "bare_ok": True, "name_said": said}, ev_i)
         elif ty == "interception":
+            if self.scene_at is not None and t >= self.scene_at:
+                self.attack_on = True
             self.touch_player(e.player, team, t)
             self.reset_streak()
             self.last_fast = None
@@ -720,6 +754,8 @@ class Layers:
         The director voices a context line at most once per CONTEXT_PLAY_S in play and per CONTEXT_DEAD_S in a dead ball, three to a dead-ball
         window: a slot that breaks those is not offered at all, so no fact is used up on a line the voice would drop."""
         if s.t - self.ctx_last < (CONTEXT_DEAD_S if s.dead else CONTEXT_PLAY_S) + SLOT_SLACK_S - 1e-9:
+            return
+        if self.attack_on and not s.dead:  # a scene's winning move: the play-by-play has the floor
             return
         if s.dead and self.ctx_window.get(s.window, 0) >= CONTEXT_PER_WINDOW:
             return
@@ -1069,6 +1105,7 @@ class Layers:
         return None
 
 
-def build_layers(meta: MatchMeta, events: list[Event], rows: list[dict]) -> list[Moment]:
-    """Every fast and context moment of a match, sorted by time of knowledge. Ids are derived from data (0.2)."""
-    return Layers(meta, events, rows).run()
+def build_layers(meta: MatchMeta, events: list[Event], rows: list[dict], scene_at: float | None = None) -> list[Moment]:
+    """Every fast and context moment of a match, sorted by time of knowledge. Ids are derived from data (0.2). `scene_at`: a generated live
+    scene starts at this match second (see `Layers`); None for every recorded or plain match."""
+    return Layers(meta, events, rows, scene_at).run()

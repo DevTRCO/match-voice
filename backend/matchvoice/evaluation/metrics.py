@@ -18,7 +18,7 @@ from ..commentary.moments import Moment, MomentBuilder
 from ..commentary.verifier import NUM_RE, SCORE_RE, Allowed, Verifier, allowed_for
 from ..facts.engine import FactEngine
 from ..pipeline.library import MatchBundle
-from ..pipeline.runner import Runner
+from ..pipeline.runner import Runner, score_line_for
 
 # truth kind -> moment kinds that voice it, and the tolerance in match seconds between truth time and moment time.
 # A goal or a red card is one event. A momentum swing is a stretch of play (truth t to truth end): a same-side
@@ -47,6 +47,9 @@ def run_replay(bundle: MatchBundle, speed: float) -> Run:
     for ev in bundle.events:
         for m in mb.feed(ev, eng.ingest(ev)):
             moments[m.id], snaps[m.id] = m, eng.snapshot()
+            if m.kind == "goal_analysis":  # the lead's score line after it is made by the runner
+                line = score_line_for(m, bundle.meta, bundle.duration)
+                moments[line.id], snaps[line.id] = line, snaps[m.id]
     return Run(bundle, speed, msgs, runner.pubs, moments, snaps)
 
 

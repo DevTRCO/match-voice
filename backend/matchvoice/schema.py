@@ -195,6 +195,7 @@ class TeamMeta(BaseModel):
     players: list[Player]
     tactics: Tactics | None = None
     postures: list[PostureShift] | None = None  # shifts only; the plan starts as `base`
+    gender: Literal["men", "women"] | None = None  # the squad's gender: pronouns for players only when it is known (None: neutral wordings)
 
 
 class MatchMeta(BaseModel):

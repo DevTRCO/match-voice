@@ -58,8 +58,10 @@ def test_flash_gets_no_style_and_a_speaker_boost():
     ("en", "A 0-1 lead.", "A nil-one lead."),
     ("de", "Es steht 1-1.", "Es steht eins zu eins."),
     ("de", "Jetzt 0-2 hinten.", "Jetzt null zu zwei hinten."),
-    ("fr", "Et c'est 1-1 !", "Et c'est un à un!"),
-    ("fr", "Le score reste 0-0.", "Le score reste zéro à zéro."),
+    ("fr", "Et c'est 1-1 !", "Et c'est un partout!"),
+    ("fr", "Le score reste 0-0.", "Le score reste zéro partout."),
+    ("de", "1:1, noch knapp zwanzig Minuten.", "eins zu eins, noch knapp zwanzig Minuten."),  # German writes 1:1 and says "eins zu eins"
+    ("fr", "Wexmoor mène 2-1 !", "Wexmoor mène deux à un!"),
 ])
 def test_scorelines_become_spoken_forms(lang, text, expected):
     assert shape_for_tts(text, lang) == expected

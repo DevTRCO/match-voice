@@ -25,8 +25,8 @@ from matchvoice.tts.voices import CREDITS_PER_CHAR, HYPE_MODEL, MODEL  # noqa: E
 
 CHARLIE = "IKne3meq5aSn9XLyUdCD"
 DANIEL = "onwK4e9ZLuTAKqWW03F9"
-INSERTS = {"goal": (ROOT / "ui/public/insert/replay.json", ROOT / "ui/public/insert/audio"),
-           "story": (ROOT / "ui/public/insert/story.json", ROOT / "ui/public/insert/story-audio")}
+# the story insert (story.json, every channel, per-speaker cast, eleven_v4) is baked by bake_story_audio.py
+INSERTS = {"goal": (ROOT / "ui/public/insert/replay.json", ROOT / "ui/public/insert/audio")}
 REPLAY, OUT = INSERTS["goal"]
 
 
@@ -69,7 +69,7 @@ async def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--go", action="store_true")
     ap.add_argument("--max-credits", type=float, default=900.0)
-    ap.add_argument("--insert", choices=sorted(INSERTS), default="goal", help="goal: the 21 s insert, story: the two-part story insert")
+    ap.add_argument("--insert", choices=sorted(INSERTS), default="goal", help="goal: the 21 s insert (the story insert: bake_story_audio.py)")
     ap.add_argument("--channel", type=int, default=None, help="only this channel id (1 = en/expert), to listen before baking all six")
     args = ap.parse_args()
     global REPLAY, OUT

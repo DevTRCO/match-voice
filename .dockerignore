@@ -2,6 +2,8 @@
 .venv
 .env
 .env.*
+**/.env
+**/.env.*
 !.env.example
 **/__pycache__
 .pytest_cache
@@ -10,5 +12,8 @@ ui/node_modules
 ui/dist
 ui/dist-static
 data/eval
-docs/img
+data/corpus
 data/cache/tts
+docs
+video
+/*.json

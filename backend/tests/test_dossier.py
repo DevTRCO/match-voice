@@ -29,4 +29,6 @@ def test_the_story_insert_tells_the_comeback_story_before_the_equaliser():
     d = story_insert(LIB)
     (a1, b1), (a2, b2) = d["parts"]
     assert a1 < d["story_t"] < b1 < a2 < d["goal_t"] < b2
-    assert d["length"] == round((b1 - a1) + (b2 - a2)) and d["length"] <= 32
+    # 44 s of parts (45 s as heard, with the cut): part 1 holds the co-commentator's pattern set-up and the story (2026-10-26), part 2
+    # the call, the co line that pays the set-up off and the score, with a breath before each of the last two
+    assert d["length"] == round((b1 - a1) + (b2 - a2)) and d["length"] <= 44

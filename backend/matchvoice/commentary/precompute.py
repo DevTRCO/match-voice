@@ -20,7 +20,7 @@ from .moments import MomentBuilder
 from .newsroom import write_moment
 
 MODEL = "claude-haiku-5-5"
-MODEL_KINDS = ("momentum", "goal_analysis", "big_save_analysis", "big_chance_analysis")
+MODEL_KINDS = ("momentum", "goal_analysis", "big_save_analysis", "big_chance_analysis", "pattern_insight")  # pattern_insight: live dense runs only (runner)
 
 
 async def main_async(arc: str, seed: int, max_calls: int) -> None:

@@ -30,7 +30,14 @@ CONTEXT_PLAY_S = 12.0  # one context line per this many viewer seconds while the
 CONTEXT_DEAD_S = 7.0  # ... and per this many in a dead ball
 CONTEXT_PER_WINDOW = 3  # at most this many context lines in one dead-ball window
 ARRIVAL_SLACK_S = 0.2  # a pass fragment is about the kick: it should be finished by the time the ball arrives (plus this: a first-time pass follows within about 0.2 s and is the news then)
+CALL_SLACK_S = 1.3  # a typed pass the caller names ("Across to Rasmussen.", "Long ball for Tavares.", "First time, Fontaine!") may run on while the
+# receiver takes the ball: the caller finishes the name as it lands, which is how the chain of a move is called
+CALL_TYPES = ("switch", "long", "first_time")  # WORDS["pass_call"]: the pass types the caller has a fragment for
 SILENT_LAYERS = ("fast", "context")  # captioned when the voice takes them, never at arrival: a fragment replaced before it is voiced is not a skip
+# A breath of crowd between two voices after a goal (docs/INSERT-SCRIPT.md 7.2): the co line waits this long after the lead's call has ended,
+# and the lead's score line this long after the co line. Viewer seconds, (kind spoken last, kind about to start) -> pause.
+BREATH_S = {("shot_goal", "goal_analysis"): 0.7, ("goal_analysis", "score_line"): 0.4,
+            ("pattern_insight", "story_note"): 0.3, ("story_note", "pattern_insight"): 0.5}  # a quiet spell: the lead and the co-commentator take turns (0.3: the story still starts inside its 3 s voice wait behind the longest set-up)
 
 
 @dataclass
@@ -90,6 +97,7 @@ class ChannelDirector:
         self._turn: dict[tuple[str, str], int] = {}  # (kind, wording without the names) -> when a fast fragment last used it
         self._count = 0
         self._now = 0.0
+        self._ended: tuple[str, float] = ("", -INF)  # kind and end of the last line the voice finished (a cut line counts too)
 
     @property
     def idle(self) -> bool:
@@ -119,8 +127,18 @@ class ChannelDirector:
     def _gap(self, m: Moment) -> float:
         return (CONTEXT_DEAD_S if m.params.get("dead") else CONTEXT_PLAY_S) * self.speed
 
+    def _breath_at(self, m: Moment) -> float:
+        """The earliest start of `m` after the breath that follows the line spoken last (-INF: no breath)."""
+        kind, end = self._ended
+        b = BREATH_S.get((kind, m.kind))
+        return end + b * self.speed if b is not None else -INF
+
     def _can_start(self, m: Moment, t: float) -> bool:
-        """The pace rules of the dense layers: fast lines are spaced, context lines are capped and wait for a quiet moment."""
+        """The breath after a goal, and the pace rules of the dense layers: fast lines are spaced, context lines are capped and wait for a quiet moment."""
+        if t < self._breath_at(m) - 1e-9:
+            return False
+        if m.kind == "score_line" and any(q.kind == "goal_analysis" for q in self._queue):
+            return False  # call, co line, score: the score waits for the co line while it is still to come (it may be held by its breath)
         if not self.dense:
             return True
         if m.layer == "fast":
@@ -135,9 +153,10 @@ class ChannelDirector:
 
     def _wake(self) -> float:
         """The next time a waiting moment becomes startable by the clock alone (INF: only an arrival or a start can change that)."""
+        wakes = [self._breath_at(m) for m in self._queue if self._breath_at(m) > self._now]
         if not self.dense:
-            return INF
-        wakes = [self._fast_at for m in self._queue if m.layer == "fast" and self._fast_at > self._now]
+            return min(wakes, default=INF)
+        wakes += [self._fast_at for m in self._queue if m.layer == "fast" and self._fast_at > self._now]
         wakes += [self._ctx_last + self._gap(m) for m in self._queue if m.layer == "context" and self._ctx_last + self._gap(m) > self._now]
         return min(wakes, default=INF)
 
@@ -195,7 +214,8 @@ class ChannelDirector:
             texts = texts[:1]  # ball in play: the shortest wording, the longer ones are for dead balls
         limit = next((a.ready_t for a in self._arrivals[self._i:] if a.priority > m.priority), INF) if lookahead else INF
         if self.dense and m.layer == "fast" and "arr" in m.params:  # the shortest wording that ends before the ball lands, else the shortest
-            limit = min(limit, m.params["arr"] + ARRIVAL_SLACK_S * self.speed)
+            call = m.kind == "pass_kind" and m.params.get("pass_type") in CALL_TYPES and m.params.get("named") and m.params.get("target")
+            limit = min(limit, m.params["arr"] + (CALL_SLACK_S if call else ARRIVAL_SLACK_S) * self.speed)
         budget = min(max(limit - self._now, 0.0), self.max_line_s * self.speed)
         fitting = [x for x in texts if self._speech(x) <= budget] or texts[:1]
         fresh = [x for x in fitting if x != self._last_said.get(m.kind)] or [x for x in texts if x != self._last_said.get(m.kind)]
@@ -265,6 +285,7 @@ class ChannelDirector:
                     break
                 self.out.append(Spoken(m.id, m.kind, m.voice, start, end, text))
                 self._now, self._cur = end, None
+                self._ended = (m.kind, end)
                 continue
             if next_arr > until:
                 break
@@ -278,6 +299,7 @@ class ChannelDirector:
                 self.out.append(cut)
                 self.notices.append(("cut", cut))
                 self._cur = None
+                self._ended = (m.kind, self._now)
 
     def close(self) -> tuple[list[Spoken], list[Dropped]]:
         """Everything still waiting is stale. Call after the last advance."""

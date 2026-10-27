@@ -115,11 +115,16 @@ def render_params(m: Moment, lang: str) -> dict:
     if "club" in p:  # French elides "de" before a vowel: "d'Aldermoor City"
         c = str(p["club"])
         p["de_club"] = (f"d'{c}" if c[:1].lower() in "aeiouh" else f"de {c}") if lang == "fr" else c
+    pron = PRONOUNS.get(p.get("squad") or "", {}).get(lang)
+    if pron:  # a squad whose gender is known: wordings with a pronoun for a player become usable (also inside the clauses below)
+        p.update(pron)
+        p.update({k[:1].upper() + k[1:]: v[:1].upper() + v[1:] for k, v in pron.items()})
     if "facet" in p and m.kind in WORDS:  # a clause that fills the template, the same in both styles
         p["note"] = WORDS[m.kind][lang][p["facet"]].format(**p)
-        for suffix in ("bare", "why"):  # the name-less clause, and the beginner's explanation of a restart
-            if f"{m.kind}_{suffix}" in WORDS:
-                p[suffix] = WORDS[f"{m.kind}_{suffix}"][lang][p["facet"]].format(**p)
+        for suffix in ("bare", "why", "plain", "bare_plain"):  # the name-less clause, the beginner's explanation of a restart, the beginner's words
+            table = f"{m.kind}_{suffix}_pron" if pron and f"{m.kind}_{suffix}_pron" in WORDS else f"{m.kind}_{suffix}"
+            if table in WORDS:
+                p[suffix] = WORDS[table][lang][p["facet"]].format(**p)
         for k, name in (("2", "also"), ("3", "more")):  # a second and a third fact of the same player in the same sentence: their own numbers (count2, season_goals2)
             if f"facet{k}" in p:
                 from .delivery import number_words
@@ -140,7 +145,70 @@ def render_params(m: Moment, lang: str) -> dict:
         p["men_en"] = MEN_EN.get(p["men"], str(p["men"]))
         p["men_de"] = f"zu {MEN_DE.get(p['men'], p['men'])}"
         p["men_fr"] = MEN_FR.get(p["men"], f"à {p['men']}")
+    if p.get("pass_type") in WORDS["pass_call"][lang] and p.get("target"):  # the caller's fragment for this pass type, per style
+        p["pass_call"] = WORDS["pass_call"][lang][p["pass_type"]].format(**p)
+        p["pass_call_plain"] = WORDS["pass_call_plain"][lang][p["pass_type"]].format(**p)
+    if "goal_facet" in p and "short" in p:  # the goal call and the score line: what the goal means, the hit, the state
+        p["meaning"] = WORDS["goal_meaning"][lang][p["goal_facet"]].format(**p)
+        state = WORDS["score_state"][lang].get(p["goal_facet"])
+        if state:
+            p["state_call"] = state.format(**p)
+    if p.get("strike"):
+        p["strike_call"] = WORDS["goal_strike"][lang]["strike"]
+    if m.kind == "score_line" and "score" in p:
+        from .delivery import score_said
+        a, b = (int(x) for x in str(m.params["score"]).split("-"))
+        said = score_said(a, b, lang)
+        p["score_words"], p["Score_words"] = said, said[:1].upper() + said[1:]
+        left = time_left(int(p["left_min"]), lang) if p.get("left_min") else None
+        if left:
+            p["left" if p.get("half", 2) == 2 else "left_ht"] = left
+    if lang == "de" and "score" in p:  # German writes a score 1:1 (and says "eins zu eins")
+        p["score"] = str(p["score"]).replace("-", ":")
     return p
+
+
+PRONOUNS = {  # the player pronouns a wording may use, only when the squad's gender is known (TeamMeta.gender)
+    "men": {"en": {"he": "he", "him": "him", "his": "his", "himself": "himself"}, "de": {"er": "er", "ihn": "ihn", "sein": "sein"},
+            "fr": {"il": "il", "lui": "lui"}},
+    "women": {"en": {"he": "she", "him": "her", "his": "her", "himself": "herself"}, "de": {"er": "sie", "ihn": "sie", "sein": "ihr"},
+              "fr": {"il": "elle", "lui": "elle"}},
+}
+_FR_LEFT = {5: "cinq minutes", 10: "une dizaine de minutes", 15: "un quart d'heure", 20: "une vingtaine de minutes", 25: "vingt-cinq minutes",
+            30: "une demi-heure", 35: "trente-cinq minutes", 40: "une quarantaine de minutes", 45: "trois quarts d'heure"}
+
+
+def time_left(minutes: int, lang: str) -> str | None:
+    """The time left in a half, the way a caller rounds it ("twenty minutes or so", "knapp zwanzig Minuten", "une vingtaine de minutes").
+    True to the clock: 19 minutes is "knapp zwanzig" in German, never "zwanzig". None under five minutes (the score stands alone then)."""
+    if minutes < 5:
+        return None
+    from .delivery import number_words
+    n5 = 5 * round(minutes / 5)
+    if lang == "en":
+        return f"{number_words(n5, 'en')} minutes"
+    if lang == "de":
+        return f"{'knapp ' if minutes < n5 else 'gut ' if minutes > n5 else ''}{number_words(n5, 'de')} Minuten"
+    return _FR_LEFT.get(n5, f"{number_words(n5, 'fr')} minutes")
+
+
+def _tidy(text: str) -> str:
+    """A clause that carries its own end ("Und heute?", "Contrôle poitrine...") inside a template that adds a stop."""
+    text = re.sub(r"\.{4,}", "...", text)
+    text = re.sub(r"([!?])\.", r"\1", text)
+    text = re.sub(r"(?<!\.)\.\.(?!\.)", ".", text)
+    return text.replace("..., ", ", ")
+
+
+def goal_facet(score: str, side: str) -> str:
+    """What a goal means, from the score after it (home-away) and the side that scored: equaliser | opener | go_ahead | more | back."""
+    h, a = (int(x) for x in str(score).split("-"))
+    own, opp = (h, a) if side == "H" else (a, h)
+    if own == opp:
+        return "equaliser"
+    if own == opp + 1:
+        return "opener" if own == 1 else "go_ahead"
+    return "more" if own > opp else "back"
 
 
 def is_named(text: str) -> bool:
@@ -151,6 +219,8 @@ def is_named(text: str) -> bool:
 def render_variants(m: Moment, lang: str, style: str) -> list[str]:
     p = render_params(m, lang)
     vs = variants(m.kind, lang, style)
+    if m.kind == "pass_kind" and "pass_call" in p and m.params.get("named"):  # a type the caller has a fragment for: always that fragment
+        return [_tidy(v.format(**p)) for v in vs if "{pass_call" in v]  # ("Long ball for Tavares."), it may run on as the ball lands (CALL_SLACK_S)
     if m.params.get("named") is not None:  # name rationing (7.1): the builder decides, the wording follows
         vs = [v for v in vs if is_named(v) == bool(m.params["named"])] or vs
         if m.kind == "pass_kind" and m.params["named"] and "target" in m.params:  # a pass that names a player names the one it is for
@@ -160,16 +230,115 @@ def render_variants(m: Moment, lang: str, style: str) -> list[str]:
     usable = [v for v in vs if all(k in p for k in re.findall(r"{(\w+)}", v))]  # a wording needs every fact it names (no `dir` for a back-pass)
     if m.kind == "pass_kind" and m.params.get("kicker_said"):  # a receipt or a call named the kicker a moment ago: the kick goes without him when a wording allows
         usable = [v for v in usable if "{player}" not in v] or usable
-    return [v.format(**p) for v in usable or vs]
+    return [_tidy(v.format(**p)) for v in usable or vs]
 
 
 class MomentBuilder:
-    def __init__(self, engine: FactEngine):
+    def __init__(self, engine: FactEngine, rows: list[dict] | None = None):
+        """`rows` are the enriched rows of the match (sim/micro, `enrich(...).rows`), when the run has them: the scoring move then carries
+        how each ball was played (pass type, touch, first time, foot, technique, pressure). Only rows of events already fed are read."""
         self.eng = engine
         self._next = 0
+        self._move: tuple[str | None, list[Event]] = (None, [])  # the side on the ball and its events in this possession, oldest first
+        self._rows: dict[int, list[dict]] = {}
+        for r in rows or ():
+            self._rows.setdefault(r["i"], []).append(r)
+
+    MOVE_TYPES = (EventType.PASS, EventType.INTERCEPTION, EventType.CARRY, EventType.TACKLE)
+    LONG_PASS_M = 30.0
+    MOVE_STEPS = 6  # the last steps of a scoring move the analyst sees
+
+    def _track_move(self, ev: Event) -> None:
+        """The events of this possession, oldest first, from past events only (no lookahead). A turnover starts a new move;
+        a press or a foul by the other side does not."""
+        side, steps = self._move
+        if ev.type == EventType.KICKOFF or (ev.team != side and ev.type in (*self.MOVE_TYPES, EventType.POSSESSION_CHANGE)):
+            side, steps = ev.team, []
+        if ev.type in self.MOVE_TYPES and ev.player:
+            steps.append(ev)
+        self._move = (side, steps)
+
+    @staticmethod
+    def _foot(body_part: str | None) -> str | None:
+        return {"left_foot": "left", "right_foot": "right"}.get(body_part or "")
+
+    def _skeleton_step(self, ev: Event) -> dict:
+        who = self._name(ev.player)
+        if ev.type == EventType.PASS:
+            step = {"player": who, "action": "long ball" if (ev.length or 0) >= self.LONG_PASS_M else "pass"}
+            if ev.outcome == "complete" and ev.receiver:
+                step["to"] = self._name(ev.receiver)
+            return step
+        if ev.type in (EventType.INTERCEPTION, EventType.TACKLE):
+            own = _attacking_x(ev.team, ev.period, ev.x) < 52.5
+            return {"player": who, "action": "wins the ball", "where": "in their own half" if own else "in the other half"}
+        return {"player": who, "action": "carries it forward"}
+
+    def _enriched_steps(self, ev: Event) -> list[dict] | None:
+        """How the ball was played in this event, from its enriched rows: the kick, the receipt worth a word, an implicit pass."""
+        rows = self._rows.get(ev.i)
+        if not rows:
+            return None
+        out: list[dict] = []
+        for r in sorted(rows, key=lambda r: r["eid"]):
+            if r.get("team") != ev.team:
+                continue
+            if r["type"] == "pass":
+                step = {"player": self._name(r.get("player") or ev.player), "action": "pass", "pass_type": r.get("pass_type"),
+                        "height": r.get("height"), "foot": self._foot(r.get("body_part")), "first_time": bool(r.get("first_time"))}
+                if r.get("target"):
+                    step["to"] = self._name(r["target"])
+                if (r.get("pressure") or {}).get("under") is not None:
+                    step["under_pressure"] = bool(r["pressure"]["under"])
+                out.append({k: v for k, v in step.items() if v is not None})
+            elif r["type"] == "receipt" and r.get("touch") and r["touch"] != "control":
+                out.append({"player": self._name(r.get("player")), "action": "takes it", "touch": r["touch"]})
+            elif r["type"] in ("interception", "tackle"):
+                out.append(self._skeleton_step(ev))
+            elif r["type"] == "carry":
+                out.append({"player": self._name(r.get("player") or ev.player), "action": "carries it forward"})
+        return out
+
+    def _move_of(self, scorer: str, shot: Event | None) -> tuple[list[str], list[dict], float | None]:
+        """The scoring move: the other players in it (in order), its last steps (dicts the analyst can picture: who, what, how), and its
+        length in seconds from the first step to the goal. Every name in the steps is in the chain, so the verifier allows it."""
+        steps: list[dict] = []
+        for ev in self._move[1]:
+            steps += self._enriched_steps(ev) or [self._skeleton_step(ev)]
+        if shot is not None:
+            shot_rows = [r for r in self._rows.get(shot.i, []) if r["type"] == "shot"]
+            s = {"player": scorer, "action": "header" if shot.body_part == "head" else "shot", "distance": self._finish(shot)}
+            if shot_rows:
+                r = shot_rows[0]
+                s |= {k: v for k, v in {"foot": self._foot(r.get("body_part")), "technique": r.get("technique"),
+                                        "first_time": bool(r.get("first_time"))}.items() if v is not None}
+                if (r.get("pressure") or {}).get("under") is not None:
+                    s["under_pressure"] = bool(r["pressure"]["under"])
+            steps.append(s)
+        steps = steps[-self.MOVE_STEPS:]
+        names: list[str] = []
+        for st in steps:
+            for n in (st.get("player"), st.get("to")):
+                if n and n != scorer and n not in names:
+                    names.append(n)
+        first = self._move[1][0].t if self._move[1] else None
+        length = round(shot.t - first, 1) if (shot is not None and first is not None) else None
+        return names, steps, length
+
+    @staticmethod
+    def _finish(ev: Event) -> str:
+        """Where the goal was scored from, in words (no number)."""
+        if ev.body_part == "head":
+            return "a header"
+        gx = ev.end_x if ev.end_x is not None else (0.0 if ev.x < 52.5 else 105.0)
+        d = ((ev.x - gx) ** 2 + (ev.y - 34.0) ** 2) ** 0.5
+        return "from close range" if d < 8 else "inside the box" if d < 17 else "from outside the box"
 
     def _m(self, ev: Event, kind: str, voice: str, priority: int, ttl: float, params: dict,
            fact: Fact | None = None) -> Moment:
+        team = self.eng.meta.teams.get(ev.team) if ev.team else None
+        if team is not None and team.gender:  # the squad's gender: a wording may say "he" (render_params, PRONOUNS)
+            params = {**params, "squad": team.gender}
         m = Moment(id=self._next, t=ev.t, clock=ev.clock, kind=kind, voice=voice, priority=priority,
                    ttl=ttl, params=params, evidence=list(fact.evidence) if fact else [ev.i],
                    fact_id=fact.id if fact else None)
@@ -185,6 +354,7 @@ class MomentBuilder:
         out: list[Moment] = []
         side = ev.team
         opp = "A" if side == "H" else "H"
+        self._track_move(ev)
 
         if ev.type == EventType.KICKOFF and ev.t == 0:
             out.append(self._m(ev, "kickoff_start", "pbp", 60, 20, {"home": names["H"], "away": names["A"]}))
@@ -193,8 +363,12 @@ class MomentBuilder:
             player = self._name(ev.player)
             if ev.outcome == "goal":
                 score = next((f.data["score"] for f in new_facts if f.kind == "goal"), f"{e.score['H']}-{e.score['A']}")
-                out.append(self._m(ev, "shot_goal", "pbp", 100, 20,
-                                   {"player": player, "team": names[side], "score": score, "xg": xg}))
+                params = {"player": player, "player_full": e.names.get(ev.player or "", player) or player, "team": names[side],
+                          "short": names[side].split()[0], "other": names[opp].split()[0], "score": score, "xg": xg,
+                          "goal_facet": goal_facet(score, side)}
+                if ev.body_part != "head" and self._finish(ev) == "from outside the box":
+                    params["strike"] = True  # a strike from range: the call may react to the hit
+                out.append(self._m(ev, "shot_goal", "pbp", 100, 20, params))
             elif ev.outcome == "saved":
                 out.append(self._m(ev, "shot_saved", "pbp", 70 if xg >= 0.15 else 45, 10,
                                    {"player": player, "keeper": self._name(ev.keeper), "xg": xg}))
@@ -237,10 +411,20 @@ class MomentBuilder:
                 out.append(self._m(ev, "sprint", "pbp", 35, 6,
                                    {"player": self._name(f.player), "speed": round(d["speed_kmh"])}, f))
             elif f.kind == "goal":
-                out.append(self._m(ev, "goal_analysis", "analyst", 70, 40, {
-                    "player": self._name(f.player), "team": d["team"], "score": d["score"],
-                    "win_before": d["win_before"], "win_after": d["win_after"], "xg": d["xg"],
-                    "tags": ",".join(f.tags)}, f))
+                scorer = self._name(f.player)
+                params = {"player": scorer, "team": d["team"], "score": d["score"],
+                          "win_before": d["win_before"], "win_after": d["win_after"], "xg": d["xg"],
+                          "tags": ",".join(f.tags), "scorer_goals": self.eng.player_stats(f.player)["goals"] if f.player else 0}
+                move, steps, length = self._move_of(scorer, ev if ev.type == EventType.SHOT else None)
+                if move:
+                    params["chain"] = move  # the players of the move, so the colour line may name who made it (the verifier allows them)
+                if steps:
+                    params["move"] = steps
+                if length is not None and length > 0:
+                    params["move_seconds"] = round(length)
+                if ev.type == EventType.SHOT:
+                    params["finish"] = self._finish(ev)
+                out.append(self._m(ev, "goal_analysis", "analyst", 70, 40, params, f))
             elif f.kind == "momentum_phase":  # five-minute pressure phase
                 out.append(self._m(ev, "momentum", "analyst", 55, 40, {
                     "team": d["team"], "share": d["share"], "shots": d["shots"], "minutes": d["minutes"]}, f))

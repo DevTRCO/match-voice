@@ -15,10 +15,14 @@ from ..facts.engine import analyse
 from ..schema import Event, EventType, MatchMeta
 from ..sim.arcs import ARCS
 from ..sim.engine import Sim
+from ..sim.scene import ScenePlan, validate
 
 PUBLISHED_FIELDS = {f.name for f in fields(Published)}
 GENERATED_ID = re.compile(r"^(" + "|".join(ARCS) + r")-(\d{1,6})$")  # e.g. comeback-4242: simulated on request, nothing is written
 GENERATED_KEPT = 24  # simulated matches kept in memory
+SCENE_KEPT = 8  # generated live scenes kept in memory, by (match, scene, variant)
+SCENE_RETRIES = 6  # a variant whose play fails the checks of sim/scene.py `validate` is drawn again this many times
+SCENE_FALLBACK = (0, 1, 2, 3, 4)  # variants known to pass (pinned by tests/test_scene.py); used only when a variant never passes
 
 
 @dataclass
@@ -28,6 +32,8 @@ class MatchBundle:
     recorded: list[Published] | None = None  # analyst output of precompute, None when never recorded
     recorded_kinds: dict[int, str] | None = None  # moment id -> kind, to catch a recording of another build
     recorded_times: dict[int, float] | None = None  # moment id -> match time, same purpose
+    variant: str | None = None  # a generated live scene (sim/scene.py): the variant it was played with; None for a plain match
+    scene: dict | None = None  # what the scene generator chose (turnover, pattern, scorer), for logs and tests
 
     @property
     def duration(self) -> float:
@@ -47,6 +53,7 @@ class Library:
         self._bundles: dict[str, MatchBundle] = {}
         self._summaries: dict[str, dict] = {}
         self._generated: OrderedDict[str, MatchBundle] = OrderedDict()
+        self._scenes: OrderedDict[tuple, MatchBundle] = OrderedDict()
 
     @staticmethod
     def generated_id(match_id: str) -> tuple[str, int] | None:
@@ -75,6 +82,37 @@ class Library:
                 self._summaries.pop(old, None)
         self._generated.move_to_end(key)
         return self._generated[key]
+
+    def scene_bundle(self, scene, variant: int) -> MatchBundle:
+        """The match of a generated live scene (pipeline/scenes.py `Scene` with `fork_after`): the plain match up to the fork, then
+        the play of `variant`. About 0.1 s; the last SCENE_KEPT are kept. `bundle()` is untouched, so recordings and replays never
+        see a scene."""
+        key = (scene.match, scene.id, variant)
+        if key in self._scenes:
+            self._scenes.move_to_end(key)
+            return self._scenes[key]
+        gen = self.generated_id(scene.match)
+        if gen is None or scene.fork_after is None:
+            raise KeyError(scene.match)
+        base = self.bundle(scene.match)
+        made = None
+        for v in (variant, *SCENE_FALLBACK):
+            for retry in range(SCENE_RETRIES):
+                plan = ScenePlan(v, retry=retry, base_meta=base.meta, fork_after=scene.fork_after, kick_at=tuple(scene.kick_at),
+                                 goal_window=tuple(scene.goal_window))
+                meta, events, _ = Sim(*gen, scene=plan).run()
+                if not validate(meta, events, plan):
+                    made = (meta, events, {**plan.info, "variant": v, "retry": retry, "fallback": v != variant})
+                    break
+            if made is not None:
+                break
+        if made is None:
+            raise RuntimeError(f"no valid scene for {scene.id} variant {variant}")
+        b = MatchBundle(made[0], made[1], variant=str(variant), scene=made[2])
+        self._scenes[key] = b
+        while len(self._scenes) > SCENE_KEPT:
+            self._scenes.popitem(last=False)
+        return b
 
     def bundle(self, match_id: str) -> MatchBundle:
         if match_id not in self.ids():  # a disk match, else a simulated one; never a path, so a request cannot walk the file system

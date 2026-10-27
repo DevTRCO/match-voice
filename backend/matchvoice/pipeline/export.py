@@ -8,7 +8,7 @@ from typing import Awaitable, Callable
 import orjson
 
 from . import protocol as proto
-from ..commentary.analyst import CallBudget
+from ..commentary.analyst import BudgetExceeded, CallBudget
 from .demo import demo_insert, story_insert
 from .library import Library, MatchBundle
 from .runner import DEFAULT_SPEED, LiveConfig, Runner
@@ -49,8 +49,8 @@ async def capture_insert(lib: Library, call: Callable[[str], Awaitable[str]] | N
 
     The static build and a server without a live budget play this file. Analyst answers come from the answer cache; the
     default model call raises, so a prompt that is not cached fails the capture instead of costing money."""
-    async def no_call(prompt: str) -> str:
-        raise RuntimeError("the insert capture makes no model calls: the answer is not in the cache")
+    async def no_call(prompt: str) -> str:  # BudgetExceeded, not another error: the newsroom never discards a cached answer for it
+        raise BudgetExceeded("the insert capture makes no model calls: the answer is not in the cache")
 
     d = demo_insert(lib)
     live = LiveConfig(call or no_call, CallBudget(1))
@@ -65,12 +65,16 @@ PART_GAP_S = 1.2  # wall seconds between the parts of the story insert: the cut
 PART_LEAD_S = 0.4  # a part starts this soon after the cut
 
 
-async def capture_story_insert(lib: Library, call: Callable[[str], Awaitable[str]] | None = None, max_calls: int = 0) -> dict:
+async def capture_story_insert(lib: Library, call: Callable[[str], Awaitable[str]] | None = None, max_calls: int = 0,
+                               cache_dir: Path | None = None, world: bool = True,
+                               world_call: Callable[[str], Awaitable[str]] | None = None) -> dict:
     """The story insert: each part a paced-as-recorded live run at 1x with the dense voice (fast and context layers, the dossier
-    stories), the parts joined back to back on one wall clock. Analyst answers come from the answer cache; a prompt that is not
-    cached falls back to the template line unless `call` and `max_calls` allow a model call (the GuardedLLM budget holds)."""
-    async def no_call(prompt: str) -> str:
-        raise RuntimeError("not in the answer cache, and this capture makes no model calls")
+    stories), the parts joined back to back on one wall clock. Analyst answers come from the answer cache (`cache_dir`, default
+    data/cache/analyst); a prompt that is not cached falls back to the template line unless `call` and `max_calls` allow a model call
+    (the GuardedLLM budget holds, retries count). `world`: the six world channels too (ids 6..11, every line by the world booth,
+    `world_call`; one budget for both booths); a world prompt that is not cached and has no call left is not said."""
+    async def no_call(prompt: str) -> str:  # BudgetExceeded, not another error: the newsroom never discards a cached answer for it
+        raise BudgetExceeded("not in the answer cache, and this capture makes no model calls")
 
     d = story_insert(lib)
     bundle = lib.bundle(d["match"])
@@ -78,9 +82,13 @@ async def capture_story_insert(lib: Library, call: Callable[[str], Awaitable[str
     hello: dict = {}
     out: list[dict] = []
     offset = 0.0
+    booth: dict = {}  # one broadcast: a set-up said in part 1 is what a goal in part 2 can pay off
     for k, (start, until) in enumerate(d["parts"]):
-        live = LiveConfig(call if (call and max_calls) else no_call, budget)
-        h, *messages = await Runner(bundle, "live", 1.0, True, live, start, None, until, fast=True).collect()  # paced: the wall clock is real
+        paid = bool(call and max_calls)
+        live = LiveConfig(call if paid else no_call, budget, cache_dir=cache_dir,
+                          world_call=((world_call if (world_call and max_calls) else no_call) if world else None))
+        h, *messages = await Runner(bundle, "live", 1.0, True, live, start, None, until, fast=True, booth=booth,
+                                    world=world).collect()  # paced: the wall clock is real
         if not hello:
             hello = {**h, "start": d["start"], "until": d["until"]}
             hello.pop("run", None)
@@ -96,8 +104,11 @@ async def capture_story_insert(lib: Library, call: Callable[[str], Awaitable[str
         for m in messages:
             if "w" in m:
                 m["w"] = round(max(0.0, m["w"] - lag) + offset, 3)
-                last_w = m["w"]
+                last_w = max(last_w, m["w"])
+                if m["k"] in ("say", "voice") and not m.get("skip") and m["e"] > m["s"]:  # a voice that runs on past the part: the cut waits for it
+                    last_w = max(last_w, m["w"] + (m["e"] - max(m["s"], m["t"])))
             out.append(m)
         offset = last_w + PART_GAP_S
     hello["wall"] = round(max(m["w"] for m in out if "w" in m), 1)
-    return {"v": proto.VERSION, "demo": d, "hello": hello, "calls": 0 if not (call and max_calls) else budget.used, "messages": out}
+    d = {**d, "length": round(hello["wall"])}  # what the start screen says: the run as heard, the cut and the last voice included
+    return {"v": proto.VERSION, "demo": d, "hello": hello, "calls": 0 if not ((call or world_call) and max_calls) else budget.used, "messages": out}

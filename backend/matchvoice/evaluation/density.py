@@ -93,7 +93,9 @@ def run_span(bundle: MatchBundle, start: float, until: float | None, fast: bool 
     # Pointed at the real cache it would delete the recorded insert's answer, so the real cache is never touched.
     with tempfile.TemporaryDirectory() as tmp:
         live = LiveConfig(_no_call, CallBudget(100_000), cache_dir=Path(tmp), fresh=True)
-        runner = (_StandIn if stand_in else Runner)(bundle, "live", 1.0, paced=False, live=live, start=start, until=until, fast=fast)
+        # patterns=False: the report measures the dense layers as reviewed in phase 3; the co-commentator's pattern set-up (commentary/patterns.py,
+        # 2026-10-26) adds analyst lines to quiet spells and is not part of these gates
+        runner = (_StandIn if stand_in else Runner)(bundle, "live", 1.0, paced=False, live=live, start=start, until=until, fast=fast, patterns=False)
         return asyncio.run(runner.collect())
 
 

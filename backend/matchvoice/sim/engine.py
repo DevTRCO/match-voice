@@ -19,6 +19,7 @@ from .profile import build_team
 from .tactics import build_tactics, posture_schedule
 
 GOAL_Y = PITCH_W / 2
+LEAGUE_GENDER = "men"  # the Synthetic League is a men's league: the booth may say "he" (TeamMeta.gender)
 FORMATIONS: dict[str, list[tuple[str, str, float, float]]] = {
     "4-4-2": [
         ("GK", "GK", 5, 34), ("RB", "DEF", 28, 60), ("CB", "DEF", 24, 42), ("CB", "DEF", 24, 26),
@@ -111,7 +112,8 @@ def _make_team(rng: random.Random, side: Side, name: str, color: str, arc: Arc, 
 
 
 class Sim:
-    def __init__(self, arc_name: str, seed: int):
+    def __init__(self, arc_name: str, seed: int, scene=None):
+        self.scene = scene  # a live scene (sim/scene.py) that takes over at a dead ball; draws nothing here, so None is the plain match
         self.arc = ARCS[arc_name]
         self.seed = seed
         self.rng = random.Random(seed)
@@ -227,6 +229,8 @@ class Sim:
 
     # ---------- actions ----------
     def step(self) -> None:
+        if self.scene is not None and self.scene.should_fork(self):
+            return self.scene.play(self)
         team = self.teams[self.poss]
         opp = self.teams[self._other(self.poss)]
         r = self.rng
@@ -509,5 +513,6 @@ class Sim:
             teams={s: TeamMeta(
                 side=s, name=t.name, short=t.short, color=t.color, formation=t.formation, players=profiles[s],
                 tactics=build_tactics(self.seed, s, t.formation, t.press, t.tempo, profiles[s]), postures=postures[s],
+                gender=LEAGUE_GENDER,
             ) for s, t in self.teams.items()})
         return meta, self.events, self.truth

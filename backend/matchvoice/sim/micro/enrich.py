@@ -46,6 +46,7 @@ BOX_Y = (PITCH_W / 2 - 20.16, PITCH_W / 2 + 20.16)
 SIX_Y = (PITCH_W / 2 - 9.16, PITCH_W / 2 + 9.16)
 GOAL_HALF = 3.66
 LOFTED_TYPES = ("cross", "switch", "clearance", "goal_kick", "corner")
+SHORT_GOAL_KICK_M = 24.0  # a goal kick shorter than this is played on the ground (the generated live scene's short goal kick)
 RESTART_PASSES = ("corner", "free_kick", "throw_in", "goal_kick")
 DROP_RANK = {"take_on": 0, "carry": 1, "pass": 2, "receipt": 3}  # lowest value first
 FOUL_TYPES = ("trip", "push", "holding", "late_tackle", "pull")
@@ -331,6 +332,8 @@ def _pass_type(ctx: Context, lo: int, a: Act, first_time: bool) -> str:
 
 
 def _height(rng: random.Random, ptype: str, length: float, kick_kmh: float) -> str:
+    if ptype == "goal_kick" and length < SHORT_GOAL_KICK_M:  # rolled to a centre back at the edge of the box (no plain-match goal kick is this short)
+        return "ground"
     if ptype in LOFTED_TYPES:
         return "lofted"
     if ptype == "long":

@@ -423,7 +423,8 @@ def test_type_priority_cross_before_through_before_back(tctx):
 
 def test_height_rules():
     for t in ("cross", "switch", "clearance", "goal_kick", "corner"):
-        assert E._height(Fixed(0.99), t, 20.0, 40.0) == "lofted"
+        assert E._height(Fixed(0.99), t, 30.0, 40.0) == "lofted"
+    assert E._height(Fixed(0.99), "goal_kick", 20.0, 40.0) == "ground"  # a short goal kick is rolled out (the live scene's; no plain one is this short)
     assert E._height(Fixed(0.99), "short", 25.0, 70.0) == "driven"
     assert E._height(Fixed(0.99), "short", 17.9, 80.0) == "ground"
     assert E._height(Fixed(0.99), "short", 25.0, 69.9) == "ground"

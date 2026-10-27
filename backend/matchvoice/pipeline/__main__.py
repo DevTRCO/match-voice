@@ -49,6 +49,7 @@ def main() -> None:
     si = sub.add_parser("export-story-insert", help="record the story insert (a quiet spell with a dossier story, then the goal) with the dense voice")
     si.add_argument("--out", type=Path, default=Path("ui/public/insert/story.json"))
     si.add_argument("--max-calls", type=int, default=0, help="model calls allowed for prompts not in the answer cache (costs money)")
+    si.add_argument("--no-world", action="store_true", help="only the core channels en, de, fr (ids 0..5), not the six world channels")
     a = ap.parse_args()
     try:
         if a.cmd == "play":
@@ -59,13 +60,15 @@ def main() -> None:
             a.out.write_bytes(orjson.dumps(doc))
             print(a.out, f"{len(doc['messages'])} messages, {doc['calls']} model calls", file=sys.stderr)
         elif a.cmd == "export-story-insert":
-            call = None
+            call = world_call = None
             if a.max_calls:
                 from ..commentary.analyst import claude_llm
+                from ..commentary.world import WORLD_SYSTEM
                 from ..config import anthropic_api_key
                 from ..commentary.precompute import MODEL
                 call = claude_llm(MODEL, anthropic_api_key())
-            doc = asyncio.run(capture_story_insert(Library(), call, a.max_calls))
+                world_call = claude_llm(MODEL, anthropic_api_key(), WORLD_SYSTEM, "WorldBooth")
+            doc = asyncio.run(capture_story_insert(Library(), call, a.max_calls, world=not a.no_world, world_call=world_call))
             a.out.parent.mkdir(parents=True, exist_ok=True)
             a.out.write_bytes(orjson.dumps(doc))
             print(a.out, f"{len(doc['messages'])} messages, {doc['calls']} model calls", file=sys.stderr)

@@ -43,7 +43,7 @@ VOICE_SETTINGS: dict[Energy, dict[str, float]] = {
     "rising": {"stability": 0.45, "similarity_boost": 0.80, "style": 0.25, "speed": 1.04},
     "peak": {"stability": 0.30, "similarity_boost": 0.75, "style": 0.55, "speed": 1.12},
 }
-STYLE_MODELS: set[str] = {"eleven_v3"}  # models that get `style`; Flash is low-latency and `style` adds latency, so it is left out until a listening test says otherwise
+STYLE_MODELS: set[str] = {"eleven_v3", "eleven_v4"}  # models that get `style`; Flash is low-latency and `style` adds latency, so it is left out until a listening test says otherwise
 
 
 def voice_settings(energy: Energy, model: str) -> dict[str, float | bool]:
@@ -164,6 +164,32 @@ def _score_words(a: int, b: int, lang: str) -> str:
     return f"{number_words(a, lang)}{sep}{number_words(b, lang)}"
 
 
+# The world languages say small scores only (0 to 10): "uno a uno", "um a um", "één-één", "bir bir"; Japanese keeps the written 1対1, which a
+# Japanese voice reads as itti tai itti.
+_WORLD_UNITS = {
+    "es": ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez"],
+    "it": ["zero", "uno", "due", "tre", "quattro", "cinque", "sei", "sette", "otto", "nove", "dieci"],
+    "pt": ["zero", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez"],
+    "nl": ["nul", "één", "twee", "drie", "vier", "vijf", "zes", "zeven", "acht", "negen", "tien"],
+    "tr": ["sıfır", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz", "on"],
+}
+_WORLD_SEP = {"es": " a ", "it": " a ", "pt": " a ", "nl": "-", "tr": " "}
+
+
+def score_said(a: int, b: int, lang: str) -> str:
+    """A scoreline the way a caller says it: "one-all", "eins zu eins", and in French "un partout" for a level score ("deux à un" otherwise);
+    "uno a uno" (es, it), "um a um" (pt), "één-één" (nl), "bir bir" (tr), and 1対1 in Japanese."""
+    if lang == "ja":
+        return f"{a}対{b}"
+    if lang in _WORLD_UNITS:
+        units = _WORLD_UNITS[lang]
+        w = lambda n: units[n] if 0 <= n < len(units) else str(n)
+        return f"{w(a)}{_WORLD_SEP[lang]}{w(b)}"
+    if lang == "fr" and a == b:
+        return f"{number_words(a, 'fr')} partout"
+    return _score_words(a, b, lang)
+
+
 def _decimal_words(whole: str, frac: str, lang: str) -> str:
     return f"{number_words(int(whole), lang)} {_POINT[lang]} " + " ".join(number_words(int(c), lang) for c in frac)
 
@@ -176,7 +202,14 @@ def shape_for_tts(text: str, lang: str) -> str:
     Plain whole numbers stay digits: engines read those correctly. The wording itself is never changed."""
     t = " ".join(text.split())
     t = t.replace("…", "...")
-    t = SCORE_RE.sub(lambda m: _score_words(int(m.group(1)), int(m.group(2)), lang), t)
+    t = SCORE_RE.sub(lambda m: score_said(int(m.group(1)), int(m.group(2)), lang), t)  # German 1:1 is "eins zu eins", French 1-1 "un partout"
+    if lang not in _UNITS:  # a world language: the score and the pauses only; its lines carry no percentages, decimals or abbreviations (verifier)
+        t = re.sub(r"\s*[—–]\s*|\s+-\s+", ", ", t)
+        t = re.sub(r"([!?！？])\s*(?:[!?！？])+", r"\1", t)
+        t = re.sub(r"\s+([,.!?])", r"\1", t).strip(" ,")
+        if t and t[-1] not in ".!?。！？":
+            t += "。" if lang == "ja" else "."
+        return t
     t = PERCENT_RE.sub(lambda m: _num_phrase(m.group(1), lang) + " " + _PERCENT_WORD[lang], t)
     for pattern, repl in _ABBREV[lang]:
         t = re.sub(pattern, repl, t)
@@ -205,9 +238,9 @@ def shape_for_tts(text: str, lang: str) -> str:
 
 # ---------- hype: how a peak line is shouted ----------
 # Applied after shape_for_tts, only to the text sent to the speech engine; the caption keeps the written line.
-# eleven_v3 reads audio tags in square brackets ([excited], [shouting]); other models would read them aloud, so they get none.
-TAG_MODELS = {"eleven_v3"}
-_SHOUT = {"en": ("GOAL", "GOOOAL"), "de": ("TOR", "TOOOR"), "fr": ("BUT", "BUUUT")}
+# eleven_v3 and eleven_v4 read audio tags in square brackets ([excited], [shouting]); other models would read them aloud, so they get none.
+TAG_MODELS = {"eleven_v3", "eleven_v4"}
+_SHOUT = {"en": ("GOAL", "GOOOAL"), "de": ("TOR", "TOOOR"), "fr": ("BUT", "BUUUT")}  # the world booth writes its own shout ("¡GOOOL!", "ゴール！")
 _TAGS: dict[Energy, str] = {"calm": "", "rising": "[excited] ", "peak": "[shouting] "}
 
 
@@ -215,12 +248,12 @@ def hype_for_tts(text: str, lang: str, energy: Energy, model: str) -> str:
     """A peak line is called, not read: the shout word is stretched ("GOOOAL!"), it stands alone as its own exclamation,
     and the line ends on an exclamation mark. With a tag model the energy also goes in as an audio tag."""
     t = text
-    if energy == "peak":
+    if energy == "peak" and lang in _SHOUT:
         word, long = _SHOUT[lang]
         m = re.match(rf"{word}(?![A-Za-z])\s*[!.,]?\s*", t)
         if m:
-            rest = t[m.end():]
-            t = f"{long}! " + rest[:1].upper() + rest[1:]
+            rest = re.sub(rf"(?<![A-Za-z]){word}(?![A-Za-z])", word.capitalize(), t[m.end():])  # a second shout word ("BUT de Fontaine") is read
+            t = f"{long}! " + rest[:1].upper() + rest[1:]  # as a word, not spelled out or taken for English "but": only the first is stretched
         t = re.sub(r"[.]$", "!", t)
     if model in TAG_MODELS:
         t = _TAGS[energy] + t

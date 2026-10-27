@@ -17,7 +17,7 @@ from matchvoice.commentary.director import (CONTEXT_DEAD_S, CONTEXT_PER_WINDOW, 
 from matchvoice.commentary.fast import (CONTEXT, CONTEXT_BASE, FAST, FAST_BASE, REPLACED_KINDS, TACTICAL_BASE, build_layers, continuity_id,
                                         fatigue_base, layer_of, state_at)
 from matchvoice.commentary.lang import LANGS, STYLES
-from matchvoice.commentary.moments import Moment, MomentBuilder, is_named, render_params, render_variants
+from matchvoice.commentary.moments import _tidy, Moment, MomentBuilder, is_named, render_params, render_variants
 from matchvoice.commentary.templates import NAME_KEYS, T, WORDS
 from matchvoice.commentary.verifier import Verifier, allowed_for
 from matchvoice.facts.engine import FactEngine
@@ -241,7 +241,7 @@ def test_a_name_less_moment_renders_only_name_less_wordings_and_a_named_one_only
         for lang in LANGS:
             for style in STYLES:
                 p = render_params(m, lang)
-                allowed = {v.format(**p) for v in T[m.kind][lang][style]
+                allowed = {_tidy(v.format(**p)) for v in T[m.kind][lang][style]
                            if is_named(v) == m.params["named"] and all(k in p for k in re.findall(r"{(\w+)}", v))}  # a wording needs every fact it names (no `dir` for a back-pass)
                 texts = render_variants(m, lang, style)
                 assert texts and set(texts) <= allowed
@@ -310,7 +310,8 @@ def test_context_content_is_real_and_rate_limited(arc, seed):
     meta, events, rows, ms = built(arc, seed)
     ctx = [m for m in ms if m.layer == "context"]
     assert {m.kind for m in ctx} >= {"player_note", "counter_note", "tempo_note"} and {m.kind for m in ctx} & set(fl.TACTIC_KINDS)
-    assert all(m.priority in range(30, 46) and m.ttl == 8.0 and m.voice_wait == 3.0 and m.voice == "analyst" for m in ctx)
+    assert all(m.priority in range(30, 46) and m.ttl == 8.0 and m.voice_wait == 3.0 for m in ctx)
+    assert all(m.voice == ("pbp" if m.kind in fl.LEAD_CONTEXT else "analyst") for m in ctx)  # the lead reads the dossier, the co-commentator the rest
     last: dict[tuple[str, str], float] = {}
     note_at: dict[str, float] = {}
     passes_at: dict[str, int] = {}
@@ -478,14 +479,15 @@ def test_the_word_tables_obey_the_caster_rules():
         for lang, codes in langs.items():
             for code, text in codes.items():
                 assert not re.search(r"[—–]", text) and not re.search(r"\d", text), (table, lang, text)
-                assert not re.search(GENDERED[lang], text, re.I), (table, lang, text)
+                club = text.replace("ils sont revenus", "") if table.startswith("story_note") else text  # "ils": the club (plural), not a player
+                assert table.endswith("_pron") or not re.search(GENDERED[lang], club, re.I), (table, lang, text)  # _pron: only with the squad's gender
     flat = [t for table in T.values() for langs in table.values() for styles in langs.values() for t in styles]
     assert not any(re.search(r"[—–]", t) for t in flat)
 
 
 def test_name_keys_cover_every_player_placeholder_of_the_bank():
     used = {k for kind in [*FAST, *CONTEXT] for langs in T[kind].values() for vs in langs.values() for v in vs for k in re.findall(r"{(\w+)}", v)}
-    placeholders = used - {"note", "bare", "why", "also", "more", "note_long", "team", "dir_word", "Dir_word", "pass_word", "Pass_word", "pass_verb",
+    placeholders = used - {"note", "bare", "why", "plain", "bare_plain", "also", "more", "note_long", "team", "dir_word", "Dir_word", "pass_word", "Pass_word", "pass_verb",
                            "Pass_done", "pass_prep", "Pass_prep", "pressed_word", "Pressed_word", "driven_word", "driven_bare", "driven_alt", "back_word", "lane_word", "third_word", "Third_word",
                            "wing_word", "Wing_word"}
     assert placeholders <= set(NAME_KEYS), placeholders
@@ -512,7 +514,8 @@ def test_the_verifier_accepts_every_wording_of_every_fast_and_context_moment(arc
                     verdict = ver.check(text, lang, allowed)
                     assert verdict.ok, (m.kind, m.params, lang, style, text, verdict.feedback())
                     assert not re.search(r"\d", text) and not re.search(r"[—–]", text), text
-                    assert not re.search(GENDERED[lang], text, re.I), (lang, text)
+                    if not m.params.get("squad"):  # a pronoun for a player only when the squad's gender is known (comeback-135 is a men's squad)
+                        assert not re.search(GENDERED[lang], text.replace("ils sont revenus", ""), re.I), (lang, text)  # the club, plural
                     if m.layer == "fast" and not (m.kind == "restart" and style == "beginner" and len(text.split()) > 10):  # the beginner's explanation of a restart is a sentence
                         assert len(text.split()) <= FRAGMENT_WORDS[lang], (m.kind, lang, text)
 
@@ -820,8 +823,12 @@ def test_the_guided_window_choice_is_unchanged_for_50_seeds_per_arc():
 
 
 def test_the_recorded_replays_stream_exactly_as_before():
-    """sha-256 of the replay stream at x30 for the three recorded matches, measured before phase 3 (fast layer off)."""
-    want = {"comeback-7": (1752, "f16eafdf63d64808"), "red_card-7": (1747, "898725f62f068355"), "unlucky-7": (1840, "73ce434fea167594")}
+    """sha-256 of the replay stream at x30 for the three recorded matches (fast layer off). Re-measured 2026-10-25 for the insert script
+    (docs/INSERT-SCRIPT.md): goal calls without the score, the lead's score line after each goal analysis, `who` on every say."""
+    # Re-measured 2026-10-25 for the producers' fixes: a breath after the goal call and after the co line (director.BREATH_S), the score line waits for the co line.
+    # Re-measured 2026-10-26 for the world channels: hello.channels carries level, solo, lead and co (name, gender); with those fields taken out
+    # the three streams hash to the 2026-10-25 digests (9915c4256e16185f, 01a1a6616db3b139, b94c8b9a570280dd), so nothing else moved.
+    want = {"comeback-7": (1761, "7c39024aef58f1c1"), "red_card-7": (1753, "e1f52e5f7b1d7b0d"), "unlucky-7": (1844, "f7edd037fb097ee4")}
     for match_id, (n, digest) in want.items():
         msgs = asyncio.run(Runner(LIB.bundle(match_id), "replay", 30.0, paced=False).collect())
         assert (len(msgs), hashlib.sha256(orjson.dumps(msgs)).hexdigest()[:16]) == (n, digest), match_id
@@ -853,7 +860,7 @@ def test_one_pass_gets_the_same_words_whether_it_arrives_or_not():
     outs = {}
     for m in ms:
         if m.kind == "pass_kind":
-            assert set(m.params) <= {"player", "target", "pass_type", "lane", "arr", "pressed", "driven", "team", "team_code", "named", "kicker_said", "name_said"}  # nothing about how it ends
+            assert set(m.params) <= {"player", "target", "pass_type", "lane", "arr", "pressed", "driven", "team", "team_code", "named", "kicker_said", "name_said", "squad"}  # nothing about how it ends
             outs.setdefault(next(e.outcome for e in events if e.i == by_eid[(m.id - FAST_BASE) // 8]["i"]), []).append(m)
     assert {"complete", "incomplete"} <= set(outs)
     for kind_of_end, group in outs.items():  # name-less lines for a failed pass exist, and none of them carries a verdict

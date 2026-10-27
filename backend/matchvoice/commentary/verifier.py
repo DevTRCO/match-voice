@@ -6,28 +6,46 @@ Deterministic, no model. A line is rejected when it contains
   - a player who is not part of the moment,
   - a tactical claim (high line, low block, pressing, in behind, a switch, between the lines, a counter) the moment's facts do not carry (7.5),
   - a trait word (pace, aerial threat, ...) in a sentence that names no player who has the trait,
+  - a habit (keeps winning it, always short, never across) the moment's facts do not carry (a pattern_insight or its pay-off),
+  - a number written as a word ("eleven times", "elfmal", "onze fois") the facts do not support, for a model line (`spelled`),
+  - a win in a season record of comebacks ("won three times", "逆転勝ち"): the record counts points after being behind, draws included,
+  - a count of anything in a beginner line ("three passes", "drei Pässe", "trois passes"), for a model line (`style`),
   - the wrong language,
+  - an em dash or a middle dot ("·", "・") in a model line (`spelled`): the user's rule for every text a viewer sees,
   - more words than the time slot allows.
+The world languages (es, it, pt, nl, tr, ja) have the same rules: their own stop words, number words, count nouns, claims and traits. Japanese is
+written without spaces: its language check reads the script (kana), names are matched without word boundaries, and a name in katakana
+(イブセン) is mapped to the roster by its consonant skeleton (`skeleton`, `kana_skeleton`), so a katakana name counts as that player.
 Rejection reasons go back to the agent that wrote the line, which gets a retry.
 """
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass, field
 
 from ..schema import MatchMeta
-from .lang import est_seconds
+from .lang import LANGS, est_seconds
 from .moments import Moment, render_params, surname
 from .templates import NAME_KEYS
 
 NUM_RE = re.compile(r"(?<![\w.])\d+(?:[.,]\d+)?")
-SCORE_RE = re.compile(r"(?<!\d)(\d{1,2})\s*[-–:]\s*(\d{1,2})(?!\d)")
-WORD_RE = re.compile(r"[a-zàâäçéèêëîïôöùûüßœ']+", re.I)
+SCORE_RE = re.compile(r"(?<!\d)(\d{1,2})\s*[-–:対]\s*(\d{1,2})(?!\d)")  # 対: Japanese writes 1対1
+WORD_RE = re.compile(r"(?:[^\W\d_]|')+")  # letters of any script (ñ, ı, ş, ã ...); Japanese runs are one "word" each and are read by script instead
+KANA_RE = re.compile(r"[\u3040-\u30ff]")  # hiragana and katakana: only Japanese writes them
+KATAKANA_RUN = re.compile(r"[\u30a1-\u30fa\u30fc]+")  # a katakana word (the middle dot U+30FB splits names)
+FORBIDDEN_PUNCT = re.compile(r"[\u2014\u00b7\u30fb\u2027\u2219]")  # em dash, middle dot, katakana middle dot, hyphenation point, bullet operator
 
 STOPWORDS = {
     "en": {"the", "and", "is", "are", "to", "of", "a", "in", "for", "with", "it", "that", "on", "they", "have", "has"},
     "de": {"der", "die", "das", "und", "ist", "mit", "den", "ein", "eine", "nicht", "auf", "für", "von", "im", "hat", "sie"},
     "fr": {"le", "la", "les", "et", "est", "un", "une", "des", "du", "de", "pour", "avec", "que", "dans", "ce", "sur", "a", "cette", "au", "aux", "en"},  # "a" is English too; a French sentence of two perfects ("a réussi ... a disputé") was read as English
+    # the world languages: function words, the most frequent first; shared ones ("de", "la", "que", "e") count for every language that has them
+    "es": {"el", "los", "las", "y", "del", "con", "por", "una", "es", "lo", "se", "pero", "esta", "está", "al", "su", "muy", "ya", "hay", "otra", "vez", "como", "la", "que", "de", "en", "un", "para", "no", "más", "ahora"},
+    "it": {"il", "gli", "della", "dello", "nel", "nella", "è", "di", "che", "per", "non", "ma", "ed", "e", "un", "una", "alla", "al", "questa", "volta", "sempre", "ancora", "poi", "la", "lo", "con"},
+    "pt": {"o", "os", "as", "e", "do", "da", "dos", "das", "não", "um", "uma", "com", "para", "que", "no", "na", "é", "mas", "ao", "pra", "essa", "dessa", "vez", "sempre", "de", "em"},
+    "nl": {"de", "het", "een", "en", "van", "is", "niet", "op", "met", "voor", "maar", "naar", "die", "dat", "nu", "weer", "er", "hij", "zijn", "deze", "keer", "altijd", "nooit", "ze", "wel"},
+    "tr": {"ve", "bir", "bu", "da", "de", "ile", "için", "çok", "ama", "şimdi", "yine", "hiç", "her", "kez", "sonra", "hep", "bile", "daha", "artık", "işte", "ki", "mi", "gibi"},
 }
 
 
@@ -63,8 +81,8 @@ CLAIMS: dict[str, dict[str, str]] = {
     },
     "switch": {
         "en": r"\bswitch(?:es|ed|ing)?\b|switch of play",
-        "de": r"Seitenwechsel|verlagert|verlagert das Spiel",
-        "fr": r"renvers\w+|changement d'aile",
+        "de": r"Seitenwechsel|verlagert|verlagert das Spiel|Verlagerung",
+        "fr": r"renvers\w+|changement d'aile|transversale",
     },
     "line_break": {
         "en": r"between the lines|splits? the lines|break(?:s|ing)? the lines|line-breaking",
@@ -80,6 +98,22 @@ CLAIMS: dict[str, dict[str, str]] = {
         "en": r"real tempo|high tempo|quick tempo|at tempo|ball quickly",
         "de": r"mit (?:richtig )?Tempo|hohem Tempo|hohes Tempo|schnell laufen",
         "fr": r"vrai rythme|rythme (?:élevé|soutenu)|circuler vite",
+    },
+    # habits (commentary/patterns.py): only a pattern_insight, or a goal analysis that pays one off, carries them
+    "habit_winner": {
+        "en": r"keeps? winning (?:it|the ball)|winning it (?:back )?again and again|keeps getting (?:it|the ball) back",
+        "de": r"holt (?:die|jeden|alle) B[aä]ll\w*|holt (?:ihn|den Ball) schon wieder|gewinnt (?:jeden|alle) B[aä]ll\w*",
+        "fr": r"ballon sur ballon|récupère (?:tous les|chaque) ballons?|récupère encore et encore",
+    },
+    "habit_short": {
+        "en": r"(?:always|every time|each time)[^.!?]{0,30}\bshort\b|\bshort\b[^.!?]{0,12}\b(?:every time|each time|always)\b|(?:then|and) it goes short",
+        "de": r"immer (?:nur )?kurz|jedes Mal kurz|kurz, jedes Mal",
+        "fr": r"toujours court|à chaque fois court|systématiquement court",
+    },
+    "habit_never_across": {
+        "en": r"never across|not once across|nothing across|nobody (?:plays|puts|gets) it across|not (?:one|a single) (?:switch|ball across)|no switch",
+        "de": r"nie(?:mals)? rüber|nie quer|keine Verlagerung|nicht eine Verlagerung|wo ist die Verlagerung|nie verlagert",
+        "fr": r"jamais de l'autre côté|pas une (?:seule )?transversale|aucune transversale|jamais (?:la |une |de )?transversale|jamais renvers\w*",
     },
     "counter": {
         "en": r"counter-?attack|on the break|break(?:s|ing)? at speed|\bcounters?\b",
@@ -100,9 +134,75 @@ TRAIT_WORDS: dict[str, dict[str, str]] = {  # trait code (schema.Trait) -> patte
     "visionary": {"en": r"sees the pass early|visionary|great vision", "de": r"erkennt den Pass früh|Spielübersicht", "fr": r"voit la passe très tôt|grande vision"},
     "dribbler": {"en": r"take a man on|loves to dribble|dribbler", "de": r"ins Dribbling|Dribbler", "fr": r"éliminer son vis-à-vis|dribbleur"},
 }
+CLAIMS_WORLD: dict[str, dict[str, str]] = {'high_line': {'es': 'línea (?:muy )?adelantada|defensa adelantada|bloque alto', 'it': 'linea alta|difesa alta|blocco alto', 'pt': 'linha alta|defesa adiantada|bloco alto', 'nl': 'hoge (?:verdedigings)?lijn|hoog blok|verdedigt hoog', 'tr': 'önde savunma|yüksek savunma hattı|yüksek blok', 'ja': '高いライン|ハイライン|最終ラインを高く'}, 'press_high': {'es': 'presión alta|presiona(?:n)? arriba', 'it': 'pressing alto|press(?:a|ano) alto', 'pt': 'pressão alta|marcação alta|pressiona(?:m)? alto', 'nl': 'hoog druk|zet(?:ten)? hoog druk|hoge druk', 'tr': 'önde baskı|yüksek pres', 'ja': 'ハイプレス|前からプレス|前からのプレス|高い位置からプレス'}, 'press_passive': {'es': 'no presiona(?:n)?|presión pasiva', 'it': 'non press(?:a|ano)|pressing passivo', 'pt': 'não pressiona(?:m)?|pressão passiva', 'nl': 'zet(?:ten)? geen druk|passieve druk', 'tr': 'baskı yapmıyor|pasif baskı', 'ja': 'プレスをかけない|プレスがない'}, 'low_block': {'es': 'bloque bajo|repliegue|defiende(?:n)? (?:muy )?atrás|encerrad[oa]s? atrás', 'it': 'blocco basso|difesa bassa|si chiud(?:e|ono) dietro|chiusi dietro', 'pt': 'bloco baixo|retrancad\\w+|recuad\\w+ demais', 'nl': 'laag blok|zakt (?:diep )?in|staat diep|ingezakt', 'tr': 'alçak blok|geride kapan\\w+|geride bekliyor', 'ja': '低いブロック|引いて守|ベタ引き|自陣に引'}, 'in_behind': {'es': 'a la espalda de la defensa|al espacio a la espalda', 'it': 'alle spalle della difesa|dietro la difesa', 'pt': 'nas costas da (?:defesa|zaga)', 'nl': 'achter de verdediging|in de rug van de verdediging', 'tr': 'savunmanın arkasına|arkaya sarkan', 'ja': '裏へ|裏を取|ラインの裏'}, 'switch': {'es': 'cambio de (?:orientación|juego|frente)', 'it': 'cambio (?:di gioco|di campo|di fronte)', 'pt': 'inversão|virada de jogo|vir(?:a|ou|ar) o jogo', 'nl': '\\bswitch\\b|wissel van kant|crossverplaatsing|verplaatst het spel', 'tr': 'oyunun yönünü değiştir\\w*|çapraz pas|kanat değiştir\\w*', 'ja': 'サイドチェンジ|逆サイドへの展開'}, 'line_break': {'es': 'entre líneas|rompe(?:n)? líneas', 'it': 'tra le linee|romp(?:e|ono) le linee', 'pt': 'entrelinhas|entre as linhas|quebra(?:r)? as linhas', 'nl': 'tussen de linies|door de linies', 'tr': 'hatlar arasında|çizgiler arasında|hatları kır\\w*', 'ja': 'ライン間|ラインを破'}, 'tempo_slow': {'es': 'baja(?:n)? el ritmo|sin prisa|se toma(?:n)? su tiempo', 'it': 'abbass(?:a|ano) i ritmi|senza fretta', 'pt': 'sem pressa|diminu\\w+ o ritmo|cadencia(?:m)? o jogo', 'nl': 'haalt het tempo eruit|geen haast', 'tr': 'oyunu yavaşlat\\w*|acele etmeden|ritmi düşür\\w*', 'ja': 'テンポを落と|ゆっくり回'}, 'tempo_high': {'es': 'ritmo alto|mucho ritmo', 'it': 'ritmo alto|ritmi alti', 'pt': 'ritmo alto|ritmo forte', 'nl': 'hoog tempo|tempo erin', 'tr': 'yüksek tempo|tempolu', 'ja': 'ハイテンポ|テンポを上げ|速いテンポ'}, 'habit_winner': {'es': '(?:recupera|gana|roba) (?:todos los|cada) balon\\w*|recupera una y otra vez|no para de recuperar|sigue recuperando|las recupera todas', 'it': "recupera (?:tutti i|ogni) pallon\\w*|continua a recuperare|recupera palloni su palloni|recupera un pallone dopo l'altro", 'pt': '(?:recupera|rouba|ganha) todas as bolas|recupera bola atrás de bola|não para de recuperar|continua recuperando', 'nl': 'wint (?:elke|alle|steeds de|steeds) ba(?:l|llen)|blijft (?:de bal |ballen )?(?:winnen|veroveren)|pakt (?:elke|alle|steeds) ba(?:l|llen)', 'tr': 'her topu kazan\\w*|sürekli top kazan\\w*|topları kazanıyor|topu (?:hep|sürekli) kazan\\w*', 'ja': '(?:何度も|次々と|ことごとく)(?:ボールを)?(?:奪|回収)|ボールを奪い続け'}, 'habit_short': {'es': 'siempre (?:en )?corto|cada vez,? (?:en )?corto|corto,? siempre', 'it': 'sempre (?:il passaggio )?cort[oa]|ogni volta cort[oa]', 'pt': 'sempre (?:o passe )?curto|toda vez curto|é sempre curto', 'nl': 'altijd kort|steeds kort|elke keer kort', 'tr': 'hep kısa|her seferinde kısa|sürekli kısa', 'ja': '(?:いつも|毎回|必ず)(?:短い|ショート)'}, 'habit_never_across': {'es': 'nunca (?:al otro lado|cruza|de banda a banda|el cambio)|ni un (?:solo )?cambio|ningún cambio', 'it': "mai (?:dall'altra parte|il cambio|sull'altro lato)|nessun cambio|neanche un cambio", 'pt': 'nunca (?:pro|para o) outro lado|nenhuma inversão|nunca a inversão|nem uma inversão', 'nl': 'nooit (?:naar de )?andere kant|nooit over|geen enkele switch|nooit een switch', 'tr': '(?:asla|hiç|bir kez bile) (?:diğer|öbür) (?:tarafa|kanada)|hiç çevirmiyor|bir kez bile çevir\\w*', 'ja': '(?:一度も|全く)(?:逆サイド|サイドチェンジ|反対側)|(?:逆サイド|反対側)へは一度も|サイドチェンジ(?:が|は)(?:ない|ありません)'}, 'counter': {'es': 'contraataque|contragolpe', 'it': 'contropiede|ripartenza', 'pt': 'contra-ataque|contragolpe', 'nl': '\\bcounter\\b|uitbraak', 'tr': 'kontra(?: atak)?', 'ja': 'カウンター'}}
+TRAIT_WORDS_WORLD: dict[str, dict[str, str]] = {'rapid': {'es': 'muy rápido|rapidísimo|velocidad endiablada', 'it': 'velocissimo|rapidissimo', 'pt': 'muito rápido|rapidíssimo', 'nl': 'razendsnel|bloedsnel', 'tr': 'çok hızlı|müthiş hızlı', 'ja': '俊足|快足'}, 'quick_off_the_mark': {'es': 'arranque explosivo', 'it': 'scatto bruciante', 'pt': 'arranque explosivo', 'nl': 'explosieve start', 'tr': 'patlayıcı çıkış', 'ja': '初速が速い'}, 'aerial_threat': {'es': 'fuerte por arriba|domina el juego aéreo', 'it': 'forte di testa|dominante nel gioco aereo', 'pt': 'forte no jogo aéreo|bom de cabeça', 'nl': 'sterk in de lucht|kopsterk', 'tr': 'hava toplarında güçlü', 'ja': '空中戦に強い|ヘディングが強い'}, 'long_range': {'es': 'desde lejos|de lejos|disparo lejano', 'it': 'da lontano|dalla distanza', 'pt': 'de longe', 'nl': 'van afstand|afstandsschot', 'tr': 'uzaktan', 'ja': '遠目から|ロングシュートが得意|ミドルが得意'}, 'set_piece_taker': {'es': 'especialista (?:a|en) balón parado', 'it': 'specialista dei calci piazzati', 'pt': 'especialista em bola parada', 'nl': 'spelhervattingsspecialist', 'tr': 'duran top uzmanı', 'ja': 'セットプレーの名手|プレースキッカー'}, 'press_resistant': {'es': 'tranquilo bajo presión', 'it': 'calmo sotto pressione', 'pt': 'calmo sob pressão', 'nl': 'rustig onder druk', 'tr': 'baskı altında sakin', 'ja': 'プレッシャーに強い'}, 'engine': {'es': 'no para de correr|pulmón', 'it': 'non smette mai di correre|polmone', 'pt': 'não para de correr|pulmão', 'nl': 'onvermoeibaar', 'tr': 'durmadan koşuyor|yorulmak bilmiyor', 'ja': '運動量が豊富|走り続ける'}, 'two_footed': {'es': 'con las dos piernas|ambidiestro', 'it': 'con entrambi i piedi|ambidestro', 'pt': 'com as duas pernas|ambidestro', 'nl': 'tweebenig|met beide benen', 'tr': 'iki ayağını da|iki ayaklı', 'ja': '両足'}, 'tough_tackler': {'es': 'duro en el cruce|aguerrido', 'it': 'mastino|duro nei contrasti', 'pt': 'marcador duro|viril', 'nl': 'harde tackler|keiharde verdediger', 'tr': 'sert müdahale|sert savunmacı', 'ja': '対人に強い|ハードタックル'}, 'visionary': {'es': 'gran visión|ve el pase antes', 'it': 'grande visione|vede il passaggio prima', 'pt': 'grande visão|enxerga o passe', 'nl': 'groot overzicht|ziet de pass vroeg', 'tr': 'oyun görüşü|pası erken görüyor', 'ja': '視野が広い'}, 'dribbler': {'es': 'regateador|encarar', 'it': "dribblatore|saltare l'uomo", 'pt': 'driblador|partir para cima', 'nl': 'dribbelaar|zijn man uitspelen', 'tr': 'çalımcı|adam eksilt\\w*', 'ja': 'ドリブラー|仕掛ける'}}
+for _c, _langs in CLAIMS_WORLD.items():  # one lexicon: the world phrases sit next to en, de and fr
+    CLAIMS[_c].update(_langs)
+for _c, _langs in TRAIT_WORDS_WORLD.items():
+    TRAIT_WORDS[_c].update(_langs)
 _CLAIM_RX = {c: {lang: re.compile(p, re.I) for lang, p in langs.items()} for c, langs in CLAIMS.items()}
+# Claims a moment's facts rule out (Allowed.forbid). The comebacks story (sim/dossier.py) counts matches in which the team took points after
+# being behind: a draw counts, so "won", "turned it round" or 逆転勝ち overstate it.
+FORBIDDEN_CLAIMS: dict[str, dict[str, str]] = {
+    "comeback_win": {
+        "en": r"\bwon\b|\bwins?\b|victor(?:y|ies)|turned (?:it|games|matches) (?:a)?round",
+        "de": r"gewonnen|\bSiege?\b|gedreht",
+        "fr": r"gagn\w+|victoires?|renvers\w+",
+        "es": r"ganad\w*|\bgan[óa]\b|victorias?|le dio la vuelta",
+        "it": r"\bvint\w*|vittori\w+|ribaltat\w*",
+        "pt": r"\bvenc\w+|vitórias?|\bvir(?:ou|aram|ar|ada|adas)\b",
+        "nl": r"gewonnen|\bwon\b|zeges?\b|overwinning\w*",
+        "tr": r"kazan\w*|galibiyet\w*",
+        "ja": r"逆転勝ち|勝利|勝っ|勝ち(?!点)",
+    },
+}
+_FORBID_RX = {c: {lang: re.compile(p, re.I) for lang, p in langs.items()} for c, langs in FORBIDDEN_CLAIMS.items()}
 _TRAIT_RX = {c: {lang: re.compile(p, re.I) for lang, p in langs.items()} for c, langs in TRAIT_WORDS.items()}
-SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
+SENTENCE_RE = re.compile(r"(?<=[.!?])\s+|(?<=[。！？])")  # Japanese ends a sentence with 。！？ and no space
+
+# numbers written as words, two to twenty (one, ein, un are articles and idioms: "one touch", "einer drauf", "en une touche")
+NUMBER_WORDS = {
+    "en": ["two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+           "sixteen", "seventeen", "eighteen", "nineteen", "twenty"],
+    "de": ["zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf", "dreizehn", "vierzehn", "fünfzehn",
+           "sechzehn", "siebzehn", "achtzehn", "neunzehn", "zwanzig"],
+    "fr": ["deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix", "onze", "douze", "treize", "quatorze", "quinze",
+           "seize", "dix-sept", "dix-huit", "dix-neuf", "vingt"],
+    "es": ["dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once", "doce", "trece", "catorce", "quince",
+           "dieciséis", "diecisiete", "dieciocho", "diecinueve", "veinte"],
+    "it": ["due", "tre", "quattro", "cinque", "sei", "sette", "otto", "nove", "dieci", "undici", "dodici", "tredici", "quattordici", "quindici",
+           "sedici", "diciassette", "diciotto", "diciannove", "venti"],
+    "pt": ["dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez", "onze", "doze", "treze", "catorze", "quinze",
+           "dezesseis", "dezessete", "dezoito", "dezenove", "vinte"],
+    "nl": ["twee", "drie", "vier", "vijf", "zes", "zeven", "acht", "negen", "tien", "elf", "twaalf", "dertien", "veertien", "vijftien",
+           "zestien", "zeventien", "achttien", "negentien", "twintig"],
+    "tr": ["iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz", "on", "on bir", "on iki", "on üç", "on dört", "on beş",
+           "on altı", "on yedi", "on sekiz", "on dokuz", "yirmi"],
+    "ja": ["二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十"],
+}
+# one, ein, un, uno, um, een, bir, 一 are articles and idioms ("una vez más", "een keer", "bir kez bile", "一度も"), never counted
+_EXTRA_WORDS = {"en": {"twice": 2, "thrice": 3}, "de": {}, "fr": {}, "es": {"veintena": 20}, "it": {"ventina": 20}, "pt": {"duas": 2},
+                "nl": {"tweemaal": 2, "driemaal": 3}, "tr": {}, "ja": {}}
+_JA_COUNTER = r"(?:回|本|度|点|人|つ|分|秒)"  # a kanji numeral is a number only with a counter after it ("三回", "二十分"), else it is part of a word
+_NUMWORD_RX = {lang: re.compile(r"(?<![\w-])(" + "|".join(sorted(map(re.escape, [*ws, *(_EXTRA_WORDS[lang] if lang not in LANGS else ())]), key=len, reverse=True)) + r")(?:mal)?(?![\w-])", re.I)
+               for lang, ws in NUMBER_WORDS.items() if lang != "ja"}
+_NUMWORD_RX["ja"] = re.compile(r"(" + "|".join(sorted(NUMBER_WORDS["ja"], key=len, reverse=True)) + r")(?=" + _JA_COUNTER + r")(?!分[なにだで])")  # 十分な is "enough"
+_NUMWORD_VALUE = {lang: {w: i + 2 for i, w in enumerate(ws)} | _EXTRA_WORDS[lang] for lang, ws in NUMBER_WORDS.items()}
+_COUNT = {  # a count of things: a number, as digits or a word, then at most one more word, then a countable noun
+    "en": r"passes|shots|touches|corners|chances|saves|tackles|crosses|attempts|interceptions|balls|times|goals",
+    "de": r"Pässe|Pässen|Schüsse|Schüssen|Torschüsse|Ballkontakte|Kontakte|Ecken|Chancen|Paraden|Flanken|Zweikämpfe|Ballgewinne|Bälle|Tore|Mal",
+    "fr": r"passes|tirs|touches|corners|occasions|arrêts|centres|ballons|récupérations|fois|buts",
+    "es": r"pases|tiros|disparos|toques|córners|ocasiones|paradas|centros|balones|recuperaciones|veces|goles",
+    "it": r"passaggi|tiri|tocchi|calci d'angolo|occasioni|parate|cross|palloni|recuperi|volte|gol",
+    "pt": r"passes|chutes|finalizações|toques|escanteios|chances|defesas|cruzamentos|bolas|vezes|gols|desarmes",
+    "nl": r"passes|schoten|balcontacten|hoekschoppen|kansen|reddingen|voorzetten|ballen|keer|doelpunten|onderscheppingen",
+    "tr": r"pas|şut|vuruş|korner|pozisyon|kurtarış|orta|top|kez|kere|gol",  # Turkish counts in the singular: "üç pas", "üç kez"
+}
+_COUNT_RX = {lang: re.compile(r"(?<![\w-])(?:\d+|" + "|".join(sorted(map(re.escape, NUMBER_WORDS[lang]), key=len, reverse=True)) + r")\s+(?:\w+\s+)?(?:" + nouns + r")(?!\w)"
+                              + (r"|(?<![\w-])(?:" + "|".join(NUMBER_WORDS["de"]) + r")mal(?!\w)" if lang == "de" else "")
+                              + (r"|\b(?:twice|thrice)\b" if lang == "en" else ""), re.I)
+             for lang, nouns in _COUNT.items()}
+_COUNT_RX["ja"] = re.compile(r"(?:\d+|" + "|".join(sorted(NUMBER_WORDS["ja"], key=len, reverse=True)) + r")\s*(?:回|本|度|人|つ)(?!目)")  # 三回, 3本のパス; 3度目 is an ordinal
 
 
 def _walk(value):
@@ -145,6 +245,13 @@ def claims_of(m: Moment) -> set[str]:
         out |= {"high": {"high_line"}, "low": {"low_block"}}.get(side.get("block"), set())
         out |= {"intense": {"press_high"}, "passive": {"press_passive"}}.get(side.get("press"), set())
         out |= {"chase": {"high_line"}, "protect": {"low_block"}}.get(side.get("posture"), set())
+    if m.kind == "pattern_insight" or p.get("pays_off"):  # the habit is the fact; "not one switch" names the switch that never came
+        out |= {"habit_winner", "habit_short", "habit_never_across"} if p.get("player") or (p.get("pays_off") or {}).get("ball_winner") else {"habit_short", "habit_never_across"}
+        if m.kind == "pattern_insight":
+            out.add("switch")
+    for step in p.get("move") or ():  # the scoring move of a goal analysis: a step with pass_type switch is a switch in the facts
+        if isinstance(step, dict) and step.get("pass_type") == "switch":
+            out.add("switch")
     build = p.get("build_up") or {}
     if isinstance(build, dict):
         if "switch" in set(_walk(build.get("chain"))):
@@ -177,6 +284,7 @@ class Allowed:
     scores: set[tuple[int, int]]
     names: set[str]  # lower-case surnames and team names the line may mention
     claims: set[str] = field(default_factory=set)  # tactical claims the moment's facts carry (CLAIMS keys, 7.5)
+    forbid: set[str] = field(default_factory=set)  # claims the moment's facts rule out (FORBIDDEN_CLAIMS keys)
 
 
 def _num_set(values) -> set[float]:
@@ -216,7 +324,69 @@ def allowed_for(m: Moment, snapshot: dict, meta: MatchMeta) -> Allowed:
         if key in raw and raw[key]:
             names.add(str(raw[key]).lower())
     names |= {str(n).lower() for n in raw.get("chain") or ()}  # the players of a move
-    return Allowed(numbers=nums, scores=scores, names=names, claims=claims_of(m))
+    if isinstance(raw.get("pays_off"), dict) and raw["pays_off"].get("ball_winner"):  # the player of the habit a goal pays off
+        names.add(str(raw["pays_off"]["ball_winner"]).lower())
+    forbid = {"comeback_win"} if m.kind == "story_note" and raw.get("facet") == "comebacks" else set()
+    return Allowed(numbers=nums, scores=scores, names=names, claims=claims_of(m), forbid=forbid)
+
+
+# ---- names in Japanese: a katakana word is mapped to the roster by its consonant skeleton ----
+# Decision (2026-10-26): a Japanese line may write a player in katakana, as Japanese broadcasts do (イブセン for Ibsen), or in Latin script.
+# Both must map to a real player of the moment. Katakana is matched by consonants only, because the vowels a transcription adds (ラスムッセン:
+# ra-su-mu-s-se-n) and the long marks carry no information: r/l, b/v, h and w are merged, doubled letters collapse, and a skeleton of four
+# consonants or more may differ in one letter (ペトロフ "ptrf" is Petrov "ptrb"). Shorter skeletons must match exactly, under three none is read.
+_KANA_CONS = {}
+for _row, _cons in (("アイウエオァィゥェォヤユヨャュョワヲヰヱーッ", ""), ("カキクケコ", "k"), ("ガギグゲゴ", "g"), ("サスセソザズゼゾヅ", "s"), ("シ", "s"),
+                    ("ジヂ", "j"), ("タテトツ", "t"), ("チ", "c"), ("ダデド", "d"), ("ナニヌネノン", "n"), ("ハヒヘホ", ""), ("フ", "f"),
+                    ("バビブベボヴ", "b"), ("パピプペポ", "p"), ("マミムメモ", "m"), ("ラリルレロ", "r")):
+    for _k in _row:
+        _KANA_CONS[_k] = _cons
+_LATIN_RULES = (("sch", "s"), ("tsch", "c"), ("ch", "c"), ("sh", "s"), ("ph", "f"), ("th", "t"), ("ck", "k"), ("qu", "k"), ("q", "k"),
+                ("x", "ks"), ("ce", "se"), ("ci", "si"), ("cy", "sy"), ("c", "k"), ("v", "b"), ("w", ""), ("l", "r"), ("z", "s"), ("h", ""), ("y", ""))
+# katakana football words that are no names (they never reach the roster match)
+JA_LOANWORDS = {"ゴール", "パス", "ボール", "シュート", "ロングボール", "ダイレクト", "サイドチェンジ", "クリア", "ヘディング", "チャンス", "ディフェンス",
+                "カウンター", "プレス", "ライン", "キーパー", "ゴールキーパー", "ペナルティ", "エリア", "コーナー", "フリーキック", "スルーパス", "ワンタッチ",
+                "トラップ", "ミドル", "サイド", "ピッチ", "チーム", "ホーム", "アウェー", "ゲーム", "ファウル", "カード", "イエロー", "レッド", "オフサイド",
+                "ポスト", "バー", "ネット", "セーブ", "ボレー", "ドリブル", "タックル", "インターセプト", "カット", "クロス", "ミドルシュート", "スコア",
+                "ゴールネット", "シーズン", "ポイント", "ロング", "ショート", "ショートパス", "ロングパス", "ハーフ", "タッチ", "ファーストタッチ", "スタジアム"}
+
+
+def skeleton(name: str) -> str:
+    """The consonants of a Latin-script name, spelled the way katakana hears them (see above)."""
+    t = "".join(c for c in unicodedata.normalize("NFKD", name.lower()) if c.isalpha() and not unicodedata.combining(c))
+    t = t.replace("ı", "i")
+    for a, b in _LATIN_RULES:
+        t = t.replace(a, b)
+    t = re.sub(r"[aeiou]", "", t)
+    return re.sub(r"(.)\1+", r"\1", t)
+
+
+def kana_skeleton(word: str) -> str:
+    """The consonants of a katakana word."""
+    return re.sub(r"(.)\1+", r"\1", "".join(_KANA_CONS.get(c, "") for c in word))
+
+
+def _near(a: str, b: str) -> bool:
+    if len(a) < 3 or len(b) < 3:
+        return False
+    if min(len(a), len(b)) < 4:
+        return a == b
+    if abs(len(a) - len(b)) > 1:
+        return False
+    prev = list(range(len(b) + 1))  # Levenshtein, at most one edit
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        prev = cur
+    return prev[-1] <= 1
+
+
+def latin_name_rx(sur: str, lang: str) -> re.Pattern:
+    """A surname in a line. Japanese has no spaces, so a Latin name touches kana ("Ibsenが"): only Latin letters bound it there."""
+    if lang == "ja":
+        return re.compile(rf"(?<![A-Za-zÀ-ÿ]){re.escape(sur)}(?![A-Za-zÀ-ÿ])", re.I)
+    return re.compile(rf"(?<!\w){re.escape(sur)}(?!\w)", re.I)
 
 
 class Verifier:
@@ -229,12 +399,48 @@ class Verifier:
         for t in meta.teams.values():
             for p in t.players:
                 self.traits.setdefault(surname(p.name).lower(), set()).update(getattr(tr, "value", tr) for tr in (p.traits or []))
+        self.skeletons = {sur: skeleton(sur) for sur in self.players}
 
-    def detect_lang(self, text: str) -> str | None:
-        words = [w.lower() for w in WORD_RE.findall(text)]
+    def katakana_names(self, text: str) -> dict[str, str]:
+        """Katakana words of a line that are a roster surname: word -> lower-case surname (the closest; none for a football word)."""
+        out: dict[str, str] = {}
+        for word in KATAKANA_RUN.findall(text):
+            if word in JA_LOANWORDS or word.rstrip("ー") in JA_LOANWORDS:
+                continue
+            k = kana_skeleton(word)
+            hits = [sur for sur, sk in self.skeletons.items() if _near(k, sk)]
+            if hits:
+                out[word] = min(hits, key=lambda sur: (self.skeletons[sur] != k, abs(len(self.skeletons[sur]) - len(k)), sur))
+        return out
+
+    def named(self, text: str, lang: str) -> set[str]:
+        """The roster surnames a line names, in Latin script or, in Japanese, in katakana."""
+        low = text.replace("İ", "I").lower()
+        out = {sur for sur in self.players if latin_name_rx(sur, lang).search(low)}
+        if lang == "ja":
+            out |= set(self.katakana_names(text).values())
+        return out
+
+    def lang_scores(self, text: str, among: tuple[str, ...] = LANGS) -> dict[str, int] | None:
+        """Stop-word hits per language (None: too short to tell)."""
+        words = [w.lower() for w in WORD_RE.findall(text) if not KANA_RE.search(w)]
         if len(words) < 5:
             return None
-        score = {lang: sum(w in sw for w in words) for lang, sw in STOPWORDS.items()}
+        score = {lang: sum(w in STOPWORDS[lang] for w in words) for lang in among if lang in STOPWORDS}
+        if "tr" in score:  # Turkish letters no other language here writes
+            score["tr"] += 2 * len(re.findall(r"[ıİğĞşŞ]", text))
+        if "es" in score:
+            score["es"] += 2 * len(re.findall(r"[ñ¿¡]", text))
+        return score
+
+    def detect_lang(self, text: str, among: tuple[str, ...] = LANGS) -> str | None:
+        """The language a line looks like, among `among` (the core three by default, which is what en, de and fr channels are checked against;
+        a world channel is checked against all nine). Japanese is read from the script: kana is Japanese, whatever else the line holds."""
+        if "ja" in among and len(KANA_RE.findall(text)) >= 2:
+            return "ja"
+        score = self.lang_scores(text, among)
+        if score is None:
+            return None
         best = max(score, key=score.get)
         return best if score[best] >= 2 and list(score.values()).count(score[best]) == 1 else None
 
@@ -246,15 +452,22 @@ class Verifier:
             m = langs[lang].search(text)
             if m and claim not in allowed.claims:
                 out.append(Violation("claim_unsupported", f"'{m.group(0)}' ({claim}) is not in the facts of this moment"))
+        for claim in sorted(allowed.forbid):
+            m = _FORBID_RX[claim][lang].search(text)
+            if m:
+                out.append(Violation("claim_unsupported", f"'{m.group(0)}' ({claim}): the record counts points after being behind, not wins"))
         for sentence in SENTENCE_RE.split(text):
-            named = {sur for sur in self.traits if re.search(rf"(?<!\w){re.escape(sur)}(?!\w)", sentence.lower())}
+            named = self.named(sentence, lang)
             for trait, langs in _TRAIT_RX.items():
                 m = langs[lang].search(sentence)
                 if m and not any(trait in self.traits[sur] for sur in named):
                     out.append(Violation("trait_unsupported", f"'{m.group(0)}' ({trait}) is said of nobody who has that trait"))
         return out
 
-    def check(self, text: str, lang: str, allowed: Allowed, max_s: float | None = None) -> Verdict:
+    def check(self, text: str, lang: str, allowed: Allowed, max_s: float | None = None, style: str | None = None,
+              spelled: bool = False) -> Verdict:
+        """`spelled`: numbers written as words must be in the facts too (the newsroom checks every model line so). `style`: a beginner
+        line carries no count of anything (the prompt's rule for beginner lines)."""
         v: list[Violation] = []
         if not text.strip():
             return Verdict(False, [Violation("empty", "no text")])
@@ -276,14 +489,36 @@ class Verifier:
             if not any(abs(value - a) < 0.006 for a in allowed.numbers):
                 v.append(Violation("number_unsupported", f"{m.group(0)} is not in the facts"))
 
-        for sur, full in self.players.items():
-            if re.search(rf"(?<!\w){re.escape(sur)}(?!\w)", low) and sur not in allowed.names \
-                    and not any(sur in t for t in self.team_names):
-                v.append(Violation("player_unsupported", f"{full} is not part of this moment"))
+        for sur in sorted(self.named(text, lang)):
+            if sur not in allowed.names and not any(sur in t for t in self.team_names):
+                v.append(Violation("player_unsupported", f"{self.players[sur]} is not part of this moment"))
 
+        if spelled:
+            bad = FORBIDDEN_PUNCT.findall(text)
+            if bad:
+                v.append(Violation("punctuation", f"{' '.join(sorted(set(bad)))}: no em dash and no middle dot in a line a viewer sees"))
+            for m in _NUMWORD_RX[lang].finditer(masked):
+                # Turkish capital dotted I lowercases to "i" plus a combining dot, which is no key ("İki" at a sentence start)
+                value = _NUMWORD_VALUE[lang].get(m.group(1).replace("İ", "i").lower())
+                if value is None:
+                    continue
+                if not any(abs(value - a) < 0.006 for a in allowed.numbers):
+                    v.append(Violation("number_unsupported", f"'{m.group(0)}' ({value}) is not in the facts"))
+        if style == "beginner":
+            m = _COUNT_RX[lang].search(text)
+            if m:
+                v.append(Violation("count_in_beginner", f"'{m.group(0)}' is a count; a beginner line says it without counting"))
         v.extend(self.claim_violations(text, lang, allowed))
 
-        detected = self.detect_lang(text)
+        among = LANGS if lang in LANGS else tuple(STOPWORDS) + ("ja",)
+        detected = self.detect_lang(text, among)
+        if lang == "ja" and detected is None and len(WORD_RE.findall(text)) >= 5 and not KANA_RE.search(text) \
+                and not re.search(r"[\u4e00-\u9fff]", text):
+            v.append(Violation("language_mismatch", "expected ja, the line has no Japanese script"))
+        if detected and detected != lang and lang not in LANGS and detected != "ja" and lang != "ja":
+            score = self.lang_scores(text, among) or {}  # es, it and pt share many function words: a world line is wrong only by a clear margin
+            if score.get(detected, 0) - score.get(lang, 0) < 2:
+                detected = None
         if detected and detected != lang:
             v.append(Violation("language_mismatch", f"expected {lang}, text looks like {detected}"))
         if max_s is not None and est_seconds(text, lang) > max_s:
