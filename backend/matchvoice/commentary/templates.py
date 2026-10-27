@@ -68,6 +68,22 @@ T: dict[str, dict[str, dict[str, list[str]]]] = {
             "expert": ["{Score_words}.", "{Score_words}, il reste {left}.", "{Score_words}. {state_call}, il reste {left}."],
         },
     },
+    "match_state": {
+        # the lead when a live run joins a running match, like a caller back from an ad break (runner._match_state): the score, the minute
+        # (expert) or the stage of the match (beginner), and how the score got here (`note`). Numbers as words; the director takes the long one.
+        "en": {
+            "beginner": ["It's {score_words}, {phase_word}.", "It's {score_words}, {phase_word}, and {note}."],
+            "expert": ["{N_word} minutes gone, {score_words}.", "{N_word} minutes gone, {score_words}, and {note}."],
+        },
+        "de": {
+            "beginner": ["Es steht {score_words}, {phase_word}.", "Es steht {score_words}, {phase_word}, und {note}."],
+            "expert": ["{N_word} Minuten gespielt, {score_words}.", "{N_word} Minuten gespielt, {score_words}, und {note}."],
+        },
+        "fr": {
+            "beginner": ["{Score_words} {phase_word}.", "{Score_words} {phase_word}, et {note}."],
+            "expert": ["{N_word} minutes de jeu, {score_words}.", "{N_word} minutes de jeu, {score_words}, et {note}."],
+        },
+    },
     "shot_saved": {
         "en": {
             "beginner": ["Saved by {keeper}!", "{player} lets fly, and {keeper} gets down to save it!",
@@ -683,6 +699,19 @@ NAME_KEYS = ("player", "target", "defender", "winner", "presser", "runner", "tak
 # exists). Clauses are third person without a pronoun, so one clause serves both styles. No digits, no dashes, no numbers: counts
 # arrive as `nth_word` / `n_word` / `goals_word` from the params.
 WORDS: dict[str, dict[str, dict[str, str]]] = {
+    "match_state": {  # how the score got here, for the line that sets the scene (facet from runner._match_state; team = the side it is about)
+        "en": {"goalless": "nobody has found a way through yet", "level_back": "{team} have fought back from a goal down",
+               "lead": "{team} are in front", "lead_back": "{team} have come from behind to lead"},
+        "de": {"goalless": "noch hat keiner getroffen", "level_back": "{team} hat einen Rückstand aufgeholt",
+               "lead": "{team} liegt vorn", "lead_back": "{team} hat das Spiel gedreht"},
+        "fr": {"goalless": "personne n'a encore marqué", "level_back": "{team} est revenu au score",
+               "lead": "{team} mène", "lead_back": "{team} a renversé la situation"},
+    },
+    "match_phase": {  # the stage of the match a beginner hears instead of the minute
+        "en": {"first": "in the first half", "second": "in the second half", "late": "late on", "added": "in added time"},
+        "de": {"first": "in der ersten Halbzeit", "second": "in der zweiten Halbzeit", "late": "kurz vor Schluss", "added": "in der Nachspielzeit"},
+        "fr": {"first": "en première période", "second": "en seconde période", "late": "en fin de match", "added": "dans le temps additionnel"},
+    },
     "dir": {
         "en": {"forward": "forward", "back": "back", "inside": "inside", "wide": "wide"},
         "de": {"forward": "nach vorn", "back": "zurück", "inside": "nach innen", "wide": "nach außen"},

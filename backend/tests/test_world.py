@@ -170,7 +170,7 @@ def test_world_system_names_every_solo_booth_and_the_shouts():
         assert shout in WORLD_SYSTEM, shout
     for never in ("No percentages", "no xG", "never a middle dot"):
         assert never.lower() in WORLD_SYSTEM.lower(), never
-    assert WORLD_PROMPT_VERSION == "w1"
+    assert WORLD_PROMPT_VERSION == "w3"
 
 
 def test_world_prompt_gives_facts_not_english_wording(bundle):

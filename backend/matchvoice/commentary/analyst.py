@@ -19,7 +19,7 @@ from .delivery import energy_of
 from .lang import BOOTH, CORE_KEYS, CPS, PAUSE_S
 from .moments import Moment, render_params
 
-PROMPT_VERSION = "v8"  # v8: de/fr set-up and pay-off wording per the producer review (German switch is "rüber", "Verlagerung" or "auf die andere Seite", never "quer"; a real callback "Genau das meinte ich."; the habit as a habit, "holt die Bälle"; fr beginner "Jamais de l'autre côté.", fr expert "transversale" said once); v7: pattern_insight (a habit the co-commentator points out in a quiet spell) and its pay-off in a goal analysis (`pays_off`, the set-up lines in the prompt), no counts in beginner lines (good examples without "two passes"); v6: the lead's lines around a goal co line (the call before, the score line after) are named, and the co line repeats neither their meaning nor a phrase of its own, ends on a stop; v5: the booth per channel (a lead and a co-commentator), goal analysis HOW then one idiom, no number in a goal co line (the score is the lead's), the move's enriched facts, room in seconds per channel; v4: no repeat of the caller's reaction, no calques; v3: named booth, voice guide, few-shot, number discipline, energy, continuity
+PROMPT_VERSION = "v9"  # v9: the match so far (`match_so_far`, live runs: the goals before this moment, how the score got here, red cards, late) and the rule that every line fits it (no "opener" or "goalless" after goals); v8: de/fr set-up and pay-off wording per the producer review (German switch is "rüber", "Verlagerung" or "auf die andere Seite", never "quer"; a real callback "Genau das meinte ich."; the habit as a habit, "holt die Bälle"; fr beginner "Jamais de l'autre côté.", fr expert "transversale" said once); v7: pattern_insight (a habit the co-commentator points out in a quiet spell) and its pay-off in a goal analysis (`pays_off`, the set-up lines in the prompt), no counts in beginner lines (good examples without "two passes"); v6: the lead's lines around a goal co line (the call before, the score line after) are named, and the co line repeats neither their meaning nor a phrase of its own, ends on a stop; v5: the booth per channel (a lead and a co-commentator), goal analysis HOW then one idiom, no number in a goal co line (the score is the lead's), the move's enriched facts, room in seconds per channel; v4: no repeat of the caller's reaction, no calques; v3: named booth, voice guide, few-shot, number discipline, energy, continuity
 MAX_CHARS = 150
 KEYS = list(CORE_KEYS)  # the core channels this prompt writes for; the world channels have their own booth (commentary/world.py)
 AFTER = "after:"  # a `recent` key prefix: the line the lead says right AFTER the co line on that channel (the score line after a goal)
@@ -91,6 +91,11 @@ Style
 The move
 - "move" lists the last steps of the scoring move, oldest first, "chain" the players in it besides the scorer. Name at most two players besides the scorer.
 - Use a tactical word only when the facts give it: "switch" (Verlagerung, transversale) only for a step with pass_type switch. Never counter, press, high line, low block, in behind or between the lines. Never call a player fast, strong in the air or good from distance.
+
+The match so far (live: "match_so_far" in the facts)
+- The broadcast may have joined a match already running. "match_so_far" is the booth's memory: every goal of this match up to this moment (minute, scorer, team, the score it made), how the score got here, red cards, and "late" from the 80th minute. Every line must fit it.
+- Never call a goal the opener or the first goal when goals came before it, never say goalless, nil-nil or "still level since the start" when the match has had goals, and never give a score other than "score_home_away". A side that was behind earlier and now leads has turned it round; read that from "match_so_far", not from the tags alone.
+- You may refer back to an earlier goal by its scorer ("Fontaine's equaliser", "Fontaines Ausgleich", "l'égalisation de Fontaine") when it adds something. Say its minute only if it matters, and then as given.
 
 Facts and names
 - Scores are always written home-away: the first number is the home team's goals, the second is the away team's, whoever scored last. Copy "score_home_away" exactly as given and never swap it. A match that is 0-1 is a lead for the away team.
@@ -248,7 +253,10 @@ def facts_of(m: Moment, snapshot: dict, meta: MatchMeta) -> dict:
     if m.kind == "pattern_insight":  # the habit as one block, as the system prompt names it ("short" is the club's first word, a template helper)
         p.pop("short", None)
         p = {"pattern": {k: v for k, v in p.items() if k in PATTERN_KEYS}, **{k: v for k, v in p.items() if k not in PATTERN_KEYS}}
-    return {"moment": {"kind": m.kind, "voice": m.voice, "match_clock": m.clock, **p, "tags": m.params.get("tags", "")}, "match": match}
+    out = {"moment": {"kind": m.kind, "voice": m.voice, "match_clock": m.clock, **p, "tags": m.params.get("tags", "")}, "match": match}
+    if snapshot.get("so_far"):  # v9, live runs: the match so far, so a booth that joined late knows the goals before it (runner._snap)
+        out["match_so_far"] = snapshot["so_far"]
+    return out
 
 
 def build_prompt(m: Moment, snapshot: dict, meta: MatchMeta, only: list[str] | None = None,

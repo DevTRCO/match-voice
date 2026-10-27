@@ -355,3 +355,65 @@ def test_the_booth_calls_the_winning_move_not_the_club_file(plays):
         for m in ms:
             if m.kind == "pass_kind" and m.t >= WIN.start and m.params.get("pass_type") in ("cross", "cut_back", "through"):
                 assert m.priority == SCENE_FINAL_PRIO
+
+
+def test_the_defending_shape_near_the_box_is_the_pages():
+    """sceneshape's `po` ports mock4's `deep`: with the ball near its own box a side without it defends the box (back four 6 to 13.5 m
+    out and inside the posts' band, midfield 14 to 20 m out); po=0 is the old shape, so nothing that does not ask for it changes."""
+    team = BASE_META.teams["A"]
+    ball = (12.0, 30.0)  # in the defending side's own frame: 12 m from its goal
+    for k, pl in enumerate(team.players):
+        args = (team.formation, k, pl.group, pl.number, "A", ball, 0.0)
+        assert sceneshape.shape_spot(*args) == sceneshape.shape_spot(*args, po=0.0)
+        x, y = sceneshape.shape_spot(*args, po=1.0)
+        if pl.group == "DEF":
+            assert 3 <= x <= 14 and abs(y - 34) <= 15, (pl.id, x, y)
+        elif pl.group == "MID":
+            assert 8 <= x <= 21, (pl.id, x, y)
+
+
+def test_onside_constants_match_the_page():
+    html = (ROOT / "ui/public/mock4.html").read_text(encoding="utf-8")
+    gap, stagger = map(float, re.search(r"const ONSIDE_GAP = ([\d.]+), ONSIDE_STAGGER = ([\d.]+)[,;]", html).groups())
+    assert (gap, stagger) == (scene_mod.ONSIDE_GAP, scene_mod.ONSIDE_STAGGER)
+
+
+def test_hash01_is_the_pages():
+    """The generator places a held receiver with the page's per-player stagger, so its hash01 must be the page's formula."""
+    html = (ROOT / "ui/public/mock4.html").read_text(encoding="utf-8")
+    a, b, c = map(float, re.search(
+        r"const hash01 = \(a,b\) => \{ const s=Math\.sin\(a\*([\d.]+)\+b\*([\d.]+)\)\*([\d.]+); return s-Math\.floor\(s\); \};", html).groups())
+    for n in range(1, 100):
+        s = math.sin(n * a + 33 * b) * c
+        assert sceneshape.hash01(n, 33) == s - math.floor(s)
+
+
+def test_every_receiver_can_wait_onside_until_the_kick(plays):
+    """Offside is judged when the ball is played. The page holds every player off the ball behind the second-last defender (or the
+    ball, or the halfway line) until a pass to him is played, so a pass end beyond the line must be reachable from the line in the
+    ball's flight: no receiver is drawn offside and none arrives late because he waited. Checked on every completed pass of the scene
+    with the line as the generator sees it (the page's defending shape, sim/sceneshape.py), from the events alone."""
+    import random as _random
+    worst = []
+    for p in plays:
+        planner = scene_mod._Planner(p["sim"], p["plan"], _random.Random(0))
+        acts = [e for e in p["scene"] if e.type in (EventType.PASS, EventType.CARRY, EventType.INTERCEPTION)]
+        for n, e in enumerate(acts):
+            planner.items = []
+            if n:
+                q = acts[n - 1]  # the ball before, which the page's late defenders still react to
+                planner.items = [scene_mod.Item("pass", e.team, q.player, *_att(e.team, q.period, q.x, q.y))]
+            if e.type != EventType.PASS or e.outcome != "complete" or e.set_piece:
+                continue
+            ball = _att(e.team, e.period, e.x, e.y)
+            end = _att(e.team, e.period, e.end_x, e.end_y)
+            rec = planner.p(e.receiver)
+            line = planner.onside_x(e.team, ball) - scene_mod.ONSIDE_GAP - scene_mod.ONSIDE_STAGGER * sceneshape.hash01(
+                rec.number + (0 if e.team == "H" else 50), 33)
+            s = planner.spot(e.team, rec, ball)
+            on = (min(s[0], line), s[1])
+            flight = e.length / (e.ball_speed / 3.6)
+            after = max(end[0] - line, math.hypot(end[0] - on[0], end[1] - on[1]) - scene_mod.LEAD_REACH)
+            assert after <= scene_mod.RUN_V * flight + 1.0 + 0.3, (p["v"], e.i, e.receiver, after, flight)
+            worst.append(end[0] - line)
+    assert max(worst) > 3  # runs in behind still happen: they start on the line and go when the ball is played

@@ -126,7 +126,7 @@ def test_delivery_on_sends_shaped_text_and_energy_settings_and_bills_what_is_sen
     fake = FakeSynth()
     t = GuardedTTS(fake, 300, MODEL, tmp_path / "tts", delivery=True)
     audio, hit = asyncio.run(t.speak("It's 1-1.", "en", "peak"))
-    assert not hit and fake.calls[0][0] == "It's one-all." and fake.settings[0]["stability"] == VOICE_SETTINGS["peak"]["stability"]
+    assert not hit and fake.calls[0][0] == "It's one-all!" and fake.settings[0]["stability"] == VOICE_SETTINGS["peak"]["stability"]
     assert t.spent == 7  # 13 characters sent, 0.5 per character, rounded up
     asyncio.run(t.speak("It's 1-1.", "en", "peak"))
     assert len(fake.calls) == 1  # cached

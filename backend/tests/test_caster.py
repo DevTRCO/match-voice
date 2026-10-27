@@ -171,7 +171,7 @@ def goal_ctx():
 
 
 def test_version_and_booth_are_named_in_the_system_prompt():
-    assert PROMPT_VERSION == "v8"
+    assert PROMPT_VERSION == "v9"
     for key in KEYS:  # the core booths; the world booths are in the world booth's own system prompt (test_world.py)
         assert BOOTH[key].lead.name in SYSTEM and BOOTH[key].co.name in SYSTEM
     assert "Ewan Marsh" not in SYSTEM and "Nadia Rowe" not in SYSTEM

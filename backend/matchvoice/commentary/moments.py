@@ -163,6 +163,11 @@ def render_params(m: Moment, lang: str) -> dict:
         left = time_left(int(p["left_min"]), lang) if p.get("left_min") else None
         if left:
             p["left" if p.get("half", 2) == 2 else "left_ht"] = left
+    if m.kind == "match_state":  # the scene-setting line: the score as a caller says it ("one-all", "un partout"), the stage of the match
+        from .delivery import score_said
+        said = score_said(int(p["goals_h"]), int(p["goals_a"]), lang)
+        p["score_words"], p["Score_words"] = said, said[:1].upper() + said[1:]
+        p["phase_word"] = WORDS["match_phase"][lang][p["phase"]]
     if lang == "de" and "score" in p:  # German writes a score 1:1 (and says "eins zu eins")
         p["score"] = str(p["score"]).replace("-", ":")
     return p

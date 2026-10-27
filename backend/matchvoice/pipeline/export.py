@@ -54,7 +54,7 @@ async def capture_insert(lib: Library, call: Callable[[str], Awaitable[str]] | N
 
     d = demo_insert(lib)
     live = LiveConfig(call or no_call, CallBudget(1))
-    runner = Runner(lib.bundle(d["match"]), "live", 1.0, True, live, d["start"], None, d["until"])
+    runner = Runner(lib.bundle(d["match"]), "live", 1.0, True, live, d["start"], None, d["until"], rejoin=False)
     hello, *messages = await runner.collect()
     hello.pop("run", None)  # a recording has no run: the server voice endpoint knows nothing about it
     return {"v": proto.VERSION, "demo": d, "hello": hello, "calls": live.budget.used,
@@ -88,7 +88,7 @@ async def capture_story_insert(lib: Library, call: Callable[[str], Awaitable[str
         live = LiveConfig(call if paid else no_call, budget, cache_dir=cache_dir,
                           world_call=((world_call if (world_call and max_calls) else no_call) if world else None))
         h, *messages = await Runner(bundle, "live", 1.0, True, live, start, None, until, fast=True, booth=booth,
-                                    world=world).collect()  # paced: the wall clock is real
+                                    world=world, rejoin=False).collect()  # paced: the wall clock is real; a recording has no scene-setting line
         if not hello:
             hello = {**h, "start": d["start"], "until": d["until"]}
             hello.pop("run", None)

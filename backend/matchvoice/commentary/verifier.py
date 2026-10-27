@@ -12,7 +12,9 @@ Deterministic, no model. A line is rejected when it contains
   - a count of anything in a beginner line ("three passes", "drei Pässe", "trois passes"), for a model line (`style`),
   - the wrong language,
   - an em dash or a middle dot ("·", "・") in a model line (`spelled`): the user's rule for every text a viewer sees,
-  - more words than the time slot allows.
+  - more words than the time slot allows,
+  - in a live run that joined a running match (`match_so_far`): an earlier scorer or goal minute outside a goal, analysis, score or
+    scene-setting line, a goal minute next to a scorer who did not score in it, a later goal called the opener, "goalless" after goals.
 The world languages (es, it, pt, nl, tr, ja) have the same rules: their own stop words, number words, count nouns, claims and traits. Japanese is
 written without spaces: its language check reads the script (kana), names are matched without word boundaries, and a name in katakana
 (イブセン) is mapped to the roster by its consonant skeleton (`skeleton`, `kana_skeleton`), so a katakana name counts as that player.
@@ -157,6 +159,32 @@ FORBIDDEN_CLAIMS: dict[str, dict[str, str]] = {
     },
 }
 _FORBID_RX = {c: {lang: re.compile(p, re.I) for lang, p in langs.items()} for c, langs in FORBIDDEN_CLAIMS.items()}
+# Live runs that join a running match (Allowed.prior_goals): once a goal has gone in, no later goal is "the opener" and the match is not
+# goalless. An opener phrase is still true of the real first goal, so it passes in a sentence that names that goal's scorer or team.
+OPENER: dict[str, str] = {
+    "en": r"\bopener\b|opening goal|open(?:s|ed)? the scoring|first goal of (?:the|this) (?:match|game|day|night|afternoon|evening)",
+    "de": r"erste[nrs]? (?:Tor|Treffer) (?:des|dieses) (?:Spiel|Abend|Nachmittag|Tag)\w*|Torreigen|Dosenöffner",
+    "fr": r"premier but (?:du|de ce|de la) (?:match|rencontre|soirée|journée)|ouvr\w+ (?:le|la) (?:score|marque)|ouverture du score",
+    "es": r"primer gol del (?:partido|encuentro)|abr\w+ el marcador|abr\w+ la lata",
+    "it": r"primo gol (?:della partita|del match|dell'incontro)|sblocc\w+ (?:il risultato|la partita)|apr\w+ le marcature",
+    "pt": r"primeiro gol (?:da partida|do jogo)|abr\w+ o placar|inaugur\w+ o marcador",
+    "nl": r"eerste (?:doelpunt|goal) van de (?:wedstrijd|middag|avond)|opent de score|opende de score|openingsgoal|openingstreffer",
+    "tr": r"maçın ilk gol\w*|skoru açt\w*|skoru açıyor|açılış golü",
+    "ja": r"先制|試合最初のゴール|この試合初ゴール",
+}
+GOALLESS: dict[str, str] = {
+    "en": r"goalless|scoreless|nil-nil|level since (?:the )?kick-?off",
+    "de": r"torlos|null zu null",
+    "fr": r"sans but|score vierge|zéro à zéro",
+    "es": r"sin goles|cero a cero|empate a cero",
+    "it": r"senza gol|reti inviolate|zero a zero",
+    "pt": r"sem gols|zero a zero",
+    "nl": r"doelpuntloos|brilstand|nul-nul",
+    "tr": r"golsüz",
+    "ja": r"スコアレス|無得点|両チーム無得点",
+}
+_OPENER_RX = {lang: re.compile(p, re.I) for lang, p in OPENER.items()}
+_GOALLESS_RX = {lang: re.compile(p, re.I) for lang, p in GOALLESS.items()}
 _TRAIT_RX = {c: {lang: re.compile(p, re.I) for lang, p in langs.items()} for c, langs in TRAIT_WORDS.items()}
 SENTENCE_RE = re.compile(r"(?<=[.!?])\s+|(?<=[。！？])")  # Japanese ends a sentence with 。！？ and no space
 
@@ -278,6 +306,10 @@ class Verdict:
         return "; ".join(f"{v.code}: {v.detail}" for v in self.violations)
 
 
+HISTORY_KINDS = {"shot_goal", "goal_analysis", "momentum", "big_save_analysis", "big_chance_analysis", "score_line", "match_state"}  # may recall the match so far
+OWN_GOAL_KINDS = {"shot_goal", "goal_analysis", "score_line"}  # the moment's own goal is the last of the match so far
+
+
 @dataclass
 class Allowed:
     numbers: set[float]
@@ -285,6 +317,8 @@ class Allowed:
     names: set[str]  # lower-case surnames and team names the line may mention
     claims: set[str] = field(default_factory=set)  # tactical claims the moment's facts carry (CLAIMS keys, 7.5)
     forbid: set[str] = field(default_factory=set)  # claims the moment's facts rule out (FORBIDDEN_CLAIMS keys)
+    goals: list[dict] = field(default_factory=list)  # live: the goals of the match so far a history line may recall (scorer, team, minute)
+    prior_goals: int = 0  # live: goals before this moment's own goal (a goal, its analysis, its score line) or before this moment
 
 
 def _num_set(values) -> set[float]:
@@ -326,8 +360,23 @@ def allowed_for(m: Moment, snapshot: dict, meta: MatchMeta) -> Allowed:
     names |= {str(n).lower() for n in raw.get("chain") or ()}  # the players of a move
     if isinstance(raw.get("pays_off"), dict) and raw["pays_off"].get("ball_winner"):  # the player of the habit a goal pays off
         names.add(str(raw["pays_off"]["ball_winner"]).lower())
+    so_far = snapshot.get("so_far") or {}  # live runs: the match so far (its goals, red cards)
+    goals = list(so_far.get("goals") or ())
+    history = m.kind in HISTORY_KINDS
+    for g in goals:  # every moment may give a score the match has had ("from 0-1 down")
+        scores.add(tuple(int(x) for x in str(g["made_it"]).split("-")))
+    if history:  # only a goal, an analysis, a score line or the scene-setting line recalls who scored and when (a pass names its own players)
+        for g in goals:
+            a, b = (int(x) for x in str(g["made_it"]).split("-"))
+            nums |= {float(a), float(b), *(float(x) for x in str(g["minute"]).split("+"))}
+            names.add(str(g["scorer"]).lower())
+        for r in so_far.get("red_cards") or ():
+            nums |= {float(x) for x in str(r["minute"]).split("+")}
+            names.add(str(r["player"]).lower())
     forbid = {"comeback_win"} if m.kind == "story_note" and raw.get("facet") == "comebacks" else set()
-    return Allowed(numbers=nums, scores=scores, names=names, claims=claims_of(m), forbid=forbid)
+    prior = max(0, len(goals) - (1 if m.kind in OWN_GOAL_KINDS and goals else 0))
+    return Allowed(numbers=nums, scores=scores, names=names, claims=claims_of(m), forbid=forbid,
+                   goals=goals if history else [], prior_goals=prior)
 
 
 # ---- names in Japanese: a katakana word is mapped to the roster by its consonant skeleton ----
@@ -464,6 +513,59 @@ class Verifier:
                     out.append(Violation("trait_unsupported", f"'{m.group(0)}' ({trait}) is said of nobody who has that trait"))
         return out
 
+    def _name_spans(self, text: str, lang: str, surnames: set[str]) -> list[tuple[int, str]]:
+        """Where a line names these roster surnames: (offset, lower-case surname), in Latin script or, in Japanese, in katakana."""
+        out = [(mt.start(), sur) for sur in surnames for mt in latin_name_rx(sur, lang).finditer(text.replace("İ", "I"))]
+        if lang == "ja":
+            kana = self.katakana_names(text)
+            out += [(mt.start(), kana[mt.group(0)]) for mt in KATAKANA_RUN.finditer(text) if kana.get(mt.group(0)) in surnames]
+        return sorted(out)
+
+    def history_violations(self, text: str, masked: str, lang: str, allowed: Allowed) -> list[Violation]:
+        """Live runs that joined a running match: the goals so far are facts, but bound to each other. A goal minute belongs to the scorer
+        named nearest before it (else after it) in the sentence; after earlier goals no goal is the opener (unless the sentence names the real
+        first goal's scorer or team) and the match is not goalless."""
+        out: list[Violation] = []
+        scorers = {str(g["scorer"]).lower() for g in allowed.goals}
+        minutes_of: dict[str, set[int]] = {}
+        for g in allowed.goals:
+            minutes_of.setdefault(str(g["scorer"]).lower(), set()).add(int(str(g["minute"]).split("+")[0]))
+        goal_minutes = set().union(*minutes_of.values()) if minutes_of else set()
+        first = allowed.goals[0] if allowed.goals else None
+        start = 0
+        for sentence in SENTENCE_RE.split(masked):
+            at = masked.find(sentence, start)
+            start = at + len(sentence)
+            real = text[at:at + len(sentence)] if at >= 0 else sentence  # the sentence before score masking, for names
+            if allowed.prior_goals:
+                m = _GOALLESS_RX[lang].search(real)
+                if m:
+                    out.append(Violation("history_mismatch", f"'{m.group(0)}': the match has had goals"))
+                m = _OPENER_RX[lang].search(real)
+                if m:
+                    ok = False
+                    if first is not None:
+                        team = str(first["team"]).lower()
+                        low = real.lower()
+                        ok = (str(first["scorer"]).lower() in {s for _, s in self._name_spans(real, lang, {str(first["scorer"]).lower()})}
+                              or team in low or team.split()[0] in low)
+                    if not ok:
+                        out.append(Violation("history_mismatch", f"'{m.group(0)}': goals came before this one, it is not the opener"))
+            if not goal_minutes:
+                continue
+            spans = self._name_spans(real, lang, scorers)
+            if not spans:
+                continue
+            for mt in NUM_RE.finditer(sentence):
+                value = float(mt.group(0).replace(",", "."))
+                if value != int(value) or int(value) not in goal_minutes:
+                    continue
+                before = [sur for pos, sur in spans if pos < mt.start()]
+                who = before[-1] if before else min(spans, key=lambda ps: ps[0] - mt.start())[1]
+                if int(value) not in minutes_of.get(who, set()):
+                    out.append(Violation("history_mismatch", f"{mt.group(0)}: {self.players.get(who, who)} scored no goal in that minute"))
+        return out
+
     def check(self, text: str, lang: str, allowed: Allowed, max_s: float | None = None, style: str | None = None,
               spelled: bool = False) -> Verdict:
         """`spelled`: numbers written as words must be in the facts too (the newsroom checks every model line so). `style`: a beginner
@@ -509,6 +611,7 @@ class Verifier:
             if m:
                 v.append(Violation("count_in_beginner", f"'{m.group(0)}' is a count; a beginner line says it without counting"))
         v.extend(self.claim_violations(text, lang, allowed))
+        v.extend(self.history_violations(text, masked, lang, allowed))
 
         among = LANGS if lang in LANGS else tuple(STOPWORDS) + ("ja",)
         detected = self.detect_lang(text, among)

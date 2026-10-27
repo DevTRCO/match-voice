@@ -139,6 +139,8 @@ class ChannelDirector:
             return False
         if m.kind == "score_line" and any(q.kind == "goal_analysis" for q in self._queue):
             return False  # call, co line, score: the score waits for the co line while it is still to come (it may be held by its breath)
+        if m.kind == "match_state" and any(q is not m and q.ready_t < m.ready_t and q.layer != "context" for q in self._queue):
+            return False  # a live run that joined a running match: the call it came in with (the goal kick) goes first, then where we are
         if not self.dense:
             return True
         if m.layer == "fast":

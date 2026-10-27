@@ -23,10 +23,11 @@ from .analyst import AFTER, MAX_CHARS, RECENT_LINES, SETUP, SPOKEN_NEVER, facts_
 from .lang import BOOTH, CPS, PAUSE_S, PRONOUN, WORLD_KEYS, est_seconds
 from .moments import Moment, render_variants
 
-WORLD_PROMPT_VERSION = "w1"
+WORLD_PROMPT_VERSION = "w3"  # w3: scorers and goal minutes of match_so_far only in a goal call, an analysis, the score line or back on air (play-by-play names only its own players), a goal minute goes with its own scorer; w2: the match so far (`match_so_far`, live runs) and the rule that every line fits it; the time left only from five minutes on (no "about five minutes" at 89'); the match_state line (back on air in a running match)
 WORLD_RATE_WPS = {"es": 2.6, "it": 2.5, "pt": 2.5, "nl": 2.2, "tr": 2.0}  # spoken words per second, estimates (no voice measured yet); Japanese counts characters
 WORLD_ROOM_S = {"goal_analysis": {"beginner": 7.0, "expert": 6.0}, "pattern_insight": {"beginner": 6.5, "expert": 6.0},
-                "shot_goal": {"beginner": 4.5, "expert": 4.0}, "score_line": {"beginner": 4.0, "expert": 4.0}, "story_note": {"beginner": 6.5, "expert": 6.5}}
+                "shot_goal": {"beginner": 4.5, "expert": 4.0}, "score_line": {"beginner": 4.0, "expert": 4.0}, "story_note": {"beginner": 6.5, "expert": 6.5},
+                "match_state": {"beginner": 6.0, "expert": 5.5}}
 PAYOFF_EXTRA_S = 1.0
 PBP_ROOM_MIN_S, PBP_ROOM_MAX_S = 1.2, 7.0
 # raw moment params that are bookkeeping, not facts
@@ -36,10 +37,14 @@ GLOSS = {  # what a moment kind is, for a model that sees only the facts
     "pass_kind": "a pass, called as it is played: pass_type switch = a long ball across to the other side of the pitch, long = a long ball forward, first_time = played on without stopping the ball; target = who it is for",
     "touch": "how the player takes the ball: facet chest = on the chest, head = with the head, control = brings it under control; the name was just said, so a fragment without it is fine",
     "shot_goal": "the goal call",
+    "counter_note": "a fact of this match the commentator reads in a quiet spell: facet move = the players of the move (chain) and the scorer who finished it, "
+                    "the score it made (goals_h-goals_a, home-away); tally = the scorer's goals this season (n), assist = who set it up; other facets: the "
+                    "figure in n (and the other side's in m) of the fact the facet names",
     "story_note": "a fact of the club's season the lead reads in a quiet spell: facet comebacks = the team took points after being behind n times this season",
-    "score_line": "back to play after the analysis: the score in this language's written form, then the time left (left_about minutes, said in words or digits)",
+    "score_line": "back to play after the analysis: the score in this language's written form, then the time left when left_about is given (minutes, said in words or digits); without it the score stands alone",
     "pattern_insight": "a habit of one side the viewer cannot see (the analysis in a quiet spell)",
     "goal_analysis": "the analysis right after the goal call: HOW it went in, then what it means",
+    "match_state": "back on air in a match already running, like after an ad break: the minute, the score and how it got there (from match_so_far), one or two short sentences",
 }
 
 
@@ -70,7 +75,12 @@ The lines, by moment kind
 - The analysis (voice "analyst": goal_analysis, pattern_insight) is the same commentator, now explaining. A goal: HOW first, one picture of the last ball or touch and the finish from "move", then ONE short idiom of what it means; do not repeat the call's words. A pattern: the habit as an observation over a dead ball (who keeps winning the ball, what happens next every time, what never happens), no number, no count, no prediction.
 - Paying it off (a goal analysis whose facts carry "pays_off"): earlier this commentator pointed out the habit (the prompt gives that line per channel), and this goal broke it. Open with a short callback in the first person ("¡Lo que les decía!", "L'avevo detto!", "Não falei?", "Zie je, dat zei ik!", "Söylemiştim!", "言った通りです！"), then the picture of how it broke (the ball winner wins it, and this time the first ball goes across at once). "Again" belongs only to what kept happening, never to the switch: it had not happened before.
 - The story (story_note): the club's record from the facts, one or two short sentences.
-- The score (score_line): the score as written above, then the time left ("quedan unos veinte minutos", "mancano una ventina di minuti", "faltam uns vinte minutos", "nog zo'n twintig minuten", "yaklaşık yirmi dakika var", "残りはおよそ20分").
+- The score (score_line): the score as written above, then the time left when the facts give left_about ("quedan unos veinte minutos", "mancano una ventina di minuti", "faltam uns vinte minutos", "nog zo'n twintig minuten", "yaklaşık yirmi dakika var", "残りはおよそ20分").
+
+The match so far (live: "match_so_far" in the facts)
+- The broadcast may have joined a match already running. "match_so_far" is the commentator's memory: every goal up to this moment (minute, scorer, team, the score it made), how the score got here, red cards, "late" from the 80th minute. Every line must fit it: never "the first goal" or "the opener" after earlier goals, never goalless or 0-0 when there were goals, never a score other than "score_home_away".
+- Back on air (match_state): where we are, like after an ad break: the minute, the score, how it got there in a few words (es, another fixture: "Minuto 88, 1-1, y el Harbour ha vuelto tras ir perdiendo."). Scorers and minutes only from match_so_far.
+- Recall earlier goals (a scorer, a minute) only in a goal call, a goal analysis, the score line or back on air. Play-by-play names only the players of its own moment. A goal minute always goes with the player who scored in that minute.
 
 What the commentator never says
 - No percentages, no probabilities, no win chance, no xG, no counts of shots, possession or passes. Numbers only from the facts: the score, the time left, the count in a season story. Never a minute, a distance, a keeper or a corner of the goal the facts do not give. Never predict.
@@ -114,6 +124,9 @@ def world_facts(m: Moment, snapshot: dict, meta: MatchMeta) -> dict:
     (no English template text, so nothing can be translated)."""
     if m.voice == "analyst":
         facts = facts_of(m, snapshot, meta)
+        if m.layer == "context":  # w2: a context line's params went through the English renderer, its finished sentence ("note") included: raw facts only
+            facts["moment"] = {k: v for k, v in facts["moment"].items()
+                               if k in ("kind", "voice", "match_clock", "score_home_away", "tags") or (k in m.params and k not in _HELPERS)}
     else:
         p = {k: v for k, v in m.params.items() if k not in _HELPERS and k not in SPOKEN_NEVER and not isinstance(v, (dict, list))}
         if "score" in p:
@@ -121,6 +134,8 @@ def world_facts(m: Moment, snapshot: dict, meta: MatchMeta) -> dict:
         facts = {"moment": {"kind": m.kind, "voice": m.voice, "match_clock": m.clock, **p},
                  "match": {"home": meta.teams["H"].name, "away": meta.teams["A"].name,
                            "score_home_away": f"{snapshot['score'][0]}-{snapshot['score'][1]}"}}
+        if snapshot.get("so_far"):  # w2, live runs: the match so far (runner._snap)
+            facts["match_so_far"] = snapshot["so_far"]
     if m.kind in GLOSS:
         facts["moment"]["kind_means"] = GLOSS[m.kind]
     return facts
@@ -132,7 +147,10 @@ def world_moment(m: Moment) -> Moment:
     from dataclasses import replace
     params = dict(m.params)
     if m.kind == "score_line" and "left_min" in params:
-        params["left_about"] = about(params["left_min"])
+        if params["left_min"] >= 5:  # as the core booth (moments.time_left): no time is said in the last minutes, the score stands alone
+            params["left_about"] = about(params["left_min"])
+        else:
+            params.pop("left_min")
     return replace(m, params=params)
 
 

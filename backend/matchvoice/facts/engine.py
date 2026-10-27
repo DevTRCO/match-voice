@@ -184,6 +184,48 @@ class FactEngine:
                 "momentum": self.momentum(), "rhythm": self.rhythm(),
                 "win": [round(h, 3), round(d, 3), round(a, 3)]}
 
+    def so_far(self, upto_t: float, clock: str) -> dict:
+        """The match so far as of match second `upto_t` (a moment's time, its own goal included), from the facts of the events
+        ingested: the booth's memory of a broadcast it may have joined late. Minute, score, every goal (minute, scorer, team, the score it
+        made), how the score got here in one plain sentence, red cards, and `late` from the 80th minute. Pure: the same events give the
+        same block, so a prompt built from it keeps its cache key."""
+        score = {"H": 0, "A": 0}
+        goals, story = [], []
+        led_since: dict[str, str] = {}  # side -> the minute of the goal that put it in front, while it still is
+        for f in self.facts:
+            if f.t > upto_t + 1e-9 or f.kind != "goal" or f.side is None:
+                continue
+            side, other = f.side, "A" if f.side == "H" else "H"
+            before = score[side] - score[other]
+            score[side] += 1
+            made = f"{score['H']}-{score['A']}"
+            who = (self.names.get(f.player or "", "") or "").split()[-1:] or ["?"]
+            scorer, team, minute = who[0], self.team_names[side], f.clock
+            goals.append({"minute": minute, "scorer": scorer, "team": team, "made_it": made})
+            what = ("took the lead" if score["H"] + score["A"] == 1 else "equalised" if before == -1 else
+                    "went ahead" if before == 0 else "made it" if before > 0 else "pulled one back")
+            story.append(f"{team} {what} {made} through {scorer} ({minute}')")
+            if before == 0:
+                led_since[side] = minute
+            elif before == -1:
+                led_since.pop(other, None)
+        h, a = score["H"], score["A"]
+        if h == a == 0:
+            state = "Still goalless."
+        elif h == a:
+            state = f"Level since {goals[-1]['minute']}'."
+        else:
+            lead = "H" if h > a else "A"
+            state = f"{self.team_names[lead]} have led since {led_since.get(lead, goals[-1]['minute'])}'."
+        out: dict = {"minute": clock, "score_home_away": f"{h}-{a}", "goals": goals, "how_it_got_here": " ".join([*(s + "." for s in story), state])}
+        reds = [{"minute": f.clock, "player": (self.names.get(f.player or "", "") or "?").split()[-1], "team": self.team_names[f.side]}
+                for f in self.facts if f.kind == "red_card" and f.t <= upto_t + 1e-9 and f.side is not None]
+        if reds:
+            out["red_cards"] = reds
+        if minute_of(clock) >= 80:
+            out["late"] = True
+        return out
+
     def player_stats(self, pid: str) -> dict:
         p = self.players.get(pid, PlayerStats())
         return {"id": pid, "name": self.names.get(pid, pid), "passes": p.passes, "passes_ok": p.passes_ok,

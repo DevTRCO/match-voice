@@ -18,7 +18,7 @@ from typing import Awaitable, Callable
 
 import orjson
 
-from ..commentary.delivery import shape_for_tts, voice_settings
+from ..commentary.delivery import hype_for_tts, shape_for_tts, voice_settings
 from ..config import ROOT, elevenlabs_api_key
 from .client import ElevenLabsClient, UpstreamError
 from .voices import CREDITS_PER_CHAR, MAX_CHARS, MODEL, voice_for
@@ -119,8 +119,8 @@ class GuardedTTS:
 
     def _prepare(self, text: str, lang: str, energy: str | None) -> tuple[str, str | None]:
         """The text that is sent (shaped for speech when delivery is on) and the energy that is part of the cache key."""
-        if self.delivery and energy:
-            return shape_for_tts(text, lang), energy
+        if self.delivery and energy:  # a peak line is called, not read: the shout word stretched, an exclamation at the end
+            return hype_for_tts(shape_for_tts(text, lang), lang, energy, self.model), energy
         return text, None
 
     def cached(self, text: str, lang: str, energy: str | None = None, who: str | None = None) -> bool:

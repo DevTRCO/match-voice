@@ -167,7 +167,7 @@ def test_the_story_insert_opens_on_the_set_up_and_cuts_before_the_corner(bundle)
 
 # ---------- the prompt ----------
 def test_prompt_v7_names_the_pattern_and_the_pay_off():
-    assert PROMPT_VERSION == "v8"
+    assert PROMPT_VERSION == "v9"
     for needle in ("pattern_insight", "pays_off", "Paying it off", "never refer back", "No count of anything"):
         assert needle in SYSTEM, needle
     assert "two passes" not in SYSTEM and "zwei Pässe" not in SYSTEM and "deux passes" not in SYSTEM

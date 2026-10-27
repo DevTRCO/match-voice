@@ -43,9 +43,10 @@ def profile(number: int, side: str, group: str) -> tuple[float, float]:
 
 
 def shape_spot(formation: str, k: int, group: str, number: int, side: str, ball: tuple[float, float], pw: float,
-               live: bool = True) -> tuple[float, float]:
+               live: bool = True, po: float = 0.0) -> tuple[float, float]:
     """The page's `shapeOf` for player `k` of a side, with the ball at `ball` (same frame) and `pw` the share of the ball that side
-    had over the last second (1 on the ball, 0 without it)."""
+    had over the last second (1 on the ball, 0 without it). `po` is the other side's share: with the ball near its own box a side
+    that does not have it defends the box (the page's `deep`); 0 leaves that out."""
     gd, gs = profile(number, side, group)
     form = FORM.get(formation)
     f = form[k] if form is not None and k < len(form) else GRP.get(group, (.45, 0.0))
@@ -65,9 +66,16 @@ def shape_spot(formation: str, k: int, group: str, number: int, side: str, ball:
     x, y = PITCH_L * dp, PITCH_W / 2 + lat + shift
     if not live or group == "GK":
         return x, y
+    deep = po * smooth((34 - bx) / 14) if group in ("DEF", "MID") else 0.0
+    if deep > 0:  # the back four drop between the six-yard line and the penalty spot and narrow to the posts, the midfield to the edge
+        hb = hash01(number + (0 if side == "H" else 50), 31)
+        back = group == "DEF"
+        dd = 6 + 6 * abs(f[1]) + 1.5 * hb if back else 14 + 4 * abs(f[1]) + 2 * hb
+        ty = clamp(PITCH_W / 2 + lat * (.42 if back else .6) + bs * .3, PITCH_W / 2 - (14 if back else 19), PITCH_W / 2 + (14 if back else 19))
+        x, y = x + (dd - x) * deep, y + (ty - y) * deep
     dx, dy = x - bx, y - by
     dd = math.hypot(dx, dy)
-    bump = smooth(dd / 14) * (1 - smooth((dd - 28) / 18))
+    bump = smooth(dd / 14) * (1 - smooth((dd - 28) / 18)) * (1 - deep * (.85 if group == "DEF" else .5))
     sq = 1 - (.4 * pw + .28 * (1 - pw)) * bump
     return bx + dx * sq, by + dy * sq
 
@@ -77,6 +85,8 @@ def mirror(p: tuple[float, float]) -> tuple[float, float]:
     return PITCH_L - p[0], PITCH_W - p[1]
 
 
-def defend_spot(formation: str, k: int, group: str, number: int, side: str, ball_att: tuple[float, float]) -> tuple[float, float]:
-    """Where a player of the side WITHOUT the ball stands, given the ball in the attacking side's frame; returned in that same frame."""
-    return mirror(shape_spot(formation, k, group, number, side, mirror(ball_att), 0.0))
+def defend_spot(formation: str, k: int, group: str, number: int, side: str, ball_att: tuple[float, float],
+                po: float = 0.0) -> tuple[float, float]:
+    """Where a player of the side WITHOUT the ball stands, given the ball in the attacking side's frame; returned in that same frame.
+    `po` 1: the attackers have had the ball for a second, so near the box the page draws the side defending it."""
+    return mirror(shape_spot(formation, k, group, number, side, mirror(ball_att), 0.0, po=po))

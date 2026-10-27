@@ -30,14 +30,14 @@ from ..commentary.delivery import energy_of
 from ..commentary.director import ChannelDirector
 from ..commentary.lang import ALL_KEYS, WORLD_KEYS, who_of
 from ..commentary.world import WORLD_PROMPT_VERSION, WORLD_SYSTEM, build_world_prompt, world_moment
-from ..commentary.fast import REPLACED_KINDS, build_layers, continuity_id, layer_of
+from ..commentary.fast import REPLACED_KINDS, SCENE_FINAL_TYPES, build_layers, continuity_id, layer_of
 from ..commentary.moments import Moment, MomentBuilder, goal_facet, render_variants
 from ..commentary.newsroom import Published, write_moment
 from ..commentary.patterns import PatternFeed, is_pattern_id
 from ..commentary.precompute import MODEL, MODEL_KINDS
 from ..config import anthropic_api_key
 from ..facts.engine import FactEngine
-from ..schema import Event
+from ..schema import Event, EventType
 from ..sim.micro.enrich import enrich
 from . import protocol as proto
 from .insights import InsightFeed
@@ -58,6 +58,8 @@ SHORT_IN_PLAY = frozenset({"tackle_won", "sprint", "shot_blocked"})  # skeleton 
 WORLD_CALL_GUESS_S = 3.0  # world_skip_late: the expected length of a world call until one has been measured in this run
 RUN_LEAD_S = 2.5  # rows on: a pass's `run` cue goes out this many match seconds before the kick, when its receiver may set off (board only)
 ROWS_CATCH_UP_S = 15.0  # rows on: the catch-up keeps the frames and enriched rows of this many match seconds before start, the rest is folded
+MATCH_STATE_ID = 850_000  # derived id of the lead's line that sets the scene when a live run joins a running match (skeleton range, between the pattern set-ups and the score lines)
+MATCH_STATE = {"priority": 45, "ttl": 12.0, "voice_wait": 8.0}  # above every fast and context line, under the score line; it waits behind the first call of the window (the goal kick), not before it
 
 
 class LiveUnavailable(RuntimeError):
@@ -302,7 +304,7 @@ class Runner:
     def __init__(self, bundle: MatchBundle, mode: Mode, speed: float = DEFAULT_SPEED, paced: bool = True,
                  live: LiveConfig | None = None, start: float = 0.0, analyst_from: float | None = None,
                  until: float | None = None, fast: bool = False, booth: dict | None = None, patterns: bool | None = None,
-                 world: bool | None = None, rows: bool = False):
+                 world: bool | None = None, rows: bool = False, rejoin: bool = True):
         if speed <= 0:
             raise ValueError("speed must be positive")
         if not 0.0 <= start < bundle.duration:
@@ -329,6 +331,9 @@ class Runner:
         self.speakers: dict[tuple[int, int], str] = {}  # (channel, moment id) -> the person who says it (the voice is theirs)
         # rows: stream the enriched rows (`row` messages) as each becomes known, and fold the catch-up to its last ROWS_CATCH_UP_S
         self.rows = rows
+        # rejoin: a live run with the dense voice that joins a running match at a dead ball (not a restarted stream) opens with the lead's
+        # scene-setting line (`match_state`). The insert captures turn it off: a recording stays as it was recorded
+        self.rejoin = rejoin and mode == "live" and fast and self.start > 0 and analyst_from is None
         # a restarted stream asks for the analyst moments that were still being written: they come from the answer
         # cache or the call under way, so the restart costs no second call
         self.analyst_from = self.start if analyst_from is None or mode != "live" else analyst_from
@@ -389,6 +394,13 @@ class Runner:
         self._pat: PatternFeed | None = None  # the pattern detector: live runs with the dense voice only, so recordings and replays are unchanged
         self.patterns = (fast and mode == "live") if patterns is None else (patterns and mode == "live")
         self._ins: dict[int, dict] = {}  # moment id -> the insight's evidence for the overlay (`say.ins`)
+        self._state_due: Moment | None = None  # a live run that joins a running match: the lead's scene-setting line, pushed with the window's first call
+        # the same line on the world channels: written by its own call, beside the serial queue, so it never takes the slot of the restart call;
+        # held until the world booth has pushed the window's first line, then said behind it with that line's age limit (or not at all)
+        self._wstask: tuple[Moment, asyncio.Task] | None = None
+        self._wstate: tuple[Moment, Published] | None = None
+        self._wopen = False  # the world channels have had their first line of this window
+        self._wfirst_t: float | None = None  # match time of that first line's moment: the scene-setting line ages from there, as on the core channels
 
     def _model_line_of(self, key: str):
         def has(m: Moment) -> bool:
@@ -477,6 +489,11 @@ class Runner:
                     yield proto.runs(max(ft, self.start - RUN_LEAD_S), cues)
             clock = self._clock = _Clock(self.speed, self.paced, self.start)
             ft = self.start
+            if self.rejoin and past and self._dead_at_start(future):  # joined a running match: the lead says where we are, after the first call
+                self._state_due = self._match_state(eng, past[-1])
+                self._moments[MATCH_STATE_ID], self._energy[MATCH_STATE_ID] = self._state_due, energy_of(self._state_due)
+                if self.world:
+                    await self._world_state_begin(ft)  # one world call, made at once: its prompt holds only the match before start
             for group in self._groups(future):
                 gt = group[-1].t
                 while ft + self.dt < gt:  # idle frames: lines and newsroom results do not wait for the next event
@@ -624,7 +641,7 @@ class Runner:
         return out
 
     def _finished(self) -> bool:
-        return not self._tasks and not self._done and not self._wq and self._wtask is None and all(d.idle for d in self._dirs)
+        return not self._tasks and not self._done and not self._wq and self._wtask is None and self._wstask is None and all(d.idle for d in self._dirs)
 
     def _prepass(self) -> None:
         """Replay: every moment is known up front, analyst lines come from the recording."""
@@ -684,6 +701,46 @@ class Runner:
                                        f"{m.params['since']}, the first pass went short every time, 0 balls across", ev))
             await self._on_moment(m, eng, ft)
 
+    def _snap(self, eng: FactEngine, m: Moment, now: bool = False) -> dict:
+        """The facts snapshot a prompt and its check read. A live run adds the match so far up to this moment (goals, red cards), so a booth
+        that joined late is never blind to what came before (PROMPT_VERSION v9, WORLD_PROMPT_VERSION w2). Recordings and replays are unchanged."""
+        snap = eng.snapshot()
+        if self.mode == "live":
+            # now: the world booth reads the match as it stands when its call starts, the memory too (else a line written after a goal
+            # would get the new score next to a memory without that goal)
+            snap["so_far"] = eng.so_far(eng.t, eng.clock) if now else eng.so_far(m.t, m.clock)
+        return snap
+
+    @staticmethod
+    def _dead_at_start(future: list[Event]) -> bool:
+        """The ball is out of play when the run joins: its next touch is a restart (a goal kick, a throw-in, a free kick, a kick-off), as the
+        viewer sees on the board. Only then is there room to set the scene; in open play the line would talk over the move."""
+        nxt = next((e for e in future if e.type != EventType.PRESSURE), None)
+        return nxt is not None and (nxt.type == EventType.KICKOFF or (nxt.type == EventType.PASS and nxt.set_piece is not None))
+
+    def _match_state(self, eng: FactEngine, last: Event) -> Moment:
+        """The lead's line when a live run joins a running match, like a caller back from an ad break: the minute, the score, how it got
+        there. From the facts of the events before start only."""
+        h, a = eng.score["H"], eng.score["A"]
+        first = {s: self.meta.teams[s].name.split()[0] for s in ("H", "A")}
+        short = first if first["H"] != first["A"] else {s: self.meta.teams[s].name for s in ("H", "A")}
+        minute, _, extra = eng.clock.partition("+")
+        if h == a == 0:
+            facet, side = "goalless", None
+        elif h == a:  # level after goals: the side that scored last came from a goal down
+            facet, side = "level_back", next(f.side for f in reversed(eng.facts) if f.kind == "goal")
+        else:
+            side = "H" if h > a else "A"
+            facet = "lead_back" if eng.was_behind[side] else "lead"
+        phase = "added" if extra else "first" if eng.period == 1 else "late" if int(minute) >= 80 else "second"
+        params = {"facet": facet, "n": int(minute), "goals_h": h, "goals_a": a, "phase": phase, "dead": True, "window": -1, "long": True}
+        if side is not None:
+            params |= {"team": short[side], "other": short["A" if side == "H" else "H"]}
+        if int(minute) >= 80:
+            params["tags"] = "late"
+        return Moment(id=MATCH_STATE_ID, t=self.start, clock=eng.clock, kind="match_state", voice="pbp", layer="context",
+                      params=params, evidence=[last.i], **MATCH_STATE)
+
     def _attach_payoff(self, m: Moment, ft: float) -> None:
         """A goal analysis: if this broadcast said a set-up for the scoring side's habit and this goal broke it, the analyst is told so
         (`pays_off`) and the overlay gets the break's evidence. A goal that did not break it gets nothing (the prompt says not to refer back)."""
@@ -701,6 +758,24 @@ class Runner:
         self._out.append(self._log(ft, m.t, "detector", "payoff", m.id,
                                    f"Goal breaks the pattern from {setup['clock']}': {brk['facts']['this_time']}", self._ins[m.id]))
 
+    def _scene_energy(self, m: Moment, base: str) -> str:
+        """A generated live scene is the last minutes of a level match: its play-by-play is not read calmly. Every call of the play is at
+        least rising while the score is level from the 85th minute; the ball that makes the chance and any shot are peak. Only the voice
+        settings change (with delivery on); captions and recordings are untouched."""
+        if self.mode != "live" or self.bundle.variant is None or m.t < self.start or m.voice != "pbp" or m.layer == "context":
+            return base
+        try:
+            minute = int(str(m.clock).split(":")[0].split("+")[0])
+        except ValueError:
+            return base
+        eng = getattr(self, "_eng", None)
+        sc = eng.snapshot()["score"] if eng is not None else None
+        if minute < 85 or not sc or sc[0] != sc[1]:
+            return base
+        if m.kind.startswith("shot_") or (m.kind == "pass_kind" and m.params.get("pass_type") in SCENE_FINAL_TYPES):
+            return "peak"
+        return base if base == "peak" else "rising"
+
     def _no_recording(self, m: Moment) -> None:
         """A model moment without a recorded entry: the publisher uses the templates, so `queued` still gets its `ready`."""
         lines = {k: render_variants(m, *k.split("/")) for k in KEYS}
@@ -710,7 +785,7 @@ class Runner:
     def _push(self, m: Moment) -> None:
         if self.fast and m.kind in REPLACED_KINDS:  # the fast layer calls the kick and the receipt instead (7.1)
             return
-        self._energy[m.id] = energy_of(m)
+        self._energy[m.id] = self._scene_energy(m, energy_of(m))
         self._moments[m.id] = m
         pub = self.pubs.get(m.id)
         for key, d in zip(KEYS, self._dirs):
@@ -719,6 +794,11 @@ class Runner:
                 d.push(replace(m, ttl=min(m.ttl, LIVE_PBP_TTL_S + (STANDIN_BEHIND_GOAL_S if m.kind == "goal_analysis" else 0.0))))
             else:
                 d.push(m)
+        if self._state_due is not None and m.id != MATCH_STATE_ID:  # the window's first call is out: the scene-setting line queues behind it
+            state, self._state_due = replace(self._state_due, t=m.t, ready_t=m.ready_t + 1e-3), None
+            self._moment_t[state.id] = state.t
+            for d in self._dirs[:len(KEYS)]:
+                d.push(state)
 
     def _complete(self, m: Moment, pub: Published) -> None:
         """Lines exist. They become ready after the time the newsroom needed, in match seconds."""
@@ -749,7 +829,7 @@ class Runner:
                                    f"Moment {m.id} ({m.kind}, {m.clock}') queued for the analyst"))
         if self.mode == "replay":
             return
-        self._jobs.append((m, eng.snapshot()))  # started once the event group has been captioned, see _start_jobs
+        self._jobs.append((m, self._snap(eng, m)))  # started once the event group has been captioned, see _start_jobs
 
     async def _start_jobs(self, ft: float) -> None:
         """Start the newsroom for the model moments of the event group that was just ticked. A goal and its analysis come
@@ -777,7 +857,7 @@ class Runner:
         """A restarted stream picks up a moment its predecessor was still writing. Its age before the restart does
         not count against it, and there is no latency to report: the event happened in the old stream."""
         m.ttl += (self.start - m.t) / self.speed
-        self._start_job(m, eng.snapshot(), self.start)
+        self._start_job(m, self._snap(eng, m), self.start)
 
     def _log(self, ft: float, at: float, agent: str, step: str, moment: int | None, msg: str,
              detail: dict | None = None, channel: int | None = None, wall: float | None = None) -> dict:
@@ -874,6 +954,10 @@ class Runner:
         """Run the world calls one after another. A finished call is pushed to the world channels; a cached prompt is answered at once
         (no call, same tick); otherwise the next call starts and the pump waits for it."""
         while True:
+            if self._wstask is not None and self._wstask[1].done():
+                m, task = self._wstask
+                self._wstask = None
+                self._world_state_ready(m, task.result(), ft)
             if self._wtask is not None:
                 m, task = self._wtask
                 if not task.done():
@@ -887,7 +971,7 @@ class Runner:
             if mid is None:
                 return
             m = world_moment(self._moments[mid])
-            snapshot, recent = self._eng.snapshot(), self._world_recent(m)  # the match as it stands when the English booth called it
+            snapshot, recent = self._snap(self._eng, m, now=True), self._world_recent(m)  # the match as it stands when the call starts
             guarded = self.live.world_guarded(self._wbudget)
             cached = guarded.has(build_world_prompt(m, snapshot, self.meta, recent=recent))
             self._out.append(self._log(ft, m.t, "analyst", "lookup" if cached else "writing", m.id,
@@ -917,18 +1001,12 @@ class Runner:
         self._wq.remove(mid)
         return mid
 
-    def _world_done(self, m: Moment, pub: Published, ft: float) -> None:
+    def _world_record(self, m: Moment, pub: Published, ft: float, continuity: bool = True) -> dict[str, str]:
+        """Log a finished world call and keep its lines; returns the line per world channel that will be said."""
         self.wpubs[m.id] = pub
-        said = {}
-        for k in WORLD_KEYS:
-            if pub.lines.get(k):
-                said[k] = pub.lines[k][-1]
-            # continuity is what the booth wrote first, before the check: a line the verifier stops (or a rule added later) then changes
-            # nothing in the prompts of the moments after it, so their answers stay valid; the prompt calls it the channel's last lines
-            line = pub.written.get(k) or said.get(k)
-            if line:
-                self.booth["world_lines"][k].append(line)
-        self.booth["world_pubs"][m.id] = said
+        said = {k: pub.lines[k][-1] for k in WORLD_KEYS if pub.lines.get(k)}
+        if continuity:
+            self._world_remember(m, pub, said)
         for step in pub.trail:
             detail = {**{k: v for k, v in step.items() if k not in ("step", "moment", "at")}, "world": True}
             msg = proto.describe(step).replace("Analyst", "World booth", 1)
@@ -937,9 +1015,65 @@ class Runner:
         self._out.append(self._log(ft, ft, "publisher", "ready", m.id, f"Moment {m.id} ready on the world channels: {len(said)} of "
                                    f"{len(WORLD_KEYS)} lines by the analyst" + (" (cached, not written in this run)" if pub.cached and said else ""),
                                    {"world": True, **({"cached": True} if pub.cached and said else {})}))
+        return said
+
+    def _world_remember(self, m: Moment, pub: Published, said: dict[str, str]) -> None:
+        for k in WORLD_KEYS:
+            # continuity is what the booth wrote first, before the check: a line the verifier stops (or a rule added later) then changes
+            # nothing in the prompts of the moments after it, so their answers stay valid; the prompt calls it the channel's last lines
+            line = pub.written.get(k) or said.get(k)
+            if line:
+                self.booth["world_lines"][k].append(line)
+        self.booth["world_pubs"][m.id] = said
+
+    def _world_done(self, m: Moment, pub: Published, ft: float) -> None:
+        said = self._world_record(m, pub, ft)
         if not said:
             return
-        wm = replace(m, ready_t=ft)  # a copy: the core directors hold the original moment
+        self._world_push(replace(m, ready_t=ft), pub)  # a copy: the core directors hold the original moment
+        if not self._wopen:
+            self._wopen, self._wfirst_t = True, m.t
+            if self._wstate is not None:
+                self._world_state_release(ft)
+
+    async def _world_state_begin(self, ft: float) -> None:
+        """The scene-setting line on the world channels: its own call, started with the window. Its prompt holds the match before start and
+        the continuity as it stands then, so every run of this scene builds the same prompt."""
+        m = world_moment(self._state_due)
+        self._wseen.add(m.id)  # the English booth's caption of it asks for no second call
+        snapshot, recent = self._snap(self._eng, m), self._world_recent(m)
+        cached = self.live.world_guarded(self._wbudget).has(build_world_prompt(m, snapshot, self.meta, recent=recent))
+        self._out.append(self._log(ft, m.t, "analyst", "lookup" if cached else "writing", m.id,
+                                   f"World booth {'looks up' if cached else 'is writing'} moment {m.id} for "
+                                   f"{', '.join(k.split('/')[0] for k in WORLD_KEYS)} ({'answer cache, no model call' if cached else 'model call started'})",
+                                   {"world": True}))
+        if cached or not self.paced:
+            self._world_state_ready(m, await self._world_write(m, snapshot, recent), ft)
+        else:
+            self._wstask = (m, asyncio.create_task(self._world_write(m, snapshot, recent)))
+
+    def _world_state_ready(self, m: Moment, pub: Published, ft: float) -> None:
+        if self._world_record(m, pub, ft, continuity=False):
+            self._wstate = (m, pub)
+            if self._wopen:
+                self._world_state_release(ft)
+
+    def _world_state_release(self, ft: float) -> None:
+        """Behind the window's first world line, the line is said if it is still in time (the age limit counts from that first line's moment
+        in match seconds, at any speed: the ball is dead for so long) and the score has not moved since start. It never enters the world
+        continuity: its call runs beside the serial queue and ends at no fixed point of it, so a later prompt that held it would depend on
+        timing and a cached re-run would miss; the memory block carries the same facts."""
+        m, pub = self._wstate
+        self._wstate = None
+        late = ft > self._wfirst_t + m.ttl
+        moved = (self._eng.score["H"], self._eng.score["A"]) != (m.params["goals_h"], m.params["goals_a"])
+        if late or moved:
+            self._out.append(self._log(ft, m.t, "director", "too_late", m.id, f"World booth drops moment {m.id} (match_state): "
+                                       + ("the score has moved since" if moved else "too old to say behind the first call"), {"world": True}))
+            return
+        self._world_push(replace(m, t=self._wfirst_t, ttl=m.ttl / self.speed, ready_t=ft + 1e-3), pub)  # the director's age limit in match seconds too
+
+    def _world_push(self, wm: Moment, pub: Published) -> None:
         for key, d in zip(self.keys[len(KEYS):], self._dirs[len(KEYS):]):
             if pub.lines.get(key):
                 d.push(wm)
@@ -988,7 +1122,8 @@ class Runner:
                 for setup in self.booth["setups"].values():  # the set-up as this channel showed it: the pay-off refers back to these words
                     if setup["id"] == sp.moment_id:
                         setup["lines"][key] = sp.text
-            if kind == "caption" or (kind == "start" and not self._captions_first):  # continuity for the analyst: what this channel just said
+            state_said = kind == "start" and sp.moment_id == MATCH_STATE_ID and self.fast  # dense: captioned when the voice takes it
+            if kind == "caption" or (kind == "start" and not self._captions_first) or state_said:  # continuity for the analyst: what this channel just said
                 if not self.fast or continuity_id(sp.moment_id):  # v5 (7.3): fast and context wording never enters a prompt
                     self._said[ch].append(sp.text)
             elif kind == "skip" and not self.fast and sp.text in self._said[ch]:  # shown but never spoken: not part of what the booth said
@@ -1009,7 +1144,7 @@ class Runner:
                     self._says += 1
                 elif shown is not None and shown["s"] == round(sp.start, 2):  # the voice took it at once: one `say` carries both
                     shown["e"] = round(sp.end, 2)
-                elif shown is None and layer_of(sp.moment_id) != "skeleton":  # fast and context lines are captioned when the voice takes them
+                elif shown is None and (layer_of(sp.moment_id) != "skeleton" or state_said):  # fast and context lines are captioned when the voice takes them
                     self._out.append(say(False))
                     self._says += 1
                 else:

@@ -50,3 +50,25 @@ def test_cues_change_nothing_the_booth_says(tmp_path):
     key = lambda ms: [(m["t"], m["ch"], m["m"], m["text"]) for m in ms if m["k"] == "say"]
     assert any(m["k"] == "run" for m in on) and not any(m["k"] == "run" for m in off)
     assert key(on) and key(on) == key(off)
+
+
+def test_a_generated_scene_is_not_read_calmly(tmp_path):
+    """Late and level: every play-by-play call of the scene is at least rising, the final ball and the goal are peak (voice settings only)."""
+    live = LiveConfig(fake_llm(), CallBudget(60), "fake", tmp_path)
+    r = Runner(LIB.scene_bundle(WIN, 11), "live", 1.0, False, live, WIN.start, None, WIN.until, fast=True, rows=True)
+    msgs = asyncio.run(r.collect())
+    says = {m["m"]: m for m in msgs if m["k"] == "say" and m["ch"] == 1}
+    energy = {mid: r.energies[(1, mid)] for mid in says}
+    goal = next(mid for mid, m in says.items() if m.get("kind") == "shot_goal")
+    assert energy[goal] == "peak"
+    before = [mid for mid, m in says.items() if m["t"] < says[goal]["t"] and m.get("kind") not in ("counter_note", "player_note", "story_note")]
+    assert before and all(energy[mid] in ("rising", "peak") for mid in before)
+    finals = [r.energies[(ch, m["m"])] for m in msgs if m["k"] == "say" and m["ch"] < 6 and m.get("kind") == "pass_kind" and m["t"] < says[goal]["t"]
+              and (r._moments.get(m["m"]) is not None and r._moments[m["m"]].params.get("pass_type") in ("cross", "cut_back", "through")) for ch in [m["ch"]]]
+    assert all(e == "peak" for e in finals)
+
+
+def test_peak_hype_stretches_the_live_goal_call():
+    from matchvoice.commentary.delivery import hype_for_tts
+    assert hype_for_tts("Goal! Kenji Fontaine! Wexmoor are in front!", "en", "peak", "eleven_flash_v2_5").startswith("GOOOAL! Kenji")
+    assert hype_for_tts("Goal kick for Tamsworth.", "en", "peak", "eleven_flash_v2_5").startswith("Goal kick")

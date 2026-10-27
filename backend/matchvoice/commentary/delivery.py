@@ -250,7 +250,8 @@ def hype_for_tts(text: str, lang: str, energy: Energy, model: str) -> str:
     t = text
     if energy == "peak" and lang in _SHOUT:
         word, long = _SHOUT[lang]
-        m = re.match(rf"{word}(?![A-Za-z])\s*[!.,]?\s*", t)
+        # the recorded script writes "GOAL", the live templates "Goal!": a mixed-case word is a shout only with its "!" ("Goal kick" is not)
+        m = re.match(rf"{word}(?![A-Za-z])\s*[!.,]?\s*", t) or re.match(rf"{word}(?![A-Za-z])\s*!\s*", t, re.I)
         if m:
             rest = re.sub(rf"(?<![A-Za-z]){word}(?![A-Za-z])", word.capitalize(), t[m.end():])  # a second shout word ("BUT de Fontaine") is read
             t = f"{long}! " + rest[:1].upper() + rest[1:]  # as a word, not spelled out or taken for English "but": only the first is stretched

@@ -25,7 +25,7 @@ import random
 from dataclasses import dataclass, field
 
 from ..schema import EventType, MatchMeta, TruthItem
-from .sceneshape import clamp, defend_spot, mirror, shape_spot
+from .sceneshape import clamp, defend_spot, hash01, mirror, shape_spot
 from .micro.enrich import CROSS_MIN_LEN_M
 
 X_MIN, X_MAX, Y_MIN, Y_MAX = 4.0, 101.0, 3.0, 65.0
@@ -35,6 +35,9 @@ PATTERNS = ("counter", "patient", "cutback", "edge", "overlap")
 FINAL_TYPE = {"counter": "through", "patient": "cross", "cutback": "cut_back", "overlap": "cross"}  # enrich pass_type of the final ball
 MAX_K = 40
 COUNTER_PRESS_P = 0.0  # a mid turnover lost and won back 3 to 6 s later: off for the demo (three turnovers in 7 s swung the whole board)
+ONSIDE_GAP, ONSIDE_STAGGER = 0.6, 1.6  # = mock4: the page holds a player off the ball 0.6 m plus his own 0 to 1.6 m behind the line
+RUN_V = 8.5  # m/s a receiver held on the line covers between the kick and the ball's arrival (the page caps every player at 10)
+LEAD_REACH = 13.0  # m a receiver covers before the kick (the page's run cue: up to 2 s at 6.5 m/s)
 
 
 class Fail(Exception):
@@ -167,10 +170,39 @@ class _Planner:
         t = self.team(side)
         return shape_spot(t.formation, t.players.index(pl), pl.group, pl.number, side, ball, pw)
 
-    def dspot(self, side, pl, ball_att):
+    def dspot(self, side, pl, ball_att, po=0.0):
         """A defender of `side`, the ball in the attacker's frame; returned in the attacker's frame."""
         t = self.team(side)
-        return defend_spot(t.formation, t.players.index(pl), pl.group, pl.number, side, ball_att)
+        return defend_spot(t.formation, t.players.index(pl), pl.group, pl.number, side, ball_att, po)
+
+    def prev_ball(self, side):
+        """Where the ball was played from before (the last pass, carry or ball win), in `side`'s frame; None at the start."""
+        for it in reversed(self.items):
+            if it.kind in ("pass", "carry", "win"):
+                return (it.x0, it.y0) if it.side == side else mirror((it.x0, it.y0))
+        return None
+
+    def onside_x(self, side, ball):
+        """The offside line for `side` at a kick from `ball` (x in `side`'s frame): the second-last opponent (the keeper counts) as
+        the page draws the defending side, the ball or the halfway line, whichever is nearest the goal. The page's defenders react
+        about a second late (to the ball halfway back to where it was played from before), so the higher of the two lines counts."""
+        dside = "A" if side == "H" else "H"
+        prev = self.prev_ball(side)
+        lines = []
+        for b in (ball,) if prev is None else (ball, ((ball[0] + prev[0]) / 2, (ball[1] + prev[1]) / 2)):
+            xs = sorted((self.dspot(dside, pl, b, po=1.0)[0] for pl in self.team(dside).active()), reverse=True)
+            lines.append(xs[1])
+        return max(min(lines), ball[0], 52.5)
+
+    def onside_reach(self, side, ball, rec, end, v, ox=None, s=None):
+        """True when `rec` can stay onside until the kick and still meet the ball at `end`: the page holds him on the line until the
+        ball is played, his own ONSIDE_GAP plus stagger behind it (mock4 `onside`), so what lies beyond is run after the kick."""
+        ox = (self.onside_x(side, ball) if ox is None else ox) - ONSIDE_GAP - ONSIDE_STAGGER * hash01(rec.number + (0 if side == "H" else 50), 33)
+        s = self.spot(side, rec, ball) if s is None else s
+        on = (min(s[0], ox), s[1])
+        flight = math.hypot(end[0] - ball[0], end[1] - ball[1]) / v
+        after = max(end[0] - ox, math.hypot(end[0] - on[0], end[1] - on[1]) - LEAD_REACH)
+        return after <= RUN_V * flight + 1.0
 
     def nearest_def(self, dside, ball_att, exclude=()):
         best = None
@@ -255,6 +287,7 @@ class _Planner:
     def options(self, side, holder, ball, intent, lo=6.0, hi=50.0, xmin=X_MIN, xmax=X_MAX, pool=None, gk=False):
         out = []
         prev = next((it for it in reversed(self.items) if it.kind == "pass" and it.side == side and it.ok and it.rid == holder.id), None)
+        ox = self.onside_x(side, ball)
         for pl in self.team(side).active():
             if pl is holder or (pl.group == "GK" and not gk) or (pool is not None and pl.id not in pool):
                 continue
@@ -282,6 +315,8 @@ class _Planner:
                 continue
             if intent == "switch" and abs(ey - ball[1]) < 40:
                 continue
+            if not self.onside_reach(side, ball, pl, (ex, ey), 19.0 if intent in ("switch", "long") else ground_speed(L), ox, s):
+                continue  # he would have to stand offside to get there
             w = math.exp(-abs(L - 16) / 10)
             if intent in ("forward", "any"):
                 w *= (1 + dx / 15) if dx > 0 else (.4 if dx < -3 else 1.0)
@@ -313,6 +348,8 @@ class _Planner:
             raise Fail("pass length")
         if v is None:
             v = self.r.uniform(15, 19) if lofted else ground_speed(L)
+        if not self.onside_reach(side, ball, rec, end, v):
+            raise Fail("offside: the run cannot wait for the kick")
         it = Item("pass", side, holder.id, ball[0], ball[1], end[0], end[1], rid=rec.id, v=v, under=under, set_piece=set_piece,
                   hold=self.first() if first else self.hold(), gap=self.r.uniform(.15, .45), fixed=first, tag=tag,
                   min_hold=1.6 if L >= 25 and not first else 0.0)  # after a long ball the page's shape needs a moment to catch up
@@ -510,8 +547,6 @@ class _Planner:
                 if st is holder:
                     continue  # the ball winner does not play the ball in behind to himself
                 s = self.spot(H, st, ball)
-                if s[0] > line + 2:
-                    continue  # offside where the page draws him at the kick (level is onside)
                 lo_x, hi_x = max(line + 11, s[0] + 7), min(96.0, s[0] + 20)  # the run in behind: 7 to 20 m from where he stands
                 if lo_x > hi_x:
                     continue
@@ -519,7 +554,8 @@ class _Planner:
                     ex = r.uniform(lo_x, hi_x)
                     ey = clamp(s[1] + r.gauss(0, 4), 18, 50)
                     L = math.hypot(ex - ball[0], ey - ball[1])
-                    if 40 <= L <= 50 and math.hypot(ex - s[0], ey - s[1]) <= 6.5 * (2 + L / ground_speed(L)) - 2:
+                    if (40 <= L <= 50 and math.hypot(ex - s[0], ey - s[1]) <= 6.5 * (2 + L / ground_speed(L)) - 2
+                            and self.onside_reach(H, ball, st, (ex, ey), ground_speed(L))):  # he waits on the line until the ball is played
                         found.append((st, ex, ey, L))
                         break
             if not found:
@@ -586,7 +622,8 @@ class _Planner:
                 tx, ty = 105 - r.uniform(4.5, 11), sp[1] + r.gauss(0, 3)
                 L = math.hypot(tx - ball[0], ty - ball[1])
                 if (26.5 <= ty <= 41.5 and -2 <= tx - sp[0] <= 14 and L >= 15
-                        and math.hypot(tx - sp[0], ty - sp[1]) <= 6.5 * (2 + L / 21) - 2):
+                        and math.hypot(tx - sp[0], ty - sp[1]) <= 6.5 * (2 + L / 21) - 2
+                        and self.onside_reach(H, ball, target, (tx, ty), 24.0)):  # onside at the cross, at the fastest ball below
                     break
             else:
                 raise Fail("cross target")
@@ -602,19 +639,26 @@ class _Planner:
                 progress(1, ball[0] + 4, 84, pool=pool, allow_switch=False)
             if not 72 <= ball[0] <= 88:
                 raise Fail("cutback: no progress")
-            flank = 1 if ball[1] >= 34 else -1
-            runs = []
-            for p in team.active():
-                if p is holder or p.pos not in (("RM", "RW", "RB") if flank > 0 else ("LM", "LW", "LB")) + ("ST",):
-                    continue
-                sp = self.spot(H, p, ball)
-                ex = r.uniform(96, 100.5)
-                ey = 34 + flank * r.uniform(10.5, 19.5)
-                L = math.hypot(ex - ball[0], ey - ball[1])
-                d = math.hypot(ex - sp[0], ey - sp[1])
-                wide = (ball[1] < BOX_Y0 or ball[1] > BOX_Y1) and ball[0] > 70
-                if 6 <= L <= (CROSS_MIN_LEN_M - 1 if wide else 32) and d <= 6.5 * (2 + L / ground_speed(L)) - 2:  # a ball from out wide this long is a cross
-                    runs.append((1.0 / (1 + d / 15), p, (ex, ey)))  # the nearer runner is likelier, any who can make it may go
+            for more in range(3):  # nobody can wait on the line and still reach the channel: one more pass up the pitch first
+                flank = 1 if ball[1] >= 34 else -1
+                runs = []
+                for p in team.active():
+                    if p is holder or p.pos not in (("RM", "RW", "RB") if flank > 0 else ("LM", "LW", "LB")) + ("ST",):
+                        continue
+                    sp = self.spot(H, p, ball)
+                    for _ in range(3):
+                        ex = r.uniform(96, 100.5)
+                        ey = 34 + flank * r.uniform(10.5, 19.5)
+                        L = math.hypot(ex - ball[0], ey - ball[1])
+                        d = math.hypot(ex - sp[0], ey - sp[1])
+                        wide = (ball[1] < BOX_Y0 or ball[1] > BOX_Y1) and ball[0] > 70
+                        if (6 <= L <= (CROSS_MIN_LEN_M - 1 if wide else 32) and d <= 6.5 * (2 + L / ground_speed(L)) - 2  # a ball from out wide this long is a cross
+                                and self.onside_reach(H, ball, p, (ex, ey), ground_speed(L))):
+                            runs.append((1.0 / (1 + d / 15), p, (ex, ey)))  # the nearer runner is likelier, any who can make it may go
+                            break
+                if runs or more == 2 or ball[0] >= 84:
+                    break
+                progress(1, ball[0] + 3, 88, pool=pool, allow_switch=False)
             if not runs:
                 raise Fail("ball into the channel")
             _, run, (ex, ey) = self.choose(runs)
@@ -629,7 +673,8 @@ class _Planner:
                 sx = clamp(sp[0] + r.uniform(4, 8), 82 if late else 85, ball[0] - 3)
                 sy = sp[1] + r.gauss(0, 2.5)
                 L = math.hypot(sx - ball[0], sy - ball[1])
-                if 26 <= sy <= 42 and 6 <= L <= (17 if late else 14) and math.hypot(sx - sp[0], sy - sp[1]) <= 6.5 * (2 + L / 15) - 2:
+                if (26 <= sy <= 42 and 6 <= L <= (17 if late else 14) and math.hypot(sx - sp[0], sy - sp[1]) <= 6.5 * (2 + L / 15) - 2
+                        and self.onside_reach(H, ball, shooter, (sx, sy), 17.0)):
                     shots.append((wt, shooter, (sx, sy)))
             if not shots or (all(o[1] is not tav for o in shots) and tav is not holder and r.random() < .35):
                 raise Fail("cutback geometry")  # the playmaker is not there yet: most often the move is drawn again rather than finished without him
