@@ -550,7 +550,7 @@ Live "New run" on the public demo (2026-10-27 night, founder approved "planen + 
 server `matchvoice.server.public` (scene whitelist `pipeline/scenes.py`, winner = comeback-135 5431 to 5490, HMAC session tokens, 3 runs a session, 10 an IP a UTC day,
 3 at once, 150 runs / 600 calls / 3,000 voice credits a day (900 a session, 1,500 an address since the review fixes), in memory, reset on restart; `row` stream message; `/api/session`, `/api/scene`, `/api/tts` with Flash voices per person;
 Origin allowlist; IP = rightmost X-Forwarded-For, `MATCHVOICE_TRUSTED_HOPS=1`). Deployed on Azure Container Apps `encara-live` (env `encara-env`, centralus, 1 replica)
-at https://encara-live.agreeablemeadow-1641ec5a.centralus.azurecontainerapps.io, image `encaramv630916.azurecr.io/match-voice:20261027-1251` (generated scenes, deployed 2026-10-27 13:10; before 20261027-0109); ACR Tasks are not allowed on this
+at https://encara-live.agreeablemeadow-1641ec5a.centralus.azurecontainerapps.io, image `encaramv630916.azurecr.io/match-voice:20261027-1603` (run cues, deployed 2026-10-27 16:10; before 20261027-1251, 20261027-0109); ACR Tasks are not allowed on this
 subscription, so build locally with `docker buildx --platform linux/amd64 --push`. Turkish "İki" crashed the verifier's number words (KeyError), fixed in `verifier.py` with a test.
 Page: `mock4.html` live branch (`LIVE_API` constant, `?api=` override), runs open in How mode 3 s behind the generator, lane 1 rows, lane 2 model calls with real times, voice per line from
 `/api/tts`, browser voice fallback; dev launcher `docs/live/devserver.py` (fake model and voice). Four-lens review, all majors fixed. SWA redeployed. End to end against the deployed
@@ -602,7 +602,7 @@ mock4: `DELAY` 1, `RUN_LEAD` 2, cues become receiver and keeper anchors, pre-kic
 at the start. Measured with a live-arrival emulator (8 seeds, 115 passes, board rebuilt every 0.25 s from what the server had sent): without cues at 1 s,
 26 receivers more than 2 m off the ball at arrival (16 m worst); with cues at 1 s, 4 (as at 3 s), positions differ from the full-knowledge board by more
 than 1 m in 0.1% of player frames (the opening second only). Devserver runs en 1430x769 and ja 390x844: run starts 1.1 s after the click, 2-1, no errors.
-852 tests green, 1 xfail. Backend changed: rebuild and redeploy the image, then SWA.
+852 tests green, 1 xfail. Deployed (image 20261027-1603, revision encara-live--0000005, SWA): a real en run started 2.0 s after the click (session, scene, socket, 1 s buffer), 2-1, no errors, 21 ElevenLabs lines, /api/tts median about 0.48 s, 19 of 21 under 1 s, max 1.06 s.
 
 Next, in order:
 6. Record the video from docs/VIDEO.md.
