@@ -6,6 +6,9 @@
 <title>encara</title>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;700&family=Barlow+Condensed:wght@700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css">
+<!-- the guided tour of phase 2 (open source, pinned); without it phase 2 still plays, just without stops -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css">
+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js" async></script>
 <style>
 :root{
   --bg:#12001a; --panel:#22002a; --panel2:#2c0536; --deep:#0e0013; --line:#ffffff12; --line2:#ffffff26;
@@ -45,14 +48,66 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .brand{font-weight:700;letter-spacing:-.03em;font-size:var(--t4);line-height:1;color:var(--text)}
 .top .ctx{font-size:var(--t2);color:var(--mute);padding-left:14px;border-left:1px solid var(--line2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .top .sp{flex:1}
-.howbtn{border:1px solid var(--line2);border-radius:6px;padding:8px 16px;font-weight:600;font-size:var(--t2);background:linear-gradient(180deg,#ffffff0a,#ffffff03);box-shadow:var(--edge);transition:background .2s,border-color .2s,color .2s;flex:none}
-.howbtn:hover{border-color:#e3b35099;color:var(--gold-hi)}
-.howbtn[aria-pressed=true]{background:var(--signal);box-shadow:none;color:var(--on-signal);border-color:var(--signal)}
-/* New run sits in the top bar, left of How: Play stays the one first action on the start screen */
-.topnew[hidden],body.endon .topnew{display:none}   /* the end screen has its own New run and count */
-.topnew small{font-weight:500;color:var(--mute);margin-left:8px}
-.topnew small:empty{display:none}
-@media (max-width:700px){ .top{gap:8px} .top .howbtn{padding:7px 11px} .topnew small{display:none} }
+/* the three phases of the demo: a framed stepper, every step clickable, the current one filled gold, a seen one tinted gold.
+   The numbers are filled discs, so they never read as the lanes' outlined 1 2 3 next to them */
+.steps{display:flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--line2);border-radius:8px;background:linear-gradient(180deg,#ffffff0d,#ffffff04);box-shadow:var(--edge),0 10px 30px #0006;flex:none;list-style:none}
+.steps li{display:flex;align-items:center}
+.steps li + li::before{content:"";width:12px;height:1px;background:var(--line2);margin:0 2px}
+.stp{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 7px;border-radius:6px;font-weight:600;font-size:var(--t2);color:var(--mute);white-space:nowrap;transition:background .2s,color .2s}
+.stp .no{width:20px;height:20px;border-radius:50%;background:#ffffff1a;display:grid;place-items:center;font-size:var(--t1);font-weight:600;flex:none;transition:background .2s,box-shadow .2s,color .2s}
+.stp:hover{color:var(--text);background:#ffffff0a}
+.stp.seen .no{color:var(--gold-hi);background:#e3b35038}
+.stp[aria-current=step]{color:var(--text);background:#ffffff12}
+.stp[aria-current=step] .no{background:var(--signal);color:var(--on-signal)}
+.stp[aria-disabled=true]{color:var(--dim);cursor:not-allowed}
+.stp[aria-disabled=true]:hover{background:none;color:var(--dim)}
+.stp[aria-disabled=true] .no{background:#ffffff0d}
+.stp small{font-weight:500;color:var(--mute)}
+.stp small:empty,.stp .ls{display:none}
+/* Next phase: quiet until the phase is seen, then gold with a soft pulse; the words say the same, so the glow is never the only signal */
+.nextp{border:1px solid var(--line2);border-radius:6px;padding:8px 14px;font-weight:600;font-size:var(--t2);background:linear-gradient(180deg,#ffffff0a,#ffffff03);box-shadow:var(--edge);color:var(--text);white-space:nowrap;flex:none;transition:background .2s,border-color .2s,color .2s}
+.nextp:hover{border-color:#e3b35099;color:var(--gold-hi)}
+.nextp[hidden]{display:inline-grid;visibility:hidden}   /* phase 3 keeps its room, so the stepper never moves */
+.nextp{display:inline-grid}
+.nextp .nl,.nextp .ns{display:grid}
+.nextp .nl>span,.nextp .ns>span{grid-area:1/1}
+.nextp .nl>span:not(.on),.nextp .ns>span:not(.on){visibility:hidden}   /* both labels share one cell: the button keeps the width of the longer one */
+.nextp[aria-disabled=true]{color:var(--dim);cursor:not-allowed}
+.nextp[aria-disabled=true]:hover{border-color:var(--line2);color:var(--dim)}
+.nextp.glow{background:var(--gold-grad);border-color:var(--signal);color:var(--on-signal);animation:nglow 2.4s ease-in-out infinite}
+.nextp.glow:hover{color:var(--on-signal);filter:brightness(1.06)}
+.nextp .ns{display:none}
+@keyframes nglow{0%,100%{box-shadow:inset 0 1px 0 #fff6,0 0 0 1px #e3b35059,0 0 10px #e3b35033}50%{box-shadow:inset 0 1px 0 #fff6,0 0 0 4px #e3b35026,0 0 26px #e3b35080}}
+@media (prefers-reduced-motion:reduce){ .nextp.glow{animation:none!important;box-shadow:inset 0 1px 0 #fff6,0 0 0 3px #e3b35026,0 0 18px #e3b35066} }
+/* a phone: numbers for every phase, a short word for the current one and for where Next leads */
+@media (max-width:700px){ .top{gap:8px} .stp{padding:5px 7px;gap:6px} .stp .lb,.stp small{display:none} .stp[aria-current=step] .ls{display:inline}
+  .steps li + li::before{width:6px;margin:0 1px} .nextp{padding:7px 11px} .nextp .nl{display:none} .nextp .ns{display:grid} }
+/* a tour stop leaves the top bar above its overlay: every phase stays clickable */
+.driver-active .app{z-index:auto}   /* no stacking context of its own while a stop is open, so the top bar can sit above the overlay */
+.driver-active .top{position:relative;z-index:10001}
+.driver-active .top,.driver-active .top *{pointer-events:auto}
+/* why a step cannot be used, after a click or tap on it (touch has no tooltip); it floats, so the page never grows */
+.top nav{position:relative}
+.stepnote{position:absolute;right:0;top:calc(100% + 8px);z-index:30;max-width:300px;padding:9px 12px;border:1px solid var(--line2);border-radius:6px;background:linear-gradient(180deg,#2c0634,#1c0122);box-shadow:var(--edge),0 16px 40px #000a;font-size:var(--t2);line-height:1.4;color:var(--text);white-space:normal}
+.stepnote[hidden]{display:none}
+/* the tour (driver.js), dressed as the page: dark panel, gold for the one action, square corners like the lanes */
+.driver-popover.encara{background:linear-gradient(180deg,#2c0634,#1c0122);color:var(--text);border:1px solid var(--line2);border-radius:8px;box-shadow:inset 0 1px 0 #ffffff12,0 24px 60px #000c;padding:14px 16px 12px;min-width:240px;max-width:320px}
+.driver-popover.encara *{font-family:var(--ui)}
+.driver-popover.encara .driver-popover-title{font-size:var(--t3);font-weight:700;letter-spacing:-.01em;line-height:1.3;color:var(--text)}
+.driver-popover.encara .driver-popover-description{font-size:var(--t2);line-height:1.5;color:var(--mute);margin-top:6px;text-wrap:pretty}
+.driver-popover.encara .driver-popover-footer{margin-top:14px;gap:10px}
+.driver-popover.encara .driver-popover-progress-text{font-size:var(--t1);font-weight:600;color:var(--dim);white-space:nowrap}
+.driver-popover.encara .driver-popover-footer button{all:unset;box-sizing:border-box;cursor:pointer;padding:7px 14px;border-radius:6px;font-weight:600;font-size:var(--t2);line-height:1.2;white-space:nowrap;text-shadow:none}
+.driver-popover.encara .driver-popover-footer .driver-popover-next-btn{background:var(--signal);color:var(--on-signal);border:1px solid var(--signal)}
+.driver-popover.encara .driver-popover-footer .driver-popover-next-btn:hover{background:var(--gold-hi)}
+.driver-popover.encara .driver-popover-footer .skipt{color:var(--mute);border:1px solid var(--line2);background:transparent;margin-right:6px}
+.driver-popover.encara .driver-popover-footer .skipt:hover{color:var(--text);border-color:#ffffff55}
+.driver-popover.encara .driver-popover-footer button:focus-visible{outline:2px solid var(--gold-hi);outline-offset:2px}
+.driver-popover.encara .driver-popover-arrow{border-color:transparent}
+.driver-popover.encara .driver-popover-arrow-side-left{border-left-color:#2a0532}
+.driver-popover.encara .driver-popover-arrow-side-right{border-right-color:#2a0532}
+.driver-popover.encara .driver-popover-arrow-side-top{border-top-color:#1e0124}
+.driver-popover.encara .driver-popover-arrow-side-bottom{border-bottom-color:#2c0634}
 
 .stage{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);min-height:0}
 .how .stage{grid-template-columns:var(--pcw,62%) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:12px 22px}
@@ -427,8 +482,13 @@ body:not(.paused):not(.idle):not(.how) .ctrl .booth.lure::after{content:"";posit
     <div class="brand">encara</div>
     <div class="ctx">Your own commentator, 9 languages, expert or newcomer</div>
     <div class="sp"></div>
-    <button class="howbtn topnew" id="topnew" hidden>New run<small id="topnewn"></small></button>
-    <button class="howbtn" id="howbtn" aria-pressed="false">How does it work?</button>
+    <nav aria-label="Demo phases"><ol class="steps" id="steps">
+      <li><button class="stp" data-p="1" aria-current="step"><span class="no">1</span><span class="lb">Demo</span><span class="ls">Demo</span></button></li>
+      <li><button class="stp" data-p="2"><span class="no">2</span><span class="lb">How does it work</span><span class="ls">How</span></button></li>
+      <li><button class="stp" data-p="3" id="step3"><span class="no">3</span><span class="lb">Generate run</span><span class="ls">Run</span><small id="step3n"></small></button></li>
+    </ol>
+    <div class="stepnote" id="stepnote" role="status" hidden></div></nav>
+    <button class="nextp" id="nextp"><span class="nl"><span class="on" data-to="2">Next: How does it work</span><span data-to="3">Next: Generate run</span></span><span class="ns"><span class="on" data-to="2">Next: How</span><span data-to="3">Next: Run</span></span></button>
   </div>
 
   <div class="stage" id="stage">
@@ -1173,7 +1233,7 @@ function plate(){
 function setCom(c){ if(!c) return; const prev=com; com=c;
   if(D && running && prev && prev!==c){ const w=nowW(); D.LINES.forEach(l=>{ const lw=l.ws[c.id]; if(lw!=null && lw<w-.05 && l!==shown) done.add("l"+l.m); }); }
   if(D && D.live && !(nowW()<talkUntil)) setVoice(expectedVoice());
-  plate(); tease(); renderStrip(); renderNew(); if(D) hear(shown); if(how()) flowTick(nowW(),true); if(D && prev && prev!==c){ $("booth").classList.remove("lure"); recast(); } }
+  plate(); tease(); renderStrip(); renderNew(); if(D) hear(shown); if(how()) flowTick(nowW(),true); if(D && prev && prev!==c){ $("booth").classList.remove("lure"); recast(); tourRetime(); } }
 // the line on screen goes to the new booth: its subtitle at once, its voice for what is left of the new channel's slot
 let recastPending=false;
 function recast(){
@@ -1322,6 +1382,8 @@ function tick(){
   if(how()) flowTick(w);
   if(!D.live && w>=D.LEN && w>=talkUntil) once("end",finish);
   fit(); draw(Math.min(w,D.LEN+3));
+  if(!D.isLive && !SEEN.has(1)){ const g=D.LINES.find(l=>l.kind==="goal"); if(g && w>=(g.ws[ch]??g.w)) markSeen(1); }   // phase 1 is seen once the recorded goal is on screen
+  tourTick(w);   // last: a stop pauses the run on this very frame
   if(running&&!paused) requestAnimationFrame(tick);
 }
 /* ---------- the two scenes: the top right names the scene, the teaser makes way as the first starts ---------- */
@@ -1411,13 +1473,14 @@ $("pick").addEventListener("keydown",e=>{
   if(k==="Enter" || isSpace(e)){ e.preventDefault(); e.stopPropagation(); if(!e.repeat) bs[i].click(); }
 });
 function finish(){
+  if(!D.isLive){ markSeen(1); if(how()){ if(TOUR){ closeStop(); TOUR=null; } markSeen(2); } }   // the end of the recorded run: phase 1 seen, and phase 2 when it was watched in How mode
   running=false; lastW=nowW(); closeStrip(); renderAlts();
   $("endh").textContent = hasGoal() ? "Hear the same goal with another commentator" : "Hear the same scene with another commentator";
   $("endn").textContent = !D.isLive ? REC_LABEL : LIVE.died ? `The stream stopped at ${clockOf(LIVE.died.t)}. This is everything that arrived; watching it again costs nothing.`
     : "Generated in this session by real model calls. Watching it again costs nothing.";
   $("endrec").hidden = !D.isLive;
   if(D.isLive && LIVE.state==="running"){ LIVE.state="done"; document.body.classList.remove("liverun"); }
-  if(how() && innerWidth<=700) setHow(false);   // a phone: the end screen needs the whole picture
+  if(how() && innerWidth<=700) setHow(false, true);   // a phone: the end screen needs the whole picture (still phase 2)
   renderNew(); checkLive();
   $("end").classList.add("on"); document.body.classList.add("idle","endon");
   if(actx){ bedGain.gain.setTargetAtTime(0,actx.currentTime,.5); setTimeout(()=>{ if(!running && actx) actx.suspend(); },1800); }
@@ -2039,14 +2102,124 @@ let scrubW=null;
   const end=e=>{ if(scrubW==null) return; const w=scrubW; scrubW=null; bar.classList.remove("drag"); seek(w); };
   bar.addEventListener("pointerup",end); bar.addEventListener("pointercancel",()=>{ scrubW=null; bar.classList.remove("drag"); });
 })();
-function setHow(on){
-  closeStrip(); document.body.classList.toggle("how",on); $("howbtn").setAttribute("aria-pressed",on); $("howbtn").textContent=on?"Back to the match":"How does it work?";
-  refit(); if(on) flowTick(nowW(),true); requestAnimationFrame(refit);
+function setHow(on, keep){   // keep: a layout change only (the phone end screen), the phase stays
+  closeStrip(); document.body.classList.toggle("how",on); if(!keep) PH = on ? 2 : 1;
+  if(!on && TOUR) endTour();   // the tour points into the lanes: it ends with How mode
+  refit(); if(on) flowTick(nowW(),true); requestAnimationFrame(refit); renderSteps();
 }
-$("howbtn").onclick=()=>setHow(!how());
+
+/* ---------- the three phases: 1 Demo (the recorded run), 2 How does it work (the same run in How mode, guided), 3 Generate run (a live run) ---------- */
+// the phase follows How mode and the live state, so H, the end screen's buttons and a refused run all keep the stepper right
+const PHASE_N = {1:"Demo", 2:"How does it work", 3:"Generate run"};
+let PH = 1;   // 1 or 2, set with How mode; a live run on screen (or being set up) is phase 3
+const phaseNow = () => ["connecting","buffer","running"].includes(LIVE.state) || (D&&D.isLive) ? 3 : PH;
+// a phase is "seen" once: 1 when the recorded run reaches its goal, 2 when the tour ends or the recorded run ends in How mode; kept for this tab if sessionStorage allows
+const SEEN = new Set((()=>{ try{ const v=JSON.parse(sessionStorage.getItem("encara.seen")||"[]"); return Array.isArray(v) ? v.filter(p=>p===1||p===2) : []; }catch(e){ return [] } })());   // anything else stored there is ignored
+function markSeen(p){ if(SEEN.has(p)) return; SEEN.add(p); try{ sessionStorage.setItem("encara.seen", JSON.stringify([...SEEN])) }catch(e){} renderSteps(); }
+let STEP3 = {ok:false, why:"Checking whether a new run can start.", tip:"", n:null};   // filled by renderNew
+function renderSteps(){
+  const ph=phaseNow(), busy=["connecting","buffer"].includes(LIVE.state);
+  document.querySelectorAll(".stp").forEach(b=>{ const p=+b.dataset.p, cur=p===ph, off=p===3 && !cur && !STEP3.ok;
+    if(cur) b.setAttribute("aria-current","step"); else b.removeAttribute("aria-current");
+    b.classList.toggle("seen", SEEN.has(p) && !cur);
+    b.setAttribute("aria-disabled", off || (busy && p!==3) ? "true" : "false");
+    const why = p===3 ? (off ? STEP3.why : STEP3.ok ? STEP3.tip : "") : "";
+    b.title = why; b.setAttribute("aria-label", `Phase ${p}, ${PHASE_N[p]}${cur?", current":SEEN.has(p)?", seen":""}${why?`. ${why}`:""}`); });
+  $("step3n").textContent = STEP3.ok && STEP3.n!=null ? `${STEP3.n} left` : "";
+  const nx=$("nextp"), to=ph+1; nx.hidden = ph===3;
+  if(ph<3){ const off = to===3 && !STEP3.ok;
+    nx.querySelectorAll("[data-to]").forEach(x=>x.classList.toggle("on", +x.dataset.to===to));
+    nx.setAttribute("aria-label", `Next phase: ${PHASE_N[to]}${off?`. ${STEP3.why}`:""}`); nx.title = off ? STEP3.why : "";
+    nx.setAttribute("aria-disabled", off||busy ? "true" : "false");
+    nx.classList.toggle("glow", SEEN.has(ph) && !off && !busy); }
+}
+function goPhase(p){
+  if(!D || ["connecting","buffer"].includes(LIVE.state)) return;   // a run is being set up: a second or two, then the stepper works again
+  const ph=phaseNow();
+  if(p===3){ if(!STEP3.ok){ stepNote(STEP3.why); return; } if(LIVE.state==="running") return;
+    LIVE.tourBack = ph===2 && !D.isLive; endTour(); startLive(); return; }   // tourBack: a refused start lands on the recorded start screen in phase 2, with the tour ready again
+  if(D.isLive || LIVE.state==="running"){   // back from a live run: the recorded run again (a run still streaming is closed, so it costs nothing more)
+    endTour(); if(LIVE.state==="running" && LIVE.ws){ try{ LIVE.ws.close() }catch(e){} }
+    toRecorded(); setHow(p===2); if(p===2) startTour(); else start(0); checkLive(); return; }
+  if(p===1){ endTour(); if(how()) setHow(false); else { PH=1; renderSteps(); } return; }   // the recorded run goes on where it is, without the lanes
+  if(p===2 && !(ph===2 && TOUR)) startTour();
+}
+document.querySelectorAll(".stp").forEach(b=>b.onclick=()=>{ stepNote(""); goPhase(+b.dataset.p); });
+$("nextp").onclick=()=>{ stepNote(""); const to=phaseNow()+1; if($("nextp").getAttribute("aria-disabled")!=="true") goPhase(to); else if(to===3 && !STEP3.ok) stepNote(STEP3.why); };
+// the reason a step cannot be used, shown after a click or tap (a phone has no tooltip), gone after a few seconds or the next click
+let stepNoteT=0;
+function stepNote(t){ const n=$("stepnote"); clearTimeout(stepNoteT); n.textContent=t||""; n.hidden=!t; if(t) stepNoteT=setTimeout(()=>{ n.hidden=true; n.textContent=""; }, 5000); }
+addEventListener("pointerdown",e=>{ if(!e.target.closest(".top nav,#nextp")) stepNote(""); });
+
+/* ---------- phase 2: the guided tour (driver.js). The recorded run plays from 0 in How mode and pauses at four stops ---------- */
+let TOUR = null;   // {stops, i, open, drv}
+// a stop opens at clip time at() for the chosen commentator; a step of the flow band counts as lit .45 s after the one before (as flowTick draws it)
+const litEnd = l => { if(!l) return null; const st=stampsOf(l, com.id); if(!st) return null; let v=st.t[0]; st.t.forEach((x,i)=>{ v=i?Math.max(x,v+.45):x; }); return v; };
+const anaLine = () => D.LINES.find(l=>l.kind==="analyst"&&l.g.kind==="goal_analysis"&&l.ws[com.id]!=null) || D.LINES.find(l=>l.kind==="insight"&&l.ws[com.id]!=null);
+function anaText(l){
+  const ins=l.ins||{}, lg=D.logs.filter(g=>g.m===l.m&&g.step==="analyst_wrote"&&g.d), lats=lg.map(g=>g.d.latency_s).filter(x=>x!=null), cached=lg.length&&lg.every(g=>g.d.cached), B=boothsOf(l.m);
+  const head = ins.kind==="payoff"&&ins.setup_clock ? `The goal breaks the pattern flagged at ${MIN(ins.setup_clock)}. ` : l.kind==="insight" ? "A habit found in the data, said in a quiet spell. " : "";
+  const wrote = lats.length ? `A model wrote these lines${cached?" live":""} in ${lats.map(r1).join(" and ")} s. ` : "A model wrote these lines. ";
+  const chk = B.acc!=null ? `The verifier checked every name and number in them: ${B.acc} of ${B.lines} lines passed. ` : "The verifier checked every name and number. ";
+  return head+wrote+chk+(cached?"This page replays them from the cache.":""); }
+const TOUR_STOPS = [
+  {at:()=>(D.rows.length?D.rows[0].w:0)+.7, el:()=>document.querySelector(".lane1"), room:"feed", side:"left",
+   title:"What arrives", text:()=>"The raw match feed, one event at a time, as the engine receives it. Open { } to see the JSON of an event."},
+  {at:()=>{ const c=INTEL[0]; return c ? c.ow+.5 : 2; }, el:()=>document.querySelector(".lane2"), room:"intel", side:"left",
+   title:"What it understands", text:()=>"Each row is something the engine noticed, the data behind it, and what it does next."},
+  // the first play-by-play line after the cut that is still the line on air when its last step lights (the band shows the line on air)
+  {at:()=>{ const c=D.cuts[0], ch=com.id, L=D.LINES.filter(l=>l.ws[ch]!=null).sort((a,b)=>a.ws[ch]-b.ws[ch]);
+     for(let i=0;i<L.length;i++){ const l=L[i]; if(!l.lead || l.ws[ch]<(c?c.b:0)) continue; const e=litEnd(l), nx=L[i+1]; if(e!=null && (!nx || e+.3<nx.ws[ch]-.05)) return e+.3; } return null; },
+   el:()=>$("flow"), side:"bottom",
+   title:"This line", text:()=>"One line on its way from the data to your ear. Each step shows how long it took in this run."},
+  {at:()=>{ const l=anaLine(); return l ? litEnd(l)+.4 : null; }, el:()=>{ const l=anaLine(); return (l&&document.querySelector(`.it[data-k="L${l.m}"]`)) || document.querySelector(".lane2"); }, room:"intel", side:"left",
+   title:"The analyst and the verifier", text:()=>{ const l=anaLine(); return l ? anaText(l) : ""; }},
+];
+// a stop whose target is not on screen, or whose list has no room for a row (a phone, where the lanes sit squeezed under the picture), is left out
+const hasRoom = s => !s.room || $(s.room).clientHeight>=44;
+const onScreen = el => { if(!el || el.offsetParent===null) return false; const r=el.getBoundingClientRect(); return r.width>=60 && r.height>=40 && r.top>=-1 && r.bottom<=innerHeight+1; };
+function startTour(play=true){   // play false: armed on the start screen, the stops come once Play starts the run
+  endTour(); if(!D || D.isLive) return;
+  if(!how()) setHow(true);
+  if(play) start(0);
+  // the targets are checked in How mode's layout; the times must rise, so a stop that comes too early waits a moment after the one before
+  let last=-1; const stops=TOUR_STOPS.filter(s=>onScreen(s.el()) && hasRoom(s) && s.at()!=null).map(s=>({...s}));
+  stops.forEach(s=>{ s.w=Math.max(s.at(), last+.3); last=s.w; });
+  TOUR={stops, i:0, open:false, drv:null};
+  if(!stops.length) TOUR=null;
+}
+// a new commentator moves the lines: the stops still to come take that channel's times
+function tourRetime(){
+  if(!TOUR) return; const S=TOUR.stops; let last = TOUR.i>0 ? S[TOUR.i-1].w : -1;
+  for(let k=TOUR.i;k<S.length;k++){ if(TOUR.open && k===TOUR.i){ last=S[k].w; continue; } const a=S[k].at(); if(a==null){ S.splice(k,1); k--; continue; } S[k].w=Math.max(a, last+.3); last=S[k].w; }
+}
+function tourTick(w){
+  if(!TOUR || TOUR.open) return;
+  const S=TOUR.stops;
+  while(TOUR.i<S.length && w>S[TOUR.i].w+1.5) TOUR.i++;   // a seek jumped past a stop: it is not shown
+  if(TOUR.i>=S.length){ TOUR=null; markSeen(2); return; }
+  if(w>=S[TOUR.i].w) openStop();
+}
+function openStop(){
+  const s=TOUR.stops[TOUR.i], el=s.el(), lib=window.driver && window.driver.js && window.driver.js.driver;
+  if(!lib || !onScreen(el) || !hasRoom(s)){ TOUR.i++; return; }   // no tour library (offline CDN) or no room: the run plays on
+  pause(); TOUR.open=true;
+  const n=TOUR.stops.length, narrow=innerWidth<=700;
+  TOUR.drv = lib({animate:!RM.matches, allowClose:false, allowKeyboardControl:false, smoothScroll:false, overlayColor:"#0c0011", overlayOpacity:.6, stagePadding:6, stageRadius:8,
+    popoverClass:"encara", showProgress:true, progressText:"{{current}} of {{total}}", showButtons:["next"], nextBtnText:"Next", doneBtnText:"Done",
+    onNextClick:()=>tourNext(),
+    onPopoverRender:pop=>{ const k=document.createElement("button"); k.type="button"; k.className="skipt"; k.textContent="Skip tour"; k.onclick=tourSkip; pop.footerButtons.prepend(k);
+      setTimeout(()=>{ if(pop.nextButton && document.body.contains(pop.nextButton)) pop.nextButton.focus({preventScroll:true}); }); },   // the tour goes on with Enter; the library focuses the first button (Skip)
+    steps:TOUR.stops.map((x,k)=>({element: k===TOUR.i ? el : undefined, popover:{title:x.title, description: k===TOUR.i ? x.text() : "", ...(narrow?{}:{side:x.side, align:"start"})}}))});
+  TOUR.drv.drive(TOUR.i);
+}
+function closeStop(){ if(TOUR && TOUR.drv){ const d=TOUR.drv; TOUR.drv=null; try{ d.destroy() }catch(e){} } if(TOUR) TOUR.open=false; }
+function tourNext(){ if(!TOUR || !TOUR.open) return; closeStop(); TOUR.i++; if(TOUR.i>=TOUR.stops.length){ TOUR=null; markSeen(2); } resume(); }
+function tourSkip(){ if(!TOUR) return; const was=TOUR.open; closeStop(); TOUR=null; markSeen(2); if(was) resume(); }
+function endTour(){ if(!TOUR) return; const was=TOUR.open; closeStop(); TOUR=null; if(was) resume(); }   // leaving phase 2: not counted as seen
+
 $("play").onclick=()=>start(0);
 $("endre").onclick=()=>start(0);
-$("topnew").onclick=startLive;
 $("endnew").onclick=startLive;
 $("endrec").onclick=backToRecorded;
 $("pp").onclick=togglePlay;
@@ -2056,6 +2229,11 @@ $("snd").onclick=()=>{ sound=!sound; $("snd").setAttribute("aria-pressed",sound)
 const isSpace = e => e.key===" "||e.code==="Space";
 addEventListener("keydown",e=>{
   if(e.target.matches("input,textarea")||e.metaKey||e.ctrlKey||e.altKey) return;
+  // a tour stop is open: Escape skips the tour, Space goes on (as Next), the player keys wait until the run plays again
+  if(TOUR && TOUR.open){ if(e.key==="Escape"){ e.preventDefault(); tourSkip(); }
+    else if(isSpace(e)){ e.preventDefault(); if(e.repeat) return;   // Space works the focused button: Skip tour skips, a step of the top bar is clicked, anything else goes on
+      if(e.target.closest && e.target.closest(".skipt")) tourSkip(); else if(e.target.closest && e.target.closest(".top button")) e.target.closest(".top button").click(); else tourNext(); }
+    else if(["ArrowLeft","ArrowRight","h","H","c","C"].includes(e.key)) e.preventDefault(); return; }
   if(isSpace(e)){ e.preventDefault(); if(!e.repeat) togglePlay(); return; }
   if(e.key==="Escape"){ if(stripOpen()){ e.preventDefault(); closeStrip(); } return; }
   if((e.key==="ArrowLeft"||e.key==="ArrowRight") && D && !D.live && (running||paused) && !stripOpen()){ e.preventDefault(); seek(nowW()+(e.key==="ArrowLeft"?-5:5)); return; }
@@ -2167,7 +2345,7 @@ function setAvail(code){ LIVE.avail=code; renderNew();
   if(code==="busy") LIVE.recheck=setTimeout(checkLive, 20000);   // a busy server frees up: ask again
   else if(API_SET && (code==="offline"||code==="refused")){ const k=LIVE.backoff=(LIVE.backoff||0)+1; if(k<=2) LIVE.recheck=setTimeout(checkLive, k===1?20000:60000); }   // a cold start: twice more, then stop
   else if(code==="ok") LIVE.backoff=0; }
-// New run: a button in the top bar (only while a run can start; what it is and the runs left in its tooltip), the second action on the end screen,
+// New run: step 3 of the stepper (enabled while a run can start, with what it is and the runs left in its tooltip; else disabled with the reason), the second action on the end screen,
 // and on the start screen only the reason, after a click that could not start a run
 function renderNew(){
   if(!$("nr")) return;
@@ -2179,8 +2357,9 @@ function renderNew(){
   const n=caps.length ? caps[0][0] : null, left = n==null ? "" : ` ${n} run${n===1?"":"s"} left ${caps[0][1]}.`;
   const len = LIVE.scene ? LIVE.scene.until-LIVE.scene.start : 60, dur = len>=40&&len<=80 ? "about a minute" : `${Math.round(len)} seconds`;
   const busy = ["connecting","buffer","running"].includes(LIVE.state), tip = `A new scene from the same match, generated now, ${dur}.${left}`;
-  $("topnew").hidden = !ok || busy; $("topnew").title = ok ? tip : ""; if(ok) $("topnew").setAttribute("aria-label", `New run. ${tip}`); else $("topnew").removeAttribute("aria-label");
-  $("topnewn").textContent = ok && n!=null ? `${n} left` : "";
+  // phase 3 of the stepper: enabled with what a run is and the runs left, or disabled with the reason it cannot start
+  STEP3 = {ok, n, tip:`Generate run: ${tip.replace(/^A/,"a")}`, why: ok ? "" : code!=null ? noteOf(code) : API_SET ? "Checking whether a new run can start." : "New runs are off: this page has no live server."};
+  renderSteps();
   $("nr").hidden = !LIVE.failed || ok || code==null; $("nrt").textContent = $("nr").hidden ? "" : noteOf(code);
   $("endnew").hidden = !ok; $("endnr").hidden = code==null;
   $("endnr").textContent = code==null ? "" : ok ? `New run: another scene from the same match, generated now.${left}` : noteOf(code);
@@ -2231,7 +2410,9 @@ function liveFail(code){
   const pb=$("playbig"); pb.classList.remove("busy");
   if(LIVE.from==="end" && LIVE.midReplay && D && D.isLive){ LIVE.midReplay=false; pb.classList.add("off"); seek(D.LEN); }   // refused during a replay: the replay jumps to its end, so the end screen shows the final board and score
   else if(LIVE.from==="end"){ pb.classList.add("off"); $("end").classList.add("on"); document.body.classList.add("idle","endon"); }
-  else { $("teaseo").textContent=""; LIVE.failed=true; if(D && !D.isLive){ reset(); draw(0); } tease(); }   // back to the recorded run's start, with the reason under Play
+  else { $("teaseo").textContent=""; LIVE.failed=true; if(D && !D.isLive){ reset(); draw(0); } tease();   // back to the recorded run's start, with the reason under Play
+    if(LIVE.tourBack && D && !D.isLive && how()) startTour(false); }   // clicked from phase 2: the tour waits for Play again
+  LIVE.tourBack=false;
   if(code==="no_world"){ if(LIVE.scene) LIVE.scene.today={...(LIVE.scene.today||{}), world:false}; return setAvail("ok"); }   // only the world commentators lose the button
   setAvail(["offline","refused","off","no_runs_today","no_calls_today","ip_limit","busy","session_limit"].includes(code) ? code : "off");
 }
@@ -2247,6 +2428,7 @@ function onHello(m, sc, world){
   if(LIVE.runsLeft!=null) LIVE.runsLeft=Math.max(0, LIVE.runsLeft-1);
   if(sc.ip_runs_left!=null) sc.ip_runs_left=Math.max(0, sc.ip_runs_left-1);
   if(sc.today && sc.today.runs_left!=null) sc.today.runs_left=Math.max(0, sc.today.runs_left-1);
+  LIVE.tourBack=false; renderNew();   // step 3 shows the runs left after this one right away
   LIVE.state="buffer"; steps(`The picture starts ${DELAY} s behind the generator`, "Connected, the generator is running");
   setTimeout(beginLive, DELAY*1000);
   clearInterval(LIVE.watch);   // no message for 8 s: the stream is gone, finish with what arrived
@@ -2292,10 +2474,11 @@ function liveBuild(){
 }
 function liveCard(){ const mn=(D.demo&&D.demo.clock)||clockOf(D.parts[0][0]).split(":")[0], el=$("cut");
   el.innerHTML=`<b>${D.live?"New run":"Your new run"}, ${esc(MIN(mn))}</b><small>${D.live?"Generated now, same match":"Generated in this session, same match"}</small>`; el.classList.add("on"); }
-function backToRecorded(){
+function toRecorded(){
   LIVE.state="idle"; document.body.classList.remove("liverun");
-  prepare(REC.st, REC.rows, false); com=COMS.find(c=>c.id===com.id)||pickDefault(); notes(); setCom(com); start(0);
+  prepare(REC.st, REC.rows, false); com=COMS.find(c=>c.id===com.id)||pickDefault(); notes(); setCom(com);
 }
+function backToRecorded(){ toRecorded(); start(0); }
 // the voice of a live line: GET /api/tts for the chosen channel only, while the run is on; any refusal (402, 409, 5xx, fallback "browser") means the browser voice
 const voiceKey = (ch,m) => `${LIVE.run}/${ch}/${m}`;
 function prefetch(ch, m){
@@ -2336,7 +2519,7 @@ async function load(){
 }
 setCom(com); fit(); draw(0); load();
 if(document.fonts) document.fonts.ready.then(()=>{ lastSz=""; fit(); draw(Math.min(nowW(),D?D.LEN+3:0)); });
-window.__mock = {start, setHow, startLive, get live(){ return {state:LIVE.state, avail:LIVE.avail, ended:LIVE.ended, died:LIVE.died, msgs:LIVE.msgs.length, rows:LIVE.rows.length, isLive:!!(D&&D.isLive), dlive:!!(D&&D.live), len:D&&D.LEN, voice:$("vlab").textContent, runsLeft:LIVE.runsLeft, note:$("nrt").textContent, top:$("topnew").hidden?null:$("topnew").title, endnote:$("endnr").textContent, voiceOff:VOICE_OFF, vc:VC.size} }, openStrip, closeStrip, pause, resume, setCom:id=>setCom(COMS.find(c=>c.id===id)), get coms(){return COMS.map(c=>({id:c.id,ch:c.ch,name:c.name,co:c.co,lang:c.lang,lvl:c.lvl}))}, get com(){return com.name}, get comId(){return com.id}, get paused(){return paused},
+window.__mock = {start, setHow, startLive, get live(){ return {state:LIVE.state, avail:LIVE.avail, ended:LIVE.ended, died:LIVE.died, msgs:LIVE.msgs.length, rows:LIVE.rows.length, isLive:!!(D&&D.isLive), dlive:!!(D&&D.live), len:D&&D.LEN, voice:$("vlab").textContent, runsLeft:LIVE.runsLeft, note:$("nrt").textContent, top:STEP3.ok?$("step3").title:null, step3:$("step3").title, phase:phaseNow(), seen:[...SEEN], glow:$("nextp").classList.contains("glow"), next:$("nextp").hidden?null:$("nextp").querySelector(".nl .on").textContent, tour:TOUR?{i:TOUR.i, open:TOUR.open, n:TOUR.stops.length, ws:TOUR.stops.map(s=>+s.w.toFixed(2))}:null, endnote:$("endnr").textContent, voiceOff:VOICE_OFF, vc:VC.size} }, openStrip, closeStrip, pause, resume, setCom:id=>setCom(COMS.find(c=>c.id===id)), get coms(){return COMS.map(c=>({id:c.id,ch:c.ch,name:c.name,co:c.co,lang:c.lang,lvl:c.lvl}))}, get com(){return com.name}, get comId(){return com.id}, get paused(){return paused},
   get w(){return running?nowW():null}, get D(){return D}, get P(){return P}, get G(){return G}, get runs(){return RUNS.map(r=>r.id+"@"+r.w0.toFixed(1))}, pos:w=>positions(w).out.map(o=>({id:o.pl.id,grp:o.pl.grp,x:o.x,y:o.y,act:o.act})), label:(l,lang)=>labelText(l,lang), sub:t=>{ const el=$("fsay"); el.className="say"; words(el,t); fitSubs(); }};
 </script>
 </body>
