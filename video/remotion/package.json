@@ -1,0 +1,23 @@
+{
+  "name": "encara-demo-video",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "render": "remotion render src/index.ts Main ../out/encara-demo_raw.mp4 --codec=h264 --crf=16 --pixel-format=yuv420p --audio-codec=aac --audio-bitrate=192k",
+    "loudness": "ffmpeg -hide_banner -i ../out/encara-demo.mp4 -af ebur128=peak=true -f null - 2>&1 | tail -14",
+    "assets": "sh scripts/link-assets.sh"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.535",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.535"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "typescript": "5.6.3"
+  }
+}

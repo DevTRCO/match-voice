@@ -1,0 +1,21 @@
+const { chromium } = require('/Users/vmt/.npm-global/lib/node_modules/@playwright/mcp/node_modules/playwright-core');
+const EXE = '/Users/vmt/Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell';
+(async () => {
+  const b = await chromium.launch({ executablePath: EXE });
+  const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
+  await p.goto('http://127.0.0.1:8812/mock4.html?lang=en', { waitUntil: 'networkidle' });
+  await p.waitForFunction(() => window.__mock && window.__mock.D && !document.getElementById('play').disabled);
+  await p.waitForTimeout(800);
+  const cdp = await p.context().newCDPSession(p);
+  await p.evaluate(() => window.__mock.start(0));
+  const fr = [];
+  cdp.on('Page.screencastFrame', async (f) => { fr.push(f); cdp.send('Page.screencastFrameAck', { sessionId: f.sessionId }).catch(()=>{}); });
+  await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 80, everyNthFrame: 1 });
+  await p.waitForTimeout(2600);
+  await cdp.send('Page.stopScreencast');
+  const fs = require('fs'); fs.mkdirSync('real', { recursive: true });
+  const t0 = fr[0].metadata.timestamp;
+  fr.forEach((f, i) => fs.writeFileSync(`real/${String(i).padStart(3, '0')}.jpg`, Buffer.from(f.data, 'base64')));
+  console.log(fr.length, 'frames over', (fr[fr.length-1].metadata.timestamp - t0).toFixed(2), 's');
+  await b.close();
+})();

@@ -1,0 +1,1050 @@
+{
+"S1_ja_goal": {
+"frames": 457,
+"audioEvents": [
+{
+"tS": 4,
+"src": "insert/story-audio/11-162.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 2.48
+},
+{
+"tS": 4,
+"src": "audio/stadium-roar.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 0.3,
+"dur": 9.5
+},
+{
+"tS": 6.5,
+"src": "insert/story-audio/11-162.mp3",
+"ev": "ended",
+"offsetS": 2.48,
+"volume": 1
+},
+{
+"tS": 7.2,
+"src": "insert/story-audio/11-163.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 5.2
+},
+{
+"tS": 12.4,
+"src": "insert/story-audio/11-163.mp3",
+"ev": "ended",
+"offsetS": 5.2,
+"volume": 1
+},
+{
+"tS": 12.6,
+"src": "insert/story-audio/11-900163.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 3.6
+},
+{
+"tS": 13.5,
+"src": "audio/stadium-roar.mp3",
+"ev": "ended",
+"offsetS": 9.5,
+"volume": 0.3
+}
+],
+"subtitleCues": [
+{
+"startS": 4,
+"endS": 7.2,
+"speaker": "Yuki Tanaka",
+"lang": "ja",
+"channel": 11,
+"text": "ゴール！フォンテーヌ！同点！",
+"moment": 162,
+"kind": "shot_goal",
+"en_expert": "Oh, what a strike! Kenji Fontaine! Wexmoor are level!"
+},
+{
+"startS": 7.2,
+"endS": 12.6,
+"speaker": "Yuki Tanaka",
+"lang": "ja",
+"channel": 11,
+"text": "言った通りです！イブセンが奪って、今度はすぐ反対側のラスムッセンへ！",
+"moment": 163,
+"kind": "goal_analysis",
+"en_expert": "There it is. Ibsen wins it, and this time it goes across, long and lofted."
+},
+{
+"startS": 12.6,
+"endS": 15.2333,
+"speaker": "Yuki Tanaka",
+"lang": "ja",
+"channel": 11,
+"text": "1対1。残りはおよそ20分です。",
+"moment": 900163,
+"kind": "score_line",
+"en_expert": "One-all, and twenty minutes or so to go."
+}
+]
+},
+"S2_scene1_analysis_enx": {
+"frames": 540,
+"audioEvents": [
+{
+"tS": 3.8333,
+"src": "insert/story-audio/1-800004.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 4.96
+},
+{
+"tS": 8.8,
+"src": "insert/story-audio/1-800004.mp3",
+"ev": "ended",
+"offsetS": 4.96,
+"volume": 1
+},
+{
+"tS": 9.8333,
+"src": "insert/story-audio/1-3339167.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 4.32
+},
+{
+"tS": 14.1667,
+"src": "insert/story-audio/1-3339167.mp3",
+"ev": "ended",
+"offsetS": 4.32,
+"volume": 1
+}
+],
+"subtitleCues": [
+{
+"startS": 3.8333,
+"endS": 9.8333,
+"speaker": "Daniel Price",
+"lang": "en",
+"channel": 1,
+"text": "Ibsen keeps winning it, and every time it's short. Nothing across.",
+"moment": 800004,
+"kind": "pattern_insight",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 9.8333,
+"endS": 18.0,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "Wexmoor have taken points from losing positions three times this season.",
+"moment": 3339167,
+"kind": "story_note",
+"clippedStart": false,
+"clippedEnd": true
+}
+]
+},
+"S3_scene2_goal_enx": {
+"frames": 1020,
+"audioEvents": [
+{
+"tS": 5.4,
+"src": "insert/story-audio/1-1189316.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.44
+},
+{
+"tS": 6.8667,
+"src": "insert/story-audio/1-1189316.mp3",
+"ev": "ended",
+"offsetS": 1.44,
+"volume": 1
+},
+{
+"tS": 7.2,
+"src": "insert/story-audio/1-1189569.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.36
+},
+{
+"tS": 8.5667,
+"src": "insert/story-audio/1-1189569.mp3",
+"ev": "ended",
+"offsetS": 1.36,
+"volume": 1
+},
+{
+"tS": 9.2,
+"src": "insert/story-audio/1-1189576.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.36
+},
+{
+"tS": 10.5667,
+"src": "insert/story-audio/1-1189576.mp3",
+"ev": "ended",
+"offsetS": 1.36,
+"volume": 1
+},
+{
+"tS": 12.3,
+"src": "insert/story-audio/1-1189697.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.68
+},
+{
+"tS": 14.0,
+"src": "insert/story-audio/1-1189697.mp3",
+"ev": "ended",
+"offsetS": 1.68,
+"volume": 1
+},
+{
+"tS": 15.1,
+"src": "insert/story-audio/1-1189713.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.28
+},
+{
+"tS": 16.4,
+"src": "insert/story-audio/1-1189713.mp3",
+"ev": "ended",
+"offsetS": 1.28,
+"volume": 1
+},
+{
+"tS": 16.4,
+"src": "insert/story-audio/1-162.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 5.28
+},
+{
+"tS": 16.4,
+"src": "audio/stadium-roar.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 0.3,
+"dur": 9.5
+},
+{
+"tS": 21.7,
+"src": "insert/story-audio/1-162.mp3",
+"ev": "ended",
+"offsetS": 5.28,
+"volume": 1
+},
+{
+"tS": 21.8,
+"src": "insert/story-audio/1-163.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 6.08
+},
+{
+"tS": 25.9,
+"src": "audio/stadium-roar.mp3",
+"ev": "ended",
+"offsetS": 9.5,
+"volume": 0.3
+},
+{
+"tS": 27.9,
+"src": "insert/story-audio/1-163.mp3",
+"ev": "ended",
+"offsetS": 6.08,
+"volume": 1
+},
+{
+"tS": 28.4,
+"src": "insert/story-audio/1-900163.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 2.8
+},
+{
+"tS": 31.2,
+"src": "insert/story-audio/1-900163.mp3",
+"ev": "ended",
+"offsetS": 2.8,
+"volume": 1
+}
+],
+"subtitleCues": [
+{
+"startS": 0.0,
+"endS": 2.0333,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "Wexmoor have taken points from losing positions three times this season.",
+"moment": 3339167,
+"kind": "story_note",
+"clippedStart": true,
+"clippedEnd": false
+},
+{
+"startS": 5.4,
+"endS": 7.2,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "Ibsen cuts it out.",
+"moment": 1189316,
+"kind": "duel",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 7.2,
+"endS": 9.2,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "Across to Rasmussen.",
+"moment": 1189569,
+"kind": "pass_kind",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 9.2,
+"endS": 12.3,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "Chests it down.",
+"moment": 1189576,
+"kind": "touch",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 12.3,
+"endS": 15.1,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "Long ball for Tavares.",
+"moment": 1189697,
+"kind": "pass_kind",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 15.1,
+"endS": 16.4,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "Fontaine!",
+"moment": 1189713,
+"kind": "pass_kind",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 16.4,
+"endS": 21.8,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "Oh, what a strike! Kenji Fontaine! Wexmoor are level!",
+"moment": 162,
+"kind": "shot_goal",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 21.8,
+"endS": 28.4,
+"speaker": "Daniel Price",
+"lang": "en",
+"channel": 1,
+"text": "There it is. Ibsen wins it, and this time it goes across, long and lofted.",
+"moment": 163,
+"kind": "goal_analysis",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 28.4,
+"endS": 34.0,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "One-all, and twenty minutes or so to go.",
+"moment": 900163,
+"kind": "score_line",
+"clippedStart": false,
+"clippedEnd": true
+}
+]
+},
+"S4_how_goal_enx": {
+"frames": 545,
+"audioEvents": [
+{
+"tS": 2.7,
+"src": "insert/story-audio/1-1189713.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.28
+},
+{
+"tS": 4,
+"src": "insert/story-audio/1-1189713.mp3",
+"ev": "ended",
+"offsetS": 1.28,
+"volume": 1
+},
+{
+"tS": 4,
+"src": "insert/story-audio/1-162.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 5.28
+},
+{
+"tS": 4,
+"src": "audio/stadium-roar.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 0.3,
+"dur": 9.5
+},
+{
+"tS": 9.3,
+"src": "insert/story-audio/1-162.mp3",
+"ev": "ended",
+"offsetS": 5.28,
+"volume": 1
+},
+{
+"tS": 9.4,
+"src": "insert/story-audio/1-163.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 6.08
+},
+{
+"tS": 13.5,
+"src": "audio/stadium-roar.mp3",
+"ev": "ended",
+"offsetS": 9.5,
+"volume": 0.3
+},
+{
+"tS": 15.5,
+"src": "insert/story-audio/1-163.mp3",
+"ev": "ended",
+"offsetS": 6.08,
+"volume": 1
+},
+{
+"tS": 16,
+"src": "insert/story-audio/1-900163.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 2.8
+}
+],
+"subtitleCues": [
+{
+"startS": 2.7,
+"endS": 4,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "Fontaine!",
+"moment": 1189713,
+"kind": "pass_kind"
+},
+{
+"startS": 4,
+"endS": 9.4,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "Oh, what a strike! Kenji Fontaine! Wexmoor are level!",
+"moment": 162,
+"kind": "shot_goal"
+},
+{
+"startS": 9.4,
+"endS": 16,
+"speaker": "Daniel Price",
+"lang": "en",
+"channel": 1,
+"text": "There it is. Ibsen wins it, and this time it goes across, long and lofted.",
+"moment": 163,
+"kind": "goal_analysis"
+},
+{
+"startS": 16,
+"endS": 18.1667,
+"speaker": "Charlie Hale",
+"lang": "en",
+"channel": 1,
+"text": "One-all, and twenty minutes or so to go.",
+"moment": 900163,
+"kind": "score_line"
+}
+]
+},
+"S5_en_beginner": {
+"frames": 1500,
+"audioEvents": [
+{
+"tS": 3.8333,
+"src": "insert/story-audio/0-800004.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 5.36
+},
+{
+"tS": 9.2,
+"src": "insert/story-audio/0-800004.mp3",
+"ev": "ended",
+"offsetS": 5.36,
+"volume": 1
+},
+{
+"tS": 10.6,
+"src": "insert/story-audio/0-3339167.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 4.32
+},
+{
+"tS": 14.9333,
+"src": "insert/story-audio/0-3339167.mp3",
+"ev": "ended",
+"offsetS": 4.32,
+"volume": 1
+},
+{
+"tS": 21.4,
+"src": "insert/story-audio/0-1189316.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.44
+},
+{
+"tS": 22.8667,
+"src": "insert/story-audio/0-1189316.mp3",
+"ev": "ended",
+"offsetS": 1.44,
+"volume": 1
+},
+{
+"tS": 23.4,
+"src": "insert/story-audio/0-1189569.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.2
+},
+{
+"tS": 24.6333,
+"src": "insert/story-audio/0-1189569.mp3",
+"ev": "ended",
+"offsetS": 1.2,
+"volume": 1
+},
+{
+"tS": 25.2,
+"src": "insert/story-audio/0-1189576.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.52
+},
+{
+"tS": 26.7333,
+"src": "insert/story-audio/0-1189576.mp3",
+"ev": "ended",
+"offsetS": 1.52,
+"volume": 1
+},
+{
+"tS": 28.3,
+"src": "insert/story-audio/0-1189697.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.76
+},
+{
+"tS": 30.0667,
+"src": "insert/story-audio/0-1189697.mp3",
+"ev": "ended",
+"offsetS": 1.76,
+"volume": 1
+},
+{
+"tS": 31.1,
+"src": "insert/story-audio/0-1189713.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.68
+},
+{
+"tS": 32.4,
+"src": "insert/story-audio/0-1189713.mp3",
+"ev": "pause",
+"offsetS": 1.3,
+"volume": 1
+},
+{
+"tS": 32.4,
+"src": "insert/story-audio/0-162.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 4.48
+},
+{
+"tS": 32.4,
+"src": "audio/stadium-roar.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 0.3,
+"dur": 9.5
+},
+{
+"tS": 36.8,
+"src": "insert/story-audio/0-162.mp3",
+"ev": "pause",
+"offsetS": 4.4,
+"volume": 1
+},
+{
+"tS": 36.8,
+"src": "insert/story-audio/0-163.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 5.36
+},
+{
+"tS": 41.9,
+"src": "audio/stadium-roar.mp3",
+"ev": "ended",
+"offsetS": 9.5,
+"volume": 0.3
+},
+{
+"tS": 42.1667,
+"src": "insert/story-audio/0-163.mp3",
+"ev": "ended",
+"offsetS": 5.36,
+"volume": 1
+},
+{
+"tS": 44.2,
+"src": "insert/story-audio/0-900163.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 2.72
+},
+{
+"tS": 46.9333,
+"src": "insert/story-audio/0-900163.mp3",
+"ev": "ended",
+"offsetS": 2.72,
+"volume": 1
+}
+],
+"subtitleCues": [
+{
+"startS": 3.8333,
+"endS": 10.6,
+"speaker": "Daniel Price",
+"lang": "en",
+"channel": 0,
+"text": "Ibsen keeps winning the ball, but every time it goes short. Nothing across.",
+"moment": 800004,
+"kind": "pattern_insight",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 10.6,
+"endS": 18.0333,
+"speaker": "Owen Carter",
+"lang": "en",
+"channel": 0,
+"text": "Don't write Wexmoor off. They've come from behind three times this season.",
+"moment": 3339167,
+"kind": "story_note",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 21.4,
+"endS": 23.4,
+"speaker": "Owen Carter",
+"lang": "en",
+"channel": 0,
+"text": "Ibsen wins it back.",
+"moment": 1189316,
+"kind": "duel",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 23.4,
+"endS": 25.2,
+"speaker": "Owen Carter",
+"lang": "en",
+"channel": 0,
+"text": "Over to Rasmussen.",
+"moment": 1189569,
+"kind": "pass_kind",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 25.2,
+"endS": 28.3,
+"speaker": "Owen Carter",
+"lang": "en",
+"channel": 0,
+"text": "Takes it on the chest.",
+"moment": 1189576,
+"kind": "touch",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 28.3,
+"endS": 31.1,
+"speaker": "Owen Carter",
+"lang": "en",
+"channel": 0,
+"text": "Long ball up to Tavares.",
+"moment": 1189697,
+"kind": "pass_kind",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 31.1,
+"endS": 32.4,
+"speaker": "Owen Carter",
+"lang": "en",
+"channel": 0,
+"text": "Now Fontaine!",
+"moment": 1189713,
+"kind": "pass_kind",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 32.4,
+"endS": 36.8,
+"speaker": "Owen Carter",
+"lang": "en",
+"channel": 0,
+"text": "Goal! Kenji Fontaine! Wexmoor are level!",
+"moment": 162,
+"kind": "shot_goal",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 36.8,
+"endS": 44.2,
+"speaker": "Daniel Price",
+"lang": "en",
+"channel": 0,
+"text": "There it is. Ibsen wins it back, and this time it goes straight across to Rasmussen!",
+"moment": 163,
+"kind": "goal_analysis",
+"clippedStart": false,
+"clippedEnd": false
+},
+{
+"startS": 44.2,
+"endS": 50.0,
+"speaker": "Owen Carter",
+"lang": "en",
+"channel": 0,
+"text": "One-all, and about twenty minutes left.",
+"moment": 900163,
+"kind": "score_line",
+"clippedStart": false,
+"clippedEnd": true
+}
+]
+},
+"S6_de_goal": {
+"frames": 241,
+"audioEvents": [
+{
+"tS": 1.7,
+"src": "insert/story-audio/3-1189713.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 1.28
+},
+{
+"tS": 3,
+"src": "insert/story-audio/3-1189713.mp3",
+"ev": "ended",
+"offsetS": 1.28,
+"volume": 1
+},
+{
+"tS": 3,
+"src": "insert/story-audio/3-162.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 3.68
+},
+{
+"tS": 3,
+"src": "audio/stadium-roar.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 0.3,
+"dur": 9.5
+},
+{
+"tS": 6.7,
+"src": "insert/story-audio/3-162.mp3",
+"ev": "ended",
+"offsetS": 3.68,
+"volume": 1
+},
+{
+"tS": 7.2,
+"src": "insert/story-audio/3-163.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 4.64
+}
+],
+"subtitleCues": [
+{
+"startS": 1.7,
+"endS": 3,
+"speaker": "Jonas Weber",
+"lang": "de",
+"channel": 3,
+"text": "Fontaine!",
+"moment": 1189713,
+"kind": "pass_kind",
+"en_expert": "Fontaine!"
+},
+{
+"startS": 3,
+"endS": 7.2,
+"speaker": "Jonas Weber",
+"lang": "de",
+"channel": 3,
+"text": "Tooor! Fontaine! Was für ein Hammer!",
+"moment": 162,
+"kind": "shot_goal",
+"en_expert": "Oh, what a strike! Kenji Fontaine! Wexmoor are level!"
+},
+{
+"startS": 7.2,
+"endS": 8.0333,
+"speaker": "Kim Berger",
+"lang": "de",
+"channel": 3,
+"text": "Genau das meinte ich. Ibsen holt ihn, und diesmal sofort rüber.",
+"moment": 163,
+"kind": "goal_analysis",
+"en_expert": "There it is. Ibsen wins it, and this time it goes across, long and lofted."
+}
+]
+},
+"S6_es_goal": {
+"frames": 241,
+"audioEvents": [
+{
+"tS": 1.7,
+"src": "insert/story-audio/6-1189713.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 2.08
+},
+{
+"tS": 3,
+"src": "insert/story-audio/6-1189713.mp3",
+"ev": "pause",
+"offsetS": 1.3,
+"volume": 1
+},
+{
+"tS": 3,
+"src": "insert/story-audio/6-162.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 3.84
+},
+{
+"tS": 3,
+"src": "audio/stadium-roar.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 0.3,
+"dur": 9.5
+},
+{
+"tS": 6.8667,
+"src": "insert/story-audio/6-162.mp3",
+"ev": "ended",
+"offsetS": 3.84,
+"volume": 1
+},
+{
+"tS": 7,
+"src": "insert/story-audio/6-163.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 6.8
+}
+],
+"subtitleCues": [
+{
+"startS": 1.7,
+"endS": 3,
+"speaker": "Lucía Romero",
+"lang": "es",
+"channel": 6,
+"text": "Tavares, de primeras.",
+"moment": 1189713,
+"kind": "pass_kind",
+"en_expert": "Fontaine!"
+},
+{
+"startS": 3,
+"endS": 7,
+"speaker": "Lucía Romero",
+"lang": "es",
+"channel": 6,
+"text": "¡GOOOL! ¡Fontaine! ¡Empata el Wexmoor!",
+"moment": 162,
+"kind": "shot_goal",
+"en_expert": "Oh, what a strike! Kenji Fontaine! Wexmoor are level!"
+},
+{
+"startS": 7,
+"endS": 8.0333,
+"speaker": "Lucía Romero",
+"lang": "es",
+"channel": 6,
+"text": "¡Lo que les decía! Ibsen la recupera y esta vez, cambio de orientación al instante para Rasmussen.",
+"moment": 163,
+"kind": "goal_analysis",
+"en_expert": "There it is. Ibsen wins it, and this time it goes across, long and lofted."
+}
+]
+},
+"S6_tr_goal": {
+"frames": 241,
+"audioEvents": [
+{
+"tS": 3,
+"src": "insert/story-audio/10-162.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 3.76
+},
+{
+"tS": 3,
+"src": "audio/stadium-roar.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 0.3,
+"dur": 9.5
+},
+{
+"tS": 6.7667,
+"src": "insert/story-audio/10-162.mp3",
+"ev": "ended",
+"offsetS": 3.76,
+"volume": 1
+},
+{
+"tS": 7,
+"src": "insert/story-audio/10-163.mp3",
+"ev": "play",
+"offsetS": 0,
+"volume": 1,
+"dur": 5.12
+}
+],
+"subtitleCues": [
+{
+"startS": 3,
+"endS": 7,
+"speaker": "Emre Aydın",
+"lang": "tr",
+"channel": 10,
+"text": "GOOOL! Fontaine! Wexmoor eşitledi!",
+"moment": 162,
+"kind": "shot_goal",
+"en_expert": "Oh, what a strike! Kenji Fontaine! Wexmoor are level!"
+},
+{
+"startS": 7,
+"endS": 8.0333,
+"speaker": "Emre Aydın",
+"lang": "tr",
+"channel": 10,
+"text": "Söylemiştim! Ibsen topu kaptı, bu kez hemen Rasmussen'e çapraz pas.",
+"moment": 163,
+"kind": "goal_analysis",
+"en_expert": "There it is. Ibsen wins it, and this time it goes across, long and lofted."
+}
+]
+},
+"S7b_picker_cycle": {
+"frames": 300,
+"audioEvents": [],
+"subtitleCues": []
+}
+}

@@ -1,0 +1,936 @@
+{
+ "LEN": 46,
+ "cuts": [
+  {
+   "a": 16.000000000000362,
+   "b": 18.670000000000364,
+   "gap": 133
+  }
+ ],
+ "off": [
+  3.638200851696638e-13,
+  18.670000000000364
+ ],
+ "parts": [
+  [
+   4233,
+   4249
+  ],
+  [
+   4382,
+   4410
+  ]
+ ],
+ "GOAL_FROM": 28.77100000000046,
+ "ATTACK_FROM": 18.670000000000073,
+ "coms": [
+  {
+   "id": 1,
+   "ch": "en/expert",
+   "name": "Charlie Hale",
+   "co": "Daniel Price",
+   "lang": "en",
+   "lvl": "expert"
+  },
+  {
+   "id": 0,
+   "ch": "en/beginner",
+   "name": "Owen Carter",
+   "co": "Daniel Price",
+   "lang": "en",
+   "lvl": "beginner"
+  },
+  {
+   "id": 3,
+   "ch": "de/expert",
+   "name": "Jonas Weber",
+   "co": "Kim Berger",
+   "lang": "de",
+   "lvl": "expert"
+  },
+  {
+   "id": 2,
+   "ch": "de/beginner",
+   "name": "Felix Brandt",
+   "co": "Kim Berger",
+   "lang": "de",
+   "lvl": "beginner"
+  },
+  {
+   "id": 5,
+   "ch": "fr/expert",
+   "name": "Hugo Martin",
+   "co": "Sacha Morel",
+   "lang": "fr",
+   "lvl": "expert"
+  },
+  {
+   "id": 4,
+   "ch": "fr/beginner",
+   "name": "Théo Laurent",
+   "co": "Sacha Morel",
+   "lang": "fr",
+   "lvl": "beginner"
+  },
+  {
+   "id": 6,
+   "ch": "es/expert",
+   "name": "Lucía Romero",
+   "co": "Lucía Romero",
+   "lang": "es",
+   "lvl": "expert"
+  },
+  {
+   "id": 7,
+   "ch": "it/beginner",
+   "name": "Giulia Conti",
+   "co": "Giulia Conti",
+   "lang": "it",
+   "lvl": "beginner"
+  },
+  {
+   "id": 8,
+   "ch": "pt/expert",
+   "name": "Rafael Souza",
+   "co": "Rafael Souza",
+   "lang": "pt",
+   "lvl": "expert"
+  },
+  {
+   "id": 9,
+   "ch": "nl/beginner",
+   "name": "Sanne de Vries",
+   "co": "Sanne de Vries",
+   "lang": "nl",
+   "lvl": "beginner"
+  },
+  {
+   "id": 10,
+   "ch": "tr/expert",
+   "name": "Emre Aydın",
+   "co": "Emre Aydın",
+   "lang": "tr",
+   "lvl": "expert"
+  },
+  {
+   "id": 11,
+   "ch": "ja/beginner",
+   "name": "Yuki Tanaka",
+   "co": "Yuki Tanaka",
+   "lang": "ja",
+   "lvl": "beginner"
+  }
+ ],
+ "lines": [
+  {
+   "m": 800004,
+   "kind": "insight",
+   "gk": "pattern_insight",
+   "w": 1.801,
+   "ins": "pattern",
+   "ch": {
+    "0": [
+     1.801,
+     6.3,
+     "Ibsen keeps winning the ball, but every time it goes short. Nothing across.",
+     "Daniel Price"
+    ],
+    "1": [
+     1.801,
+     5.58,
+     "Ibsen keeps winning it, and every time it's short. Nothing across.",
+     "Daniel Price"
+    ],
+    "2": [
+     1.801,
+     5.97,
+     "Ibsen holt die Bälle immer wieder, aber dann geht es immer nur kurz.",
+     "Kim Berger"
+    ],
+    "3": [
+     1.801,
+     4.72,
+     "Ibsen holt die Bälle, und dann immer kurz. Nie rüber.",
+     "Kim Berger"
+    ],
+    "4": [
+     1.801,
+     6.22,
+     "Ibsen récupère le ballon, mais après, toujours court. Jamais de l'autre côté.",
+     "Sacha Morel"
+    ],
+    "5": [
+     1.801,
+     5.53,
+     "Ibsen récupère, et derrière, toujours court. Jamais de transversale.",
+     "Sacha Morel"
+    ],
+    "6": [
+     1.819,
+     7.49,
+     "Wexmoor recupera en campo propio y luego siempre en corto. Ni un balón cruzado desde el descanso.",
+     "Lucía Romero"
+    ],
+    "7": [
+     1.819,
+     9.38,
+     "Il Wexmoor recupera palla nella sua metà campo, ma poi passa sempre corto. Dal riposo nessun pallone dall'altra parte.",
+     "Giulia Conti"
+    ],
+    "8": [
+     1.819,
+     6.92,
+     "O Wexmoor rouba no seu campo e sempre passa curto. Nenhuma inversão desde o intervalo.",
+     "Rafael Souza"
+    ],
+    "9": [
+     1.819,
+     8.94,
+     "Wexmoor wint de bal op eigen helft, maar speelt daarna altijd kort. Sinds de rust nooit naar de andere kant.",
+     "Sanne de Vries"
+    ],
+    "10": [
+     1.819,
+     7.05,
+     "Wexmoor kendi yarısında topu kapıyor, hep kısa pas. Devreden beri çapraz top yok.",
+     "Emre Aydın"
+    ],
+    "11": [
+     1.819,
+     6.59,
+     "ウェクスモアは自陣で奪っても、いつも短いパス。後半、反対側へのボールは一度もありません。",
+     "Yuki Tanaka"
+    ]
+   }
+  },
+  {
+   "m": 3339167,
+   "kind": "story",
+   "gk": "story_note",
+   "w": 7.001,
+   "ins": null,
+   "ch": {
+    "0": [
+     8.6,
+     6.22,
+     "Don't write Wexmoor off. They've come from behind three times this season.",
+     "Owen Carter"
+    ],
+    "1": [
+     7.801,
+     6.06,
+     "Wexmoor have taken points from losing positions three times this season.",
+     "Charlie Hale"
+    ],
+    "2": [
+     8.2,
+     5.71,
+     "Wexmoor hat diese Saison schon dreimal einen Rückstand aufgeholt.",
+     "Felix Brandt"
+    ],
+    "3": [
+     7.001,
+     6.46,
+     "Dreimal hat Wexmoor diese Saison nach Rückstand noch gepunktet. Und heute?",
+     "Jonas Weber"
+    ],
+    "4": [
+     8.401,
+     6.23,
+     "Wexmoor est mené. Mais attention : trois fois cette saison, ils sont revenus.",
+     "Théo Laurent"
+    ],
+    "5": [
+     7.801,
+     4.99,
+     "Wexmoor sait revenir au score : déjà trois fois cette saison.",
+     "Hugo Martin"
+    ],
+    "6": [
+     9.6,
+     5.7,
+     "Tercera vez esta temporada que el Wexmoor suma puntos tras ir por detrás.",
+     "Lucía Romero"
+    ],
+    "7": [
+     11.6,
+     5.99,
+     "Il Wexmoor ha già rimontato tre volte quest'anno, dopo essere stato sotto.",
+     "Giulia Conti"
+    ],
+    "8": [
+     9.201,
+     5.99,
+     "Terceira vez na temporada que o Wexmoor soma pontos depois de ficar atrás.",
+     "Rafael Souza"
+    ],
+    "9": [
+     11.2,
+     5.5,
+     "Wexmoor heeft dit seizoen al drie keer een achterstand omgebogen.",
+     "Sanne de Vries"
+    ],
+    "10": [
+     9.201,
+     4.3,
+     "Wexmoor bu sezon üç kez geriden gelip puan aldı.",
+     "Emre Aydın"
+    ],
+    "11": [
+     8.8,
+     5.01,
+     "今季、ウェクスモアは3度、負けていた試合から勝ち点を拾っています。",
+     "Yuki Tanaka"
+    ]
+   }
+  },
+  {
+   "m": 1189316,
+   "kind": "pbp",
+   "gk": "duel",
+   "w": 19.37,
+   "ins": null,
+   "ch": {
+    "0": [
+     19.37,
+     1.82,
+     "Ibsen wins it back.",
+     "Owen Carter"
+    ],
+    "1": [
+     19.37,
+     1.74,
+     "Ibsen cuts it out.",
+     "Charlie Hale"
+    ],
+    "2": [
+     19.37,
+     2.13,
+     "Ibsen geht dazwischen.",
+     "Felix Brandt"
+    ],
+    "3": [
+     19.37,
+     2.13,
+     "Ibsen geht dazwischen.",
+     "Jonas Weber"
+    ],
+    "4": [
+     19.37,
+     1.45,
+     "Ibsen récupère.",
+     "Théo Laurent"
+    ],
+    "5": [
+     19.37,
+     1.68,
+     "Ibsen intercepte !",
+     "Hugo Martin"
+    ],
+    "6": [
+     19.379,
+     1.56,
+     "Intercepta Ibsen.",
+     "Lucía Romero"
+    ],
+    "7": [
+     19.379,
+     1.61,
+     "Ibsen intercetta.",
+     "Giulia Conti"
+    ],
+    "8": [
+     19.379,
+     1.22,
+     "Ibsen rouba.",
+     "Rafael Souza"
+    ],
+    "9": [
+     19.379,
+     1.74,
+     "Ibsen onderschept.",
+     "Sanne de Vries"
+    ],
+    "10": [
+     19.379,
+     1.3,
+     "Ibsen kesti.",
+     "Emre Aydın"
+    ],
+    "11": [
+     19.379,
+     1.59,
+     "イブセンがカット。",
+     "Yuki Tanaka"
+    ]
+   }
+  },
+  {
+   "m": 1189569,
+   "kind": "pbp",
+   "gk": "pass_kind",
+   "w": 20.969,
+   "ins": null,
+   "ch": {
+    "0": [
+     21.37,
+     1.74,
+     "Over to Rasmussen.",
+     "Owen Carter"
+    ],
+    "1": [
+     21.17,
+     1.9,
+     "Across to Rasmussen.",
+     "Charlie Hale"
+    ],
+    "2": [
+     21.571,
+     2.05,
+     "Rüber zu Rasmussen...",
+     "Felix Brandt"
+    ],
+    "3": [
+     21.571,
+     1.3,
+     "Rasmussen...",
+     "Jonas Weber"
+    ],
+    "4": [
+     20.969,
+     2.38,
+     "Rasmussen, de l'autre côté.",
+     "Théo Laurent"
+    ],
+    "5": [
+     21.17,
+     2.46,
+     "Transversale pour Rasmussen.",
+     "Hugo Martin"
+    ],
+    "6": [
+     21.18,
+     2.15,
+     "Ibsen cambia a Rasmussen.",
+     "Lucía Romero"
+    ],
+    "7": [
+     21.18,
+     2.15,
+     "Ibsen, dall'altra parte.",
+     "Giulia Conti"
+    ],
+    "8": [
+     21.18,
+     2.53,
+     "Ibsen inverte para Rasmussen.",
+     "Rafael Souza"
+    ],
+    "9": [
+     21.18,
+     2.94,
+     "Ibsen speelt naar de andere kant.",
+     "Sanne de Vries"
+    ],
+    "10": [
+     21.18,
+     2.72,
+     "Ibsen'den Rasmussen'e çapraz.",
+     "Emre Aydın"
+    ],
+    "11": [
+     21.18,
+     1.87,
+     "イブセンから反対側へ。",
+     "Yuki Tanaka"
+    ]
+   }
+  },
+  {
+   "m": 1189576,
+   "kind": "pbp",
+   "gk": "touch",
+   "w": 23.171,
+   "ins": null,
+   "ch": {
+    "0": [
+     23.171,
+     2.06,
+     "Takes it on the chest.",
+     "Owen Carter"
+    ],
+    "1": [
+     23.171,
+     1.5,
+     "Chests it down.",
+     "Charlie Hale"
+    ],
+    "2": [
+     23.57,
+     1.72,
+     "...mit der Brust.",
+     "Felix Brandt"
+    ],
+    "3": [
+     23.171,
+     1.72,
+     "...mit der Brust.",
+     "Jonas Weber"
+    ],
+    "4": [
+     23.37,
+     2.38,
+     "Il contrôle de la poitrine.",
+     "Théo Laurent"
+    ],
+    "5": [
+     23.57,
+     1.84,
+     "Contrôle poitrine...",
+     "Hugo Martin"
+    ],
+    "6": [
+     23.37,
+     1.78,
+     "Rasmussen, de pecho.",
+     "Lucía Romero"
+    ],
+    "7": [
+     23.37,
+     1.83,
+     "Di petto, Rasmussen.",
+     "Giulia Conti"
+    ],
+    "8": [
+     23.771,
+     1.84,
+     "No peito, Rasmussen.",
+     "Rafael Souza"
+    ],
+    "9": [
+     24.17,
+     2.14,
+     "Op de borst, Rasmussen.",
+     "Sanne de Vries"
+    ],
+    "10": [
+     23.971,
+     1.96,
+     "Göğsünde, Rasmussen.",
+     "Emre Aydın"
+    ],
+    "11": [
+     23.18,
+     1.73,
+     "ラスムッセン、胸で。",
+     "Yuki Tanaka"
+    ]
+   }
+  },
+  {
+   "m": 1189697,
+   "kind": "pbp",
+   "gk": "pass_kind",
+   "w": 26.271,
+   "ins": null,
+   "ch": {
+    "0": [
+     26.271,
+     2.22,
+     "Long ball up to Tavares.",
+     "Owen Carter"
+    ],
+    "1": [
+     26.271,
+     2.06,
+     "Long ball for Tavares.",
+     "Charlie Hale"
+    ],
+    "2": [
+     26.272,
+     2.63,
+     "Lang nach vorne auf Tavares!",
+     "Felix Brandt"
+    ],
+    "3": [
+     26.272,
+     2.05,
+     "Und lang auf Tavares!",
+     "Jonas Weber"
+    ],
+    "4": [
+     26.272,
+     2.3,
+     "Long ballon pour Tavares !",
+     "Théo Laurent"
+    ],
+    "5": [
+     26.272,
+     2.3,
+     "Ballon long pour Tavares !",
+     "Hugo Martin"
+    ],
+    "6": [
+     26.279,
+     2.3,
+     "Rasmussen, largo a Tavares.",
+     "Lucía Romero"
+    ],
+    "7": [
+     26.279,
+     2.61,
+     "Lungo per Tavares, a sinistra.",
+     "Giulia Conti"
+    ],
+    "8": [
+     26.279,
+     2.61,
+     "Lançamento longo para Tavares.",
+     "Rafael Souza"
+    ],
+    "9": [
+     26.279,
+     2.3,
+     "Lang naar Tavares, links.",
+     "Sanne de Vries"
+    ],
+    "10": [
+     26.279,
+     1.88,
+     "Tavares'e uzun top.",
+     "Emre Aydın"
+    ],
+    "11": [
+     26.279,
+     2.01,
+     "左のタバレスへ長いパス。",
+     "Yuki Tanaka"
+    ]
+   }
+  },
+  {
+   "m": 1189713,
+   "kind": "pbp",
+   "gk": "pass_kind",
+   "w": 29.07,
+   "ins": null,
+   "ch": {
+    "0": [
+     29.07,
+     1.34,
+     "Now Fontaine!",
+     "Owen Carter"
+    ],
+    "1": [
+     29.07,
+     1.02,
+     "Fontaine!",
+     "Charlie Hale"
+    ],
+    "2": [
+     29.07,
+     1.05,
+     "Fontaine!",
+     "Felix Brandt"
+    ],
+    "3": [
+     29.07,
+     1.05,
+     "Fontaine!",
+     "Jonas Weber"
+    ],
+    "4": [
+     29.07,
+     1.07,
+     "Fontaine !",
+     "Théo Laurent"
+    ],
+    "5": [
+     29.07,
+     1.07,
+     "Fontaine !",
+     "Hugo Martin"
+    ],
+    "6": [
+     29.078,
+     1.3,
+     "Tavares, de primeras.",
+     "Lucía Romero"
+    ],
+    "7": [
+     29.078,
+     1.3,
+     "Tavares, di prima.",
+     "Giulia Conti"
+    ],
+    "8": [
+     29.078,
+     1.3,
+     "Tavares, de primeira.",
+     "Rafael Souza"
+    ],
+    "9": [
+     29.078,
+     1.3,
+     "Tavares, direct door.",
+     "Sanne de Vries"
+    ],
+    "10": [
+     29.078,
+     1.3,
+     "Tavares'e, tek vuruş.",
+     "Emre Aydın"
+    ],
+    "11": [
+     29.078,
+     1.3,
+     "タバレスへ、ワンタッチ。",
+     "Yuki Tanaka"
+    ]
+   }
+  },
+  {
+   "m": 162,
+   "kind": "goal",
+   "gk": "shot_goal",
+   "w": 30.372,
+   "ins": null,
+   "ch": {
+    "0": [
+     30.372,
+     3.5,
+     "Goal! Kenji Fontaine! Wexmoor are level!",
+     "Owen Carter"
+    ],
+    "1": [
+     30.372,
+     4.54,
+     "Oh, what a strike! Kenji Fontaine! Wexmoor are level!",
+     "Charlie Hale"
+    ],
+    "2": [
+     30.372,
+     3.88,
+     "Tooor! Fontaine! Der Ausgleich für Wexmoor!",
+     "Felix Brandt"
+    ],
+    "3": [
+     30.372,
+     3.3,
+     "Tooor! Fontaine! Was für ein Hammer!",
+     "Jonas Weber"
+    ],
+    "4": [
+     30.372,
+     3.45,
+     "BUT ! BUT de Fontaine ! Wexmoor égalise !",
+     "Théo Laurent"
+    ],
+    "5": [
+     30.372,
+     2.92,
+     "BUUUT ! Fontaine ! Quelle frappe !",
+     "Hugo Martin"
+    ],
+    "6": [
+     30.382,
+     3.11,
+     "¡GOOOL! ¡Fontaine! ¡Empata el Wexmoor!",
+     "Lucía Romero"
+    ],
+    "7": [
+     30.382,
+     3.22,
+     "GOOOL! Fontaine! Pareggio del Wexmoor!",
+     "Giulia Conti"
+    ],
+    "8": [
+     30.382,
+     2.92,
+     "GOOOL! Fontaine! Empata o Wexmoor!",
+     "Rafael Souza"
+    ],
+    "9": [
+     30.382,
+     3.26,
+     "GOAL! Fontaine! Wexmoor maakt gelijk!",
+     "Sanne de Vries"
+    ],
+    "10": [
+     30.382,
+     3.13,
+     "GOOOL! Fontaine! Wexmoor eşitledi!",
+     "Emre Aydın"
+    ],
+    "11": [
+     30.382,
+     2.3,
+     "ゴール！フォンテーヌ！同点！",
+     "Yuki Tanaka"
+    ]
+   }
+  },
+  {
+   "m": 163,
+   "kind": "analyst",
+   "gk": "goal_analysis",
+   "w": 33.57,
+   "ins": "payoff",
+   "ch": {
+    "0": [
+     34.77,
+     7.02,
+     "There it is. Ibsen wins it back, and this time it goes straight across to Rasmussen!",
+     "Daniel Price"
+    ],
+    "1": [
+     35.769,
+     6.22,
+     "There it is. Ibsen wins it, and this time it goes across, long and lofted.",
+     "Daniel Price"
+    ],
+    "2": [
+     34.97,
+     7.8,
+     "Genau das meinte ich! Ibsen holt den Ball, und diesmal geht's sofort auf die andere Seite.",
+     "Kim Berger"
+    ],
+    "3": [
+     34.571,
+     5.55,
+     "Genau das meinte ich. Ibsen holt ihn, und diesmal sofort rüber.",
+     "Kim Berger"
+    ],
+    "4": [
+     34.571,
+     5.23,
+     "Voilà ! Ibsen récupère, et cette fois, ça part de l'autre côté !",
+     "Sacha Morel"
+    ],
+    "5": [
+     34.171,
+     5.37,
+     "Voilà ! Ibsen récupère, et cette fois, transversale tout de suite.",
+     "Sacha Morel"
+    ],
+    "6": [
+     34.37,
+     7.56,
+     "¡Lo que les decía! Ibsen la recupera y esta vez, cambio de orientación al instante para Rasmussen.",
+     "Lucía Romero"
+    ],
+    "7": [
+     34.37,
+     6.76,
+     "L'avevo detto! Ibsen recupera palla e stavolta subito dall'altra parte, a Rasmussen.",
+     "Giulia Conti"
+    ],
+    "8": [
+     34.171,
+     5.6,
+     "Não falei? Ibsen rouba e, dessa vez, inversão na hora para Rasmussen.",
+     "Rafael Souza"
+    ],
+    "9": [
+     34.37,
+     7.26,
+     "Zie je, dat zei ik! Ibsen wint de bal en nu meteen naar de andere kant, naar Rasmussen.",
+     "Sanne de Vries"
+    ],
+    "10": [
+     34.37,
+     5.89,
+     "Söylemiştim! Ibsen topu kaptı, bu kez hemen Rasmussen'e çapraz pas.",
+     "Emre Aydın"
+    ],
+    "11": [
+     33.57,
+     5.16,
+     "言った通りです！イブセンが奪って、今度はすぐ反対側のラスムッセンへ！",
+     "Yuki Tanaka"
+    ]
+   }
+  },
+  {
+   "m": 900163,
+   "kind": "pbp",
+   "gk": "score_line",
+   "w": 38.97,
+   "ins": null,
+   "ch": {
+    "0": [
+     42.171,
+     3.42,
+     "One-all, and about twenty minutes left.",
+     "Owen Carter"
+    ],
+    "1": [
+     42.37,
+     3.5,
+     "One-all, and twenty minutes or so to go.",
+     "Charlie Hale"
+    ],
+    "2": [
+     43.169,
+     2.97,
+     "1:1. Noch knapp zwanzig Minuten.",
+     "Felix Brandt"
+    ],
+    "3": [
+     40.37,
+     3.8,
+     "1:1. Und jetzt ist hier wieder alles drin.",
+     "Jonas Weber"
+    ],
+    "4": [
+     40.17,
+     4.07,
+     "Un partout, et il reste une vingtaine de minutes.",
+     "Théo Laurent"
+    ],
+    "5": [
+     39.768,
+     5.53,
+     "Un partout. Le match est relancé, il reste une vingtaine de minutes.",
+     "Hugo Martin"
+    ],
+    "6": [
+     42.171,
+     3.27,
+     "Uno a uno, y quedan unos veinte minutos.",
+     "Lucía Romero"
+    ],
+    "7": [
+     41.57,
+     3.15,
+     "1-1, e mancano una ventina di minuti.",
+     "Giulia Conti"
+    ],
+    "8": [
+     40.171,
+     3.07,
+     "Um a um, e faltam uns vinte minutos.",
+     "Rafael Souza"
+    ],
+    "9": [
+     42.171,
+     3.58,
+     "1-1, en nog zo'n twintig minuten te gaan.",
+     "Sanne de Vries"
+    ],
+    "10": [
+     40.57,
+     3.21,
+     "Bir bir, yaklaşık yirmi dakika var.",
+     "Emre Aydın"
+    ],
+    "11": [
+     38.97,
+     2.58,
+     "1対1。残りはおよそ20分です。",
+     "Yuki Tanaka"
+    ]
+   }
+  }
+ ]
+}
