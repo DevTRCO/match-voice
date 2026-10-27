@@ -430,6 +430,9 @@ body:not(.paused):not(.idle):not(.how) .ctrl .booth.lure::after{content:"";posit
 .lg .lc{margin-right:3px}
 .lg .fl{padding:3px 6px}
 .fl .lv1{display:none}
+/* invite to switch: a gold wave runs along the other commentators every 5 s until the viewer has switched once (its phase is set from the clock, so a re-render does not restart it) */
+.flags.invite .fl:not([aria-pressed=true]):not(.soon){animation:flwave 5s ease-in-out var(--d,0s) infinite}
+@keyframes flwave{0%,16%,100%{border-color:transparent;box-shadow:none;color:var(--mute)}7%{border-color:#e3b350a6;box-shadow:0 0 12px #e3b35059;color:var(--text)}}
 .flags.tight .lb{display:none}
 .flags.compact{gap:1px}
 .flags.compact .fl{padding:3px 5px 3px 4px}
@@ -1205,7 +1208,8 @@ function hear(line){
     $("who").innerHTML=`${mini(who)}<b>${esc(who.name)}</b>${flagOf(com)}${lat!=null?`<span>${fmtLat(lat)} after ${afterWhat(line)}${wt?`, waited for the ${wt}`:""}${cached?", from the cache":""}</span>`:""}`;
   }
   nowLine();
-  const btn = (c, inner) => `<button class="fl${c.lvl==="expert"?" ex":""}" data-id="${c.id}" aria-pressed="${c===com}" title="${esc(c.name)}, ${esc(langOf(c.lang).name)}, ${LVL[c.lvl]}" aria-label="${esc(c.name)}, ${esc(langOf(c.lang).name)}, ${LVL[c.lvl]}">${inner}</button>`;
+  let wi=0; const ph=(performance.now()%5000)/1000;
+  const btn = (c, inner) => `<button class="fl${c.lvl==="expert"?" ex":""}" style="--d:${(wi++*.11-ph).toFixed(2)}s" data-id="${c.id}" aria-pressed="${c===com}" title="${esc(c.name)}, ${esc(langOf(c.lang).name)}, ${LVL[c.lvl]}" aria-label="${esc(c.name)}, ${esc(langOf(c.lang).name)}, ${LVL[c.lvl]}">${inner}</button>`;
   const langs=[...new Set(COMS.map(c=>c.lang))];
   $("flags").innerHTML=`<span class="lb">Same moment</span>`+langs.map(l=>{ const cs=COMS.filter(c=>c.lang===l), c0=cs[0];
       return cs.length>1 ? `<span class="lg">${flagOf(c0)}<span class="lc">${codeOf(c0)}</span>${cs.map(c=>btn(c,`<small><span class="lv">${LVL[c.lvl]}</span><span class="lv1">${LVL[c.lvl].slice(0,3)}</span></small>`)).join("")}</span>`
@@ -1214,8 +1218,10 @@ function hear(line){
   $("flags").querySelectorAll(".fl[data-id]").forEach(b=>{ const c=COMS.find(x=>x.id===+b.dataset.id);
     b.onmouseenter=b.onfocus=()=>{ preview=c; nowLine(); }; b.onmouseleave=b.onblur=()=>{ if(preview===c){ preview=null; nowLine(); } };
     b.onclick=()=>{ preview=null; setCom(c); }; });
+  $("flags").classList.toggle("invite", INVITE && !!line);
   flagsFit();
 }
+let INVITE=true; try{ INVITE=sessionStorage.getItem("mv_switched")!=="1" }catch(e){}
 // one slim row: the level word only where a language has two booths (as in the picker); when narrow the codes go, then the row label
 // narrow: the row label goes, then the gaps close, then the level words shorten; every language keeps its flag and code, and as a last resort the row wraps
 function flagsFit(){ const f=$("flags"); if(!f||f.offsetParent===null) return; f.classList.remove("tight","compact","short","wrap");
@@ -1235,6 +1241,7 @@ function plate(){
 function setCom(c){ if(!c) return; const prev=com; com=c;
   if(D && running && prev && prev!==c){ const w=nowW(); D.LINES.forEach(l=>{ const lw=l.ws[c.id]; if(lw!=null && lw<w-.05 && l!==shown) done.add("l"+l.m); }); }
   if(D && D.live && !(nowW()<talkUntil)) setVoice(expectedVoice());
+  if(D && prev && prev!==c && INVITE){ INVITE=false; try{ sessionStorage.setItem("mv_switched","1") }catch(e){} }   // switched once: the wave stops
   plate(); tease(); renderStrip(); renderNew(); if(D) hear(shown); if(how()) flowTick(nowW(),true); if(D && prev && prev!==c){ $("booth").classList.remove("lure"); recast(); tourRetime(); } }
 // the line on screen goes to the new booth: its subtitle at once, its voice for what is left of the new channel's slot
 let recastPending=false;
