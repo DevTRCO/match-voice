@@ -944,8 +944,10 @@ function speak(line, c, off=0){
       const v=speechSynthesis.getVoices().find(v=>v.lang===u.lang)||speechSynthesis.getVoices().find(v=>v.lang.startsWith(c.lang)); if(v) u.voice=v;
       u.onend=fin; speechSynthesis.speak(u); setVoice("browser");
     }catch(e){} };
-  const play=(u, o)=>{ const a=new Audio(u); curAudio=a; a.onended=fin; if(o>.05) a.addEventListener("loadedmetadata",()=>{ try{ a.currentTime=Math.min(o, Math.max(0,a.duration-.05)) }catch(e){} },{once:true});
-    a.onerror=()=>{ if(gen===voiceGen) tts() }; a.play().then(()=>{ if(gen===voiceGen) setVoice("el") }).catch(()=>{ if(gen===voiceGen) tts() }); };
+  // an ended file is let go: a resume after a pause calls play() on curAudio, and play() on an ended file starts it again over the next line
+  const play=(u, o)=>{ const a=new Audio(u); curAudio=a; a.onended=()=>{ if(curAudio===a) curAudio=null; fin(); }; if(o>.05) a.addEventListener("loadedmetadata",()=>{ try{ a.currentTime=Math.min(o, Math.max(0,a.duration-.05)) }catch(e){} },{once:true});
+    let fell=false; const fall=()=>{ if(gen===voiceGen && !fell){ fell=true; if(curAudio===a) curAudio=null; a.pause(); tts(); } };   // an error and a refused play() can both fire: one fallback
+    a.onerror=fall; a.play().then(()=>{ if(gen===voiceGen) setVoice("el") }).catch(fall); };
   if(live){
     if(line.skip && line.skip[c.id]){ talkUntil=0; return; }   // the director gave up on this line (it waited too long): shown, never spoken
     if(off >= (line.dur[c.id]||3)-.3){ talkUntil=0; return; }   // found late (a switch, a tab back from the background): not worth a request
@@ -1603,7 +1605,7 @@ function resume(){
   if(!running||!paused) return;
   paused=false; t0=performance.now()-pauseW*1000; document.body.classList.remove("paused"); $("pp").setAttribute("aria-label","Pause"); $("pp").title="Pause (Space)";
   if(recastPending){ recastPending=false; if(shown && nowW()<talkUntil) speak(shown, com); }
-  else { if(curAudio) curAudio.play().catch(()=>{}); try{ speechSynthesis.resume() }catch(e){} }
+  else { if(curAudio && !curAudio.ended) curAudio.play().catch(()=>{}); try{ speechSynthesis.resume() }catch(e){} }
   if(roar) roar.play().catch(()=>{}); if(actx) actx.resume().then(()=>{ if(paused||!running) actx.suspend(); });
   requestAnimationFrame(tick);
 }
