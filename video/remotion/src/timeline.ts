@@ -12,11 +12,6 @@ import {segFrames} from './Main';
 
 export const LOWER_THIRD = 'Vu Minh Tran, building encara';
 
-const JA = {
-  162: 'GOAL! Fontaine! Level!',
-  163: 'Just as I said! Ibsen wins it, and this time straight across to Rasmussen!',
-};
-
 // Founder takes are at -16 LUFS; in the film they sit 2 dB lower so every goal call peaks above the founder's loudest word.
 const FOUNDER = 0.8;
 
@@ -35,26 +30,48 @@ export const timeline: Timeline = {
   global: [],
   segments: [
     {
-      // 1. cold open: Yuki Tanaka's goal call and pay-off (the Japanese build-up lines were never played in this take)
+      // 1. cold open: the same goal in four languages, hard cuts, each in the breath after the scorer's name.
+      // Japanese first: the goal call starts at S1 4.00 s, "フォンテーヌ！" ends at about 5.55 (RMS of 11-162.mp3)
       id: '1-ja-goal',
       type: 'shot',
       src: 'shots/S1_ja_goal.mp4',
-      inS: 3.2,
-      outS: 12.5,
-      audio: [
-        ...shotAudio('S1_ja_goal', 3.2, 12.5, {roar: false}),
-        // the roar runs on under the text card as the crowd tail
-        {src: ROAR, atS: 0.8, durS: 9.5, role: 'goal', volume: PAGE_MIX.filmRoar, fadeOutS: 1.5},
-      ],
-      subs: shotCues('S1_ja_goal', 3.2, 12.5, JA),
-      plates: [{fromS: 0.3, durS: 3.5, name: 'Yuki Tanaka', role: 'Japanese', face: 'yuki-tanaka'}],
+      inS: 2.8,
+      outS: 5.6,
+      audio: shotAudio('S1_ja_goal', 2.8, 5.6),
+      subs: [{startS: 1.2, endS: 2.8, text: 'ゴール！フォンテーヌ！', translation: 'GOAL! Fontaine!', lang: 'ja', page: true}],
+      plates: [{fromS: 0, durS: 2.8, name: 'Yuki Tanaka', role: 'Japanese', face: 'yuki-tanaka', cut: true}],
       note: RECORDED_NOTE,
     },
+    // then German, Spanish, Turkish
     {
-      id: '2-card',
-      type: 'text',
-      durS: 5.5,
-      lines: ['Yuki Tanaka is an AI commentator.', "In the 68th minute she pointed out a habit in Wexmoor's game."],
+      id: '9a-de-goal',
+      type: 'shot',
+      src: 'shots/S6_de_goal.mp4',
+      inS: 3.0,
+      outS: 4.8333,
+      audio: shotAudio('S6_de_goal', 3.0, 4.8333),
+      subs: [{startS: 0, endS: 1.8333, text: 'Tooor! Fontaine!', translation: 'GOAL! Fontaine!', lang: 'de', page: true}],
+      plates: [{fromS: 0, durS: 1.8333, name: 'Jonas Weber', role: 'German', face: 'jonas-weber', cut: true}],
+    },
+    {
+      id: '9b-es-goal',
+      type: 'shot',
+      src: 'shots/S6_es_goal.mp4',
+      inS: 3.0,
+      outS: 5.0,
+      audio: shotAudio('S6_es_goal', 3.0, 5.0),
+      subs: [{startS: 0, endS: 2.0, text: '¡GOOOL! ¡Fontaine!', translation: 'GOAL! Fontaine!', lang: 'es', page: true}],
+      plates: [{fromS: 0, durS: 2.0, name: 'Lucía Romero', role: 'Spanish', face: 'lucia-romero', cut: true}],
+    },
+    {
+      id: '9c-tr-goal',
+      type: 'shot',
+      src: 'shots/S6_tr_goal.mp4',
+      inS: 3.0,
+      outS: 5.0333,
+      audio: shotAudio('S6_tr_goal', 3.0, 5.0333),
+      subs: [{startS: 0, endS: 2.0333, text: 'GOOOL! Fontaine!', translation: 'GOAL! Fontaine!', lang: 'tr', page: true}],
+      plates: [{fromS: 0, durS: 2.0333, name: 'Emre Aydın', role: 'Turkish', face: 'emre-aydin', cut: true}],
     },
     {
       id: '3-founder-A',
@@ -163,37 +180,6 @@ export const timeline: Timeline = {
       // the line is short and the boards carry no crowd: lifted 3 dB so the split does not dip under the film
       audio: shotAudio('S3_scene2_goal_enx', 8.9, 12.3, {skip: [1189569]}).map((x) => ({...x, volume: 1.4})),
     },
-    // 9. the goal call in German, Spanish, Turkish: hard cuts on the goal, each cut in the breath after the scorer's name
-    {
-      id: '9a-de-goal',
-      type: 'shot',
-      src: 'shots/S6_de_goal.mp4',
-      inS: 3.0,
-      outS: 4.8333,
-      audio: shotAudio('S6_de_goal', 3.0, 4.8333),
-      subs: [{startS: 0, endS: 1.8333, text: 'Tooor! Fontaine!', translation: 'GOAL! Fontaine!', lang: 'de', page: true}],
-      plates: [{fromS: 0, durS: 1.8333, name: 'Jonas Weber', role: 'German', face: 'jonas-weber', cut: true}],
-    },
-    {
-      id: '9b-es-goal',
-      type: 'shot',
-      src: 'shots/S6_es_goal.mp4',
-      inS: 3.0,
-      outS: 5.0,
-      audio: shotAudio('S6_es_goal', 3.0, 5.0),
-      subs: [{startS: 0, endS: 2.0, text: '¡GOOOL! ¡Fontaine!', translation: 'GOAL! Fontaine!', lang: 'es', page: true}],
-      plates: [{fromS: 0, durS: 2.0, name: 'Lucía Romero', role: 'Spanish', face: 'lucia-romero', cut: true}],
-    },
-    {
-      id: '9c-tr-goal',
-      type: 'shot',
-      src: 'shots/S6_tr_goal.mp4',
-      inS: 3.0,
-      outS: 5.0333,
-      audio: shotAudio('S6_tr_goal', 3.0, 5.0333),
-      subs: [{startS: 0, endS: 2.0333, text: 'GOOOL! Fontaine!', translation: 'GOAL! Fontaine!', lang: 'tr', page: true}],
-      plates: [{fromS: 0, durS: 2.0333, name: 'Emre Aydın', role: 'Turkish', face: 'emre-aydin', cut: true}],
-    },
     {
       id: '10a-founder-D1',
       type: 'founder',
@@ -229,8 +215,8 @@ export const timeline: Timeline = {
   ],
 };
 
-// Crowd bed under the whole film at the page level, ducked -20 dB under the founder. Lifted to 0.25 under the text card
-// (after the roar tail) and the end card so neither plays as silence; fades over the last 1.5 s.
+// Crowd bed under the whole film at the page level, ducked -20 dB under the founder. Lifted to 0.25 under the end card so it
+// does not play as silence; fades over the last 1.5 s.
 const startOf = (id: string): number => {
   let f = 0;
   for (const s of timeline.segments as Segment[]) {
@@ -239,8 +225,6 @@ const startOf = (id: string): number => {
   }
   throw new Error(`no segment ${id}`);
 };
-const CARD = startOf('2-card');
-const CARD_END = startOf('3-founder-A');
 const END = startOf('11-end');
 timeline.global.push({
   src: BED,
@@ -250,10 +234,6 @@ timeline.global.push({
   fadeOutS: 1.5,
   env: [
     [0, PAGE_MIX.bed],
-    [CARD, PAGE_MIX.bed],
-    [CARD + 1.0, 0.25],
-    [CARD_END - 0.4, 0.25],
-    [CARD_END, PAGE_MIX.bed],
     [END - 0.3, PAGE_MIX.bed],
     [END + 0.3, 0.25],
   ],

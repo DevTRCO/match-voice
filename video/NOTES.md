@@ -106,3 +106,7 @@ Still open:
 - Repo visibility: make it public (after a secret scan), then set REPO_URL and re-render the end card.
 - ja and en goal calls are under the +2 LU target over the founder's loudest moment.
 - Nobody has listened to the film yet.
+
+## Re-cut 2026-10-28 (founder: the story jumped)
+
+The cold open is now the same goal in four languages, hard cuts in the breath after the scorer's name: Japanese (S1 2.8 to 5.6, cut after "フォンテーヌ！"), German, Spanish, Turkish. Then founder A, founder B, scene 1, scene 2, C with agents and verifier, the split, D1, picker D2, D3, end card. The text card ("Yuki Tanaka is an AI commentator...") is gone, and with it the bed lift under it. 3,046 frames, 101.5 s, -15.7 LUFS integrated, true peak -1.2 dBFS. The final file is the raw render remuxed with faststart (`-c copy`); the previous cut is kept locally as `video/out/encara-demo.v1.mp4`.
