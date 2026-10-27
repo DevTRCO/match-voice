@@ -745,6 +745,15 @@ function buildPlay(D){
       LB.push({w, wEnd:w+2.6, id:sh, k:"shot", m:Math.round(dist), pr:r.pressure ? (r.pressure.under?"on":"off") : null}); holder=null; bx=ex+s*.6; by=ey;
     }
   }
+  // live: a pass whose row has not come yet but whose `run` cue has: its receiver (and a keeper's goal kick) already moves
+  const FLH=[];   // the same passes as play entries, for the runs made before a kick (a midfielder checking short); never drawn
+  if(D.isLive) for(const h of LIVE.hints){ if(R.some(q=>q.type==="pass"&&q.eid===h.eid)) continue;
+    const wk=D.wOf(h.t), wa=Math.max(wk+.2, D.wOf(h.t_arr||h.t+1));
+    anchor(h.player,{w0:wk,w1:wa,w2:wa+.05,x:h.x,y:h.y,wk});
+    if(h.by && h.sx!=null) FLH.push({wk,wa,sx:h.sx,sy:h.sy,ex:h.x,ey:h.y,team:h.by[0],pt:h.pass_type,by:h.by,to:h.player,len:Math.hypot(h.x-h.sx,h.y-h.sy)});
+    if(h.under && h.by) PR.push({id:h.by,w0:wk-1.4,w1:wk});
+    if(h.pass_type==="goal_kick" && h.by && h.sx!=null){ const s=D.goalX(h.by[0])<52?1:-1;
+      anchor(h.by,{w0:Math.max(D.off[D.partOf(wk)],wk-2.4),w1:wk-.15,w2:wk+.1,x:h.sx+s*.9,y:h.sy+.25}); } }
   key(D.LEN+60,bx,by);
   K.sort((a,b)=>a.w-b.w); POS.sort((a,b)=>a[0]-b[0]);
   // labels never stack: a label starts when the one before has had about a second, and ends when the next starts
@@ -755,7 +764,7 @@ function buildPlay(D){
   for(let i=0;i<LB.length-1;i++) LB[i].w1 = Math.min(LB[i].w1, LB[i+1].w0);
   // a cut ends a move
   D.cuts.forEach(ct=>MV.forEach(m=>{ if(m.w0<ct.a&&m.w1>ct.a) m.w1=ct.a; }));
-  return {K,A,LB,PR,POS,FL,IC,MV};
+  return {K,A,LB,PR,POS,FL,FLH,IC,MV};
 }
 
 /* ---------- individual players: profile per shirt number, purposeful runs from the events ---------- */
@@ -780,7 +789,7 @@ function buildRuns(){
   const of=(s,f)=>D.players.filter(p=>p.side===s&&f(p));
   const fwd=s=>D.goalX(s)>D.ownX(s)?1:-1;
   const fbY=p=>/^R/.test(p.pos)?1:-1;   // which flank a full back covers, in the team's own frame
-  for(const f of P.FL){ if(f.shot) continue;
+  for(const f of P.FL.concat(P.FLH||[])){ if(f.shot) continue;
     const T=f.team, O=D.other(T), s=fwd(T), passer=D.PL[f.by]||{};
     // a midfielder checks short to offer the defender or keeper on the ball a pass
     if(passer.grp==="DEF"||passer.grp==="GK"){
@@ -1328,12 +1337,12 @@ const hasGoal = () => !!(D && D.rows.some(r=>r.type==="shot"&&(D.E[r.i]||{}).out
 const sceneName = k => k===1 ? "Scene 1, analysis" : `Scene 2, ${hasGoal()?"the goal":"open play"}`;
 const REC_TXT = {
   rec:  ()=>({long:"Recorded from a real run", short:"Recorded", title:REC_LABEL}),
-  now:  ()=>{ const n=lagS(); return {long:`Generated now, ${n}\u00a0s behind`, short:`Live, ${n}\u00a0s behind`, title:`Generated now by real model calls. The picture runs ${n} seconds behind the generator, so every pass is known before it is drawn.`}; },
+  now:  ()=>{ const n=lagS(); return {long:`Generated now, ${n}\u00a0s behind`, short:`Live, ${n}\u00a0s behind`, title:`Generated now by real model calls. The picture runs ${n}\u00a0${n===1?"second":"seconds"} behind the generator, so every pass is known before it is drawn.`}; },
   mine: ()=>({long:"Your new run", short:"Your run", title:"Generated in this session. Watching it again costs nothing."}),
   ana:  ()=>({long:sceneName(1), short:"Scene 1",
               title: (D&&D.deadBall ? "The ball is out of play: the commentator explains what the data shows." : "A pause in play: the commentator explains what the data shows.")+" "+REC_LABEL}),
   live: ()=>({long:sceneName(2), short:"Scene 2", title:"Back in play: live commentary again. "+REC_LABEL}) };
-// seconds the board is behind the generator: 3 by design, more after a pause (the generator does not wait)
+// seconds the board is behind the generator: DELAY by design, more after a pause (the generator does not wait)
 const lagS = () => { if(!LIVE.tHello || !D || !D.live) return DELAY; return Math.max(DELAY, Math.round((performance.now()-LIVE.tHello)/1000 - nowW())); };
 function lagBadge(){ if(REC_ON!=="now") return; const n=lagS(); if(n!==LIVE.lagShown){ LIVE.lagShown=n; fitRec(); } }
 const REC_LABEL = "Recorded from a real run of the engine. The agents wrote and checked every line; this page replays it at match pace.";
@@ -1725,7 +1734,7 @@ function targetOf(pl,k,w){
 // a long run to a pass keeps an even pace; a short one eases in and out
 function anchorW(a,w){ if(w<a.w0) return 0; if(w<a.w1){ if(a.w1<=a.w0) return 1; const k=(w-a.w0)/(a.w1-a.w0); return a.w1-a.w0>1 ? .55*k+.45*smooth(k) : smooth(k); } if(w<=a.w2) return 1; return 1-smooth((w-a.w2)/(a.fall||3.2)); }   // a player who just played the ball jogs back into shape, no sprint
 // live data: a receiver starts towards the pass before the kick, so a short pass to a player 20 m away is a run, not a dash.
-// The lead is at most DELAY-1 (2 s): the board runs DELAY (3 s) behind the generator and a pass row is sent at its kick, so it is known a second before the run starts.
+// The lead is at most RUN_LEAD (2 s): the server sends a `run` cue 2.5 s before each kick (who sets off, to which spot), so the run is known before it starts.
 function preRuns(){
   const idx={}, bySide={H:0,A:0}; D.players.forEach(pl=>idx[pl.id]=bySide[pl.side]++);
   const rawAt=(pl,w)=>{ let [x,y]=targetOf(pl,idx[pl.id],w);   // where the player is at the kick, from the touches before it only
@@ -1741,7 +1750,7 @@ function preRuns(){
   const runs=[]; D.players.forEach(pl=>(P.A[pl.id]||[]).forEach(a=>{ if(a.wk!=null) runs.push([pl,a]); }));
   runs.sort((p,q)=>p[1].wk-q[1].wk);
   for(const [pl,a] of runs){
-    const [x,y]=rawAt(pl,a.wk), d=Math.hypot(a.x-x,a.y-y), lead=clamp(d/6.5-(a.w1-a.wk),0,DELAY-1);
+    const [x,y]=rawAt(pl,a.wk), d=Math.hypot(a.x-x,a.y-y), lead=clamp(d/6.5-(a.w1-a.wk),0,RUN_LEAD);
     let lo=partStart(a.wk); for(const b of P.A[pl.id]) if(b!==a && b.w1<=a.wk+1e-6) lo=Math.max(lo,b.w1);
     a.w0=Math.max(lo,a.wk-lead); }
   goalSpots();
@@ -2062,7 +2071,8 @@ function prepare(st, rows, live){
   D = build(st, rows); D.isLive=!!live; D.live=!!live && !LIVE.ended; document.body.classList.toggle("livedata", D.isLive);
   // a dead ball only when the data says so: the last event went out or was a foul, or the next feed row after it is a restart (corner, free kick, goal kick, throw-in)
   { const last=Object.values(D.E).filter(e=>e.t<D.parts[0][0]).sort((a,b)=>a.t-b.t).pop();
-    const nx=last && (rows||[]).filter(r=>r.t>last.t+.01 && r.k===0).sort((a,b)=>a.t-b.t)[0];
+    const cue=live ? LIVE.hints.map(h=>({t:h.t, k:0, pass_type:h.pass_type, team:h.by&&h.by[0]})) : [];   // live: a restart is set up before its row comes, the run cue says which
+    const nx=last && (rows||[]).concat(cue).filter(r=>r.t>last.t+.01 && r.k===0).sort((a,b)=>a.t-b.t)[0];
     const RESTART=["corner","free_kick","goal_kick","throw_in"];
     D.restart = nx && RESTART.includes(nx.pass_type) ? {type:nx.pass_type, side:nx.team, t:nx.t} : null;
     D.deadBall = !!last && (!!D.restart || last.type==="foul" || last.outcome==="out");
@@ -2110,8 +2120,9 @@ function liveTimingNote(){
 // the live API runs on another origin than this page; ?api=https://... overrides it. Without a usable address the page plays the recorded run only.
 const LIVE_API = (new URLSearchParams(location.search).get("api") || "https://encara-live.agreeablemeadow-1641ec5a.centralus.azurecontainerapps.io").replace(/\/+$/,"");
 const API_SET = /^https?:\/\//.test(LIVE_API) && !/REPLACE/.test(LIVE_API);
-const DELAY = 3;   // seconds the picture runs behind the generator: every short lookahead of the board (a pass's receipt, a run before the kick, a label hand-over) is known by then
-const LIVE = {state:"idle", avail:null, scene:null, health:null, token:null, runsLeft:null, runsCap:null, ws:null, hello:null, run:null, msgs:[], rows:[], demo:null,
+const DELAY = 1;   // seconds the picture runs behind the generator: covers the stream's tick and the network, and gives the voice a head start
+const RUN_LEAD = 2;   // the longest run a receiver makes before the kick; the server's `run` cue arrives 2.5 s before the kick, so it is known in time
+const LIVE = {state:"idle", avail:null, scene:null, health:null, token:null, runsLeft:null, runsCap:null, ws:null, hello:null, run:null, msgs:[], rows:[], hints:[], demo:null,
   tHello:0, lagShown:null, voiced:new Set(), lastAt:0, lastT:null, lastW:0, ended:false, end:null, died:null, dirty:false, built:0, from:"start", retried:false, recheck:null, watch:null};
 const VC = new Map(), VBLOCK = new Set();   // the voice of this run's lines (promises of blob urls), and channels the server will not voice
 let VOICE_OFF = null, VOICE_FAILS = 0;
@@ -2231,7 +2242,7 @@ function onHello(m, sc, world){
   // so the cap never strikes in the middle of the attack and the goal call is never the line that loses its voice
   const vleft=[sc.session_credits_left, sc.ip_credits_left, sc.today&&sc.today.voice_credits_left].filter(x=>typeof x==="number");
   if(!VOICE_OFF && vleft.length && Math.min(...vleft) < RUN_VOICE_NEED) VOICE_OFF="tts_low";
-  Object.assign(LIVE, {hello:m, run:m.run, msgs:[], rows:[], ended:false, end:null, died:null, dirty:true, tHello:performance.now(), lastAt:performance.now(), lastT:null, lastW:0, retried:false,
+  Object.assign(LIVE, {hello:m, run:m.run, msgs:[], rows:[], hints:[], ended:false, end:null, died:null, dirty:true, tHello:performance.now(), lastAt:performance.now(), lastT:null, lastW:0, retried:false,
     demo:{match:sc.match, start:sc.start, until:sc.until, clock:sc.clock, score:sc.score, goal_t:sc.goal_t, parts:[[sc.start, sc.until]], attack:sc.attack, live:true, pending:true, length:sc.until-sc.start}});
   if(LIVE.runsLeft!=null) LIVE.runsLeft=Math.max(0, LIVE.runsLeft-1);
   if(sc.ip_runs_left!=null) sc.ip_runs_left=Math.max(0, sc.ip_runs_left-1);
@@ -2244,6 +2255,7 @@ function onHello(m, sc, world){
 function onLiveMsg(m){
   LIVE.lastAt=performance.now(); LIVE.dirty=true;
   if(m.k==="row"){ LIVE.rows.push(...(m.rows||[])); if(typeof m.w==="number") LIVE.lastW=m.w; return; }
+  if(m.k==="run"){ LIVE.hints.push(...(m.rows||[])); return; }   // a receiver sets off before the kick: the board's cue, never shown as data
   if(m.k==="end"){ LIVE.end=m; LIVE.lastT=m.t; LIVE.ended=true; return; }
   if(m.k==="error") return;   // the close that follows ends the run
   LIVE.msgs.push(m); LIVE.lastT=m.t; if(typeof m.w==="number") LIVE.lastW=m.w;

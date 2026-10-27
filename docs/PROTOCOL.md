@@ -280,6 +280,21 @@ target and the planned arrival `t_arr`, as the file does), the receipt at the ar
 | `w` | paced live only: wall seconds since the stream started |
 | `rows` | the rows that became known since the last `row` message, ordered by `t`, then `eid`. Each row is sent once. A run sends none after `until` |
 
+### `run` (run cues for the board)
+
+Additive (2026-10-27), sent whenever `row` messages are (rows on); clients that do not know it ignore it. One cue per pass row that
+names a target, sent `RUN_LEAD_S` (2.5 match seconds) before the kick: the moment the receiver may set off. It lets the page run its
+picture 1 s behind the generator (was 3 s) and still start a receiver's run before the ball is played. A cue is off-ball movement only:
+who runs (`player`), from whose pass (`by`, `pass_type`, whether the passer is pressed, `under`), to which spot (`x, y`, the receipt's,
+else the pass end) and when the ball is due (`t`, `t_arr`), plus the kick spot (`sx, sy`). It has no outcome, the booth never reads it
+(a run with rows off says the same lines at the same times, `tests/test_run_cues.py`), and the page draws nothing from it but motion:
+the ball, the labels and lane 1 wait for the pass row.
+
+```json
+{"k":"run","t":5418.0,"rows":[{"eid":29424,"t":5420.3,"t_arr":5422.069,"player":"A8","by":"A3","pass_type":"short","under":true,
+ "x":38.0,"y":53.8,"sx":16.4,"sy":48.0}]}
+```
+
 Catch-up with rows on: before `start` the stream sends only the frames of the last 15 match seconds (the newest one always; its stat
 deltas cover everything folded, so the state at `start` is the same as with the full catch-up) and one `row` message with the rows of
 those 15 seconds. Without rows the catch-up is unchanged: for the winner scene (start 5415) that is 1,363 frames, about 196 KB, sent

@@ -595,6 +595,15 @@ shot), the keeper takes his goal kick (0.93 m from the ball), a run with under 2
 instead of "Short", headers once, "met first time", carry and press rows name the player, "1 commentator", phone rows wrap. A forged-token test
 was flaky 1 time in 16 (it appended "0" to a real token), fixed. 849 tests green, 1 xfail. The backend changed again: rebuild and redeploy the image.
 
+Live picture 1 s behind instead of 3 (2026-10-27, founder: "das ist aber nicht realtime"; no commit, 0 model calls, 0 ElevenLabs credits): the 3 s
+buffer existed for the board's runs before a kick (up to 2 s). The runner now sends `run` cues (`proto.runs`, `RUN_LEAD_S` 2.5) with rows on: per targeted
+pass the runner, passer, pass type, pressure, spot and times, before the kick; the booth never reads them (same lines with rows off, `test_run_cues.py`).
+mock4: `DELAY` 1, `RUN_LEAD` 2, cues become receiver and keeper anchors, pre-kick runs (`FLH`) and pressure until the pass row arrives, and name the restart
+at the start. Measured with a live-arrival emulator (8 seeds, 115 passes, board rebuilt every 0.25 s from what the server had sent): without cues at 1 s,
+26 receivers more than 2 m off the ball at arrival (16 m worst); with cues at 1 s, 4 (as at 3 s), positions differ from the full-knowledge board by more
+than 1 m in 0.1% of player frames (the opening second only). Devserver runs en 1430x769 and ja 390x844: run starts 1.1 s after the click, 2-1, no errors.
+852 tests green, 1 xfail. Backend changed: rebuild and redeploy the image, then SWA.
+
 Next, in order:
 6. Record the video from docs/VIDEO.md.
 

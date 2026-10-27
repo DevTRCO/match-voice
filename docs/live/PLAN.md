@@ -34,7 +34,8 @@ Input: docs/live/UNDERSTAND.md (three read-only reports: backend, page, deploy).
   - counters in memory; one replica (min = max = 1) so they hold; a restart resets them (documented).
 - Origins: CORS and a WebSocket Origin check from `MATCHVOICE_ALLOWED_ORIGINS` (SWA URL plus localhost dev).
 - Page (ui/public/mock4.html): live branch that collects the stream into the same {demo, hello, messages} shape and rebuilds
-  D/P/RUNS/INTEL about 4 times a second; board plays 3 s behind the generator (stated on the page); a live run opens in How mode so
+  D/P/RUNS/INTEL about 4 times a second; board plays 1 s behind the generator (stated on the page; was 3 s until the `run` cues of
+  2026-10-27 gave the board the receivers' runs 2.5 s before each kick); a live run opens in How mode so
   data, agents and voice are visible; after `end` the run behaves like a recording (seek, replay, other commentator).
   "New run" as a button in the top bar next to "How does it work" (only while a run can start; runs left beside it, hidden on a phone,
   in its tooltip and aria-label) and on the end screen (the top bar button hides there, so the count is shown once). The start screen

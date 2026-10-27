@@ -56,6 +56,7 @@ SCORE_LINE = {"priority": 60, "ttl": 30.0, "voice_wait": 20.0}  # after the co-c
 WORLD_CONTEXT_WAIT_S = 6.0  # world channels: a context line (the story) may wait this long for the voice (the core lead waits 3 s for the co)
 SHORT_IN_PLAY = frozenset({"tackle_won", "sprint", "shot_blocked"})  # skeleton play-by-play that takes its shortest wording while the ball is in play (fast layer on)
 WORLD_CALL_GUESS_S = 3.0  # world_skip_late: the expected length of a world call until one has been measured in this run
+RUN_LEAD_S = 2.5  # rows on: a pass's `run` cue goes out this many match seconds before the kick, when its receiver may set off (board only)
 ROWS_CATCH_UP_S = 15.0  # rows on: the catch-up keeps the frames and enriched rows of this many match seconds before start, the rest is folded
 
 
@@ -429,6 +430,8 @@ class Runner:
             feed = self._rows if self._rows is not None else enrich(self.meta, self.bundle.events).rows
             self._row_feed = sorted((r for r in feed if self.until is None or r["t"] <= self.until), key=lambda r: (r["t"], r["eid"]))
             self._ri = 0
+            self._cue_feed = self._run_cues(self._row_feed)
+            self._ci = 0
         mb = MomentBuilder(eng, self._rows)
         if self.patterns:
             self._pat = PatternFeed(self.meta, fired=self.booth["fired"])
@@ -469,6 +472,9 @@ class Runner:
                 early = [r for r in early if r["t"] >= self.start - ROWS_CATCH_UP_S]
                 if early:  # stamped at the newest of them: still before start, never ahead of a row
                     yield proto.rows(max(ft, early[-1]["t"]), early)
+                cues = [c for c in self._take_cues(self.start) if c["t"] >= self.start - ROWS_CATCH_UP_S]
+                if cues:
+                    yield proto.runs(max(ft, self.start - RUN_LEAD_S), cues)
             clock = self._clock = _Clock(self.speed, self.paced, self.start)
             ft = self.start
             for group in self._groups(future):
@@ -537,18 +543,62 @@ class Runner:
             self._ri += 1
         return out
 
+    def _run_cues(self, feed: list[dict]) -> list[dict]:
+        """One cue per pass that names a target: who sets off, from whom, to which spot (the receipt's, else the pass end) and
+        when the ball is due. The board starts the receiver's run before the kick; the booth never sees a cue."""
+        rec = {r["pass_eid"]: r for r in feed if r["type"] == "receipt" and r.get("pass_eid") is not None}
+        evs = self.bundle.events
+        out = []
+        for r in feed:
+            if r["type"] != "pass" or not r.get("target"):
+                continue
+            ev = evs[r["i"]] if r.get("k") == 0 and 0 <= r["i"] < len(evs) else None
+            rc = rec.get(r["eid"])
+            if rc is not None:
+                x, y = rc["x"], rc["y"]
+            elif r.get("end_x") is not None:
+                x, y = r["end_x"], r["end_y"]
+            elif ev is not None and ev.end_x is not None:
+                x, y = ev.end_x, ev.end_y
+            else:
+                continue
+            sx = r["x"] if r.get("x") is not None else (ev.x if ev is not None else None)
+            sy = r["y"] if r.get("y") is not None else (ev.y if ev is not None else None)
+            out.append({"eid": r["eid"], "t": r["t"], "t_arr": r.get("t_arr"), "player": r["target"],
+                        "by": r.get("player") or (ev.player if ev is not None else None), "pass_type": r.get("pass_type"),
+                        "under": bool((r.get("pressure") or {}).get("under")),
+                        "x": round(x, 1), "y": round(y, 1), "sx": None if sx is None else round(sx, 1), "sy": None if sy is None else round(sy, 1)})
+        out.sort(key=lambda c: (c["t"], c["eid"]))
+        return out
+
+    def _take_cues(self, ft: float) -> list[dict]:
+        out = []
+        while self._ci < len(self._cue_feed) and self._cue_feed[self._ci]["t"] - RUN_LEAD_S <= ft:
+            out.append(self._cue_feed[self._ci])
+            self._ci += 1
+        return out
+
     def _send_rows(self, ft: float, at: int | None = None) -> None:
-        """Rows on: one `row` message with the enriched rows whose time has come (no lookahead)."""
+        """Rows on: one `row` message with the enriched rows whose time has come (no lookahead), then one `run` message with
+        the cues of passes due within RUN_LEAD_S (the receiver's run starts before the kick; board only)."""
         if not self.rows:
             return
+        w = self._clock.since() if self.real else None
         batch = self._take_rows(ft)
-        if not batch:
-            return
-        msg = proto.rows(ft, batch, w=self._clock.since() if self.real else None)
-        if at is None:
-            self._out.append(msg)
-        else:
-            self._out.insert(at, msg)
+        if batch:
+            msg = proto.rows(ft, batch, w=w)
+            if at is None:
+                self._out.append(msg)
+            else:
+                self._out.insert(at, msg)
+                at += 1
+        cues = self._take_cues(ft)
+        if cues:
+            msg = proto.runs(ft, cues, w=w)
+            if at is None:
+                self._out.append(msg)
+            else:
+                self._out.insert(at, msg)
 
     def _groups(self, events: list[Event]):
         group: list[Event] = []

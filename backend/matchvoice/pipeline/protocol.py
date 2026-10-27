@@ -144,6 +144,16 @@ def voice(t: float, channel: int, moment: int, start: float, end: float, cut: bo
     return out
 
 
+def runs(t: float, cues: list[dict], w: float | None = None) -> dict:
+    """Additive, with rows on: run cues for the board. A cue goes out RUN_LEAD_S (2.5 match s) before its pass, when the receiver
+    may set off: `eid` of the pass row, kick `t`, `t_arr`, the runner `player`, the passer `by`, `pass_type`, whether the passer is
+    pressed (`under`), the spot `x, y` and the kick spot `sx, sy` (metres). Off-ball movement only: no outcome, and the commentary never reads it."""
+    out = {"k": "run", "t": round(t, 2), "rows": cues}
+    if w is not None:
+        out["w"] = round(w, 3)
+    return out
+
+
 def rows(t: float, rows: list[dict], w: float | None = None) -> dict:
     """Additive, live runs with rows on (`fast=1` or `rows=1`): the enriched rows (sim/micro/enrich.py, the shape of
     ui/public/insert/micro.json) whose time `t` the stream has reached, in time order. A pass row comes at its kick, its receipt
