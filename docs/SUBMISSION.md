@@ -5,7 +5,7 @@ under each box counts the box content only (spaces and line breaks included). Ev
 docs/EVAL.md, docs/DENSITY.md, docs/DEPLOY.md, the code or a file in `data/` or `ui/public/insert/`; the source is named
 where the number appears. Replace `VIDEO_URL` once the video is on YouTube.
 
-Checked on 2026-10-26: `python -m pytest -q` gives 770 passed, 1 xfailed (no key, about 5 minutes); the demo URL answers 200.
+Checked on 2026-10-27: `python -m pytest -q` gives 899 passed, 1 xfailed (no key, about 6 minutes); the demo URL and the live server's /api/health answer 200.
 The verifier figures below follow docs/EVAL.md as regenerated on 2026-10-26 at 23:54 (895 lines at x30).
 
 ## 1. Project name and tagline
@@ -29,21 +29,21 @@ Characters: 75
 ## 2. Elevator pitch
 
 ```text
-A football match broadcast is usually made for one audience in one language. encara is a real-time commentary engine that clubs, leagues and streaming services can plug into their own apps. From a live stream of match events it writes and speaks commentary in nine languages, at beginner or expert level. Agents on the Microsoft Agent Framework split the work: a spotter tracks each team's habits over the half, Claude writes the analysis and every line in six of the languages, templates call the play-by-play in English, German and French, and plain code checks the names and numbers in every model line against the match data before it is spoken. The public demo runs on Azure Static Web Apps.
+A football match broadcast is usually made for one audience in one language. encara is a real-time commentary engine that clubs, leagues and streaming services can plug into their own apps. From a live stream of match events it writes and speaks commentary in nine languages, at beginner or expert level. Agents on the Microsoft Agent Framework split the work: a spotter tracks each team's habits over the half, Claude writes the analysis and every line in six of the languages, templates call the play-by-play in English, German and French, and plain code checks the names and numbers in every model line against the match data before it is spoken. The live server runs on Azure Container Apps and the demo page on Azure Static Web Apps.
 ```
 
-Characters: 696
+Characters: 738
 
 ## 3. Full description
 
 ```text
 What it does
 
-encara turns a live stream of football match events into spoken commentary. Nine languages run today on twelve channels, each with a fictional commentator at beginner or expert level. English, German and French have a two-person booth at both levels; Spanish, Italian, Portuguese, Dutch, Turkish and Japanese each have a solo commentator.
+encara turns a live stream of football match events into spoken commentary. Nine languages run on twelve channels, each with a fictional commentator at beginner or expert level. English, German and French have a two-person booth at both levels; Spanish, Italian, Portuguese, Dutch, Turkish and Japanese each have a solo commentator.
 
-Clubs, leagues and streaming services plug it in through one documented stream: captions, voice timing and evidence arrive as messages over WebSocket or server-sent events (docs/PROTOCOL.md), and an MCP server exposes the match data, the commentary and the verifier as 7 tools (docs/MCP.md). The demo page plays a recording of that stream.
+Clubs, leagues and streaming services plug it in through one documented stream: captions, voice timing and evidence arrive as messages over WebSocket or server-sent events (docs/PROTOCOL.md), and an MCP server exposes the match data, the commentary and the verifier as 7 tools (docs/MCP.md).
 
-In the demo the spotter finds a habit during a quiet 68th minute. Since half-time Wexmoor has won the ball 11 times in its own half, and every first pass after those wins was short; none went across the pitch. The commentator points it out. At 71' Wexmoor wins the ball, switches it about 50 m across and scores, and the commentator refers back to the earlier line.
+The demo has three steps. Demo plays a recorded insert: in a quiet 68th minute the spotter finds a habit. Since half-time Wexmoor has won the ball 11 times in its own half, and every first pass after those wins was short. The commentator points it out. At 71' Wexmoor wins the ball, switches it about 50 m across and scores, and the commentator refers back to the earlier line. How does it work shows, line by line, what arrived, what the system understood, what was written, what the verifier checked and when it was spoken. Generate run plays a new scene of the same match, simulated and commentated live with real model calls: 1-1 in the 88th minute, a new attack each run and a late winner.
 
 The problem
 
@@ -51,68 +51,69 @@ A match broadcast is usually made for one audience in one language. A language m
 
 How it works
 
-The work is split into five roles. Two call a model; the other three are plain code, so facts and timing do not depend on a model.
-- Spotter (code): reads every event in order with no lookahead, detects moments and keeps state over the half to find a team's habit and the goal that breaks it.
-- Analyst and world booth (two Claude Haiku 5.5 agents): get the facts of one moment and the lines the booth said before it. One call writes the lines for the six core channels, a second call the lines for the six world-language channels.
-- Verifier (code): checks the numbers, scorelines, player names, claims about habits and records, language and length of every model line against the match data.
+Ingest: the server streams synthetic events (passes, receipts, shots, tackles, pressure, possession, metadata) one by one, with no lookahead. Interpret: a fact engine keeps live statistics, momentum, win probability and the match so far. Explain: five roles, two of them model agents.
+- Spotter (code): detects moments and keeps state over the half to find a team's habit and the goal that breaks it.
+- Analyst and world booth (two Claude Haiku 5.5 agents): get the facts of one moment, the match so far and the lines the booth said before. One call writes the lines for the six core channels, a second call the lines for the six world-language channels.
+- Verifier (code): checks the numbers, scorelines, player names, the match history, claims about habits and records, language and length of every model line against the match data.
 - Publisher (code): releases the lines that pass.
 - Directors (code, one per channel): decide what is said and when, and drop lines that come too late.
-
-Play-by-play in English, German and French comes from a bank of fixed template lines, and the analyst adds the analysis. In the six world languages the world booth writes every line.
+Render: captions, voice and an animated pitch with the players' runs. Personalize: the viewer picks a language and a level, and can switch commentator mid-match; the same moment reads differently for a newcomer and an expert.
 
 Analyst, Verifier and Publisher form a Microsoft Agent Framework workflow with conditional edges. A rejected line goes back to the Analyst once with the reason. If it fails again, the core languages use a template line and the world languages say nothing for that moment.
 
 Microsoft and Azure technologies used
 
 - Microsoft Agent Framework (Python): the newsroom workflow, its executors and edges, and both model agents.
-- Azure Static Web Apps (Free plan): hosts the public demo.
-- A Dockerfile for the live server, built and run locally, and a documented Azure Container Apps setup that has not been deployed.
+- Azure Container Apps: the live server (WebSocket stream, model calls, voice), one replica in Central US, with per-session, per-address and daily limits on runs, model calls and voice credits.
+- Azure Container Registry: the server image.
+- Azure Static Web Apps (Free plan): the demo page.
 
-The model is Claude Haiku 5.5 from Anthropic, called through the Agent Framework's Anthropic connector (agent-framework-anthropic), not Azure OpenAI. The demo's voices were generated ahead of time with ElevenLabs Eleven v4. In live mode the page uses the browser's own speech voice; the server's optional ElevenLabs voice covers English, German and French.
+The model is Claude Haiku 5.5 from Anthropic, called through the Agent Framework's Anthropic connector (agent-framework-anthropic), not Azure OpenAI. The recorded demo's voices were generated ahead of time with ElevenLabs Eleven v4. A generated run is voiced as it happens with ElevenLabs Flash v2.5 for the chosen commentator; the browser's own speech voice takes over if the voice service is unavailable or over its daily budget.
 
 What I measured
 
 - Verifier on injected errors, three recorded matches, the six core channels, 895 lines (docs/EVAL.md): swapped scorelines caught 43 of 43, changed numbers 203 of 203, swapped players 625 of 626. The one miss is a German genitive. The six world languages are not in this test yet.
-- World booth in the demo insert, in a paid run at match pace: 10 calls took 1.1 to 2.6 s each (median 1.3 s). World-language captions came a median 2.6 s after the event, at most 5.7 s, and 1.2 to 4.4 s behind the English booth.
-- Core analyst: one fresh call wrote all six core lines in 2.1 s (a single measurement).
-- Template captions: 2 to 3 ms after the event for goals in an earlier live test, and at most 5 ms for every template line in a run with a stand-in model on 2026-10-20.
-- Estimated cost per 90-minute match, from measured prompt and answer sizes (no token counts were logged): under one cent of model calls for the six core channels, and about $1.60 to $3.20 of ElevenLabs voice per channel.
-- 770 automated tests pass.
+- World booth in the demo insert, in a paid run at match pace: 10 calls took 1.1 to 2.6 s each (median 1.3 s). World-language captions came a median 2.6 s after the event, at most 5.7 s.
+- Generated run on Azure: commentary starts 2.0 s after the click, and a voice line is ready a median 0.48 s after it is requested. The picture runs 1 s behind the generator, so each player's run is known before it is drawn.
+- Template captions: at most 5 ms after the event.
+- Estimated cost per 90-minute match, from measured prompt and answer sizes: under one cent of model calls for the six core channels, and about $1.60 to $3.20 of ElevenLabs voice per channel.
+- 899 automated tests pass.
 
 Limits
 
-All match data is synthetic and every club, player and commentator is fictional. The public demo is a recording made at match pace from cached model answers. The answers come from real calls in an earlier run, and the page makes no model calls. Nobody has had the languages read by a native speaker. The engine reads match events only and has no player tracking data.
+All match data is synthetic and every club, player and commentator is fictional. Nobody has had the languages read by a native speaker. The engine reads match events only and has no player tracking data. In the six world languages every line is written by the model, so they speak later than English, German and French. The public server allows one generated run per browser session and caps runs, model calls and voice credits per day.
 
-The verifier checks names, numbers, scorelines, some claims, language and length. It does not check positions on the pitch, who a number belongs to, or which player played a pass first time. Three world-language lines in the demo say Tavares was on the left, and two say the first-time pass went to him; the verifier let them through. The injected-error test covers the core languages only.
-
-The live page offers English, German and French. The six world channels run on the server in live mode but are not shown there yet, and a full match with all six has not been run.
+The verifier checks names, numbers, scorelines, the match so far, some claims, language and length. It does not check positions on the pitch or which player played a pass first time. The injected-error test covers the core languages only.
 
 What's next
 
-Native-speaker review, a licensed live data feed, the live server on Azure Container Apps, one voice stream per channel shared by all its listeners, and more languages. Each new language needs a prompt section and word lists for the verifier. The voice model, ElevenLabs Eleven v4, supports more than 90 languages.
+Native-speaker review, a licensed live data feed, one voice stream per channel shared by all its listeners, favourite-club and player modes, and more languages. Each new language needs a prompt section and word lists for the verifier.
 ```
 
-Characters: 5,678
+Characters: 5,914
 
 ## 4. Category fit: Best Multi-Agent System
 
 ```text
-A prompt that sees one moment at a time cannot connect a quiet 68th minute to a goal at 71'. The spotter keeps state over the whole half and finds the habit at 68'. When the goal at 71' breaks it, the spotter says so, and the runner hands the analyst the line the booth said at 68', so the call-back refers to a line the viewer heard about three minutes earlier. The analyst writes, a deterministic verifier checks the names and numbers in each model line against the match data, and the Agent Framework workflow routes a rejected line back once with the reason before a template or silence takes over. The check is plain code, so it does not depend on the model that wrote the line. One analyst call writes the lines for six channels, a second call those for six more languages, and twelve directors each decide timing for their own channel: one waits for a goal call to finish, another drops a line that arrived too late. Two roles call a model and three are plain code, each tested on its own.
+A prompt that sees one moment at a time cannot connect a quiet 68th minute to a goal at 71'. The spotter keeps state over the whole half and finds the habit at 68'. When the goal at 71' breaks it, the spotter says so, and the runner hands the analyst the line the booth said at 68', so the call-back refers to a line the viewer heard about three minutes earlier. In a live run every agent shares the match so far, so a booth that joins at 1-1 in the 88th minute knows who scored and when. The analyst writes, a deterministic verifier checks the names, numbers and match history in each model line against the match data, and the Agent Framework workflow routes a rejected line back once with the reason before a template or silence takes over. One analyst call writes the lines for six channels, a second call those for six more languages, and twelve directors each decide timing for their own channel. Two roles call a model and three are plain code, each tested on its own.
 ```
 
-Characters: 996
+Characters: 975
 
 ## 5. Testing instructions
 
 ```text
 1. Public demo, no setup, no key
-Open https://happy-bush-012530710.5.azurestaticapps.net in a desktop browser and turn the sound on. Press Play to hear the 46-second insert: the quiet 68th minute, the pattern, then the 71st-minute goal and the call-back. Use "Choose your commentator" to switch to another of the twelve channels (nine languages, beginner or expert), and "Hear the same goal with another commentator" at the end. "How does it work?" shows what arrives, what the system understands and what you hear, in sync with the match. The page plays a recording of the pipeline running at match pace. The model's lines in it were written by real calls in an earlier run and read from the answer cache while it was recorded, so they appear sooner than a live call would. The page makes no model calls.
+Open https://happy-bush-012530710.5.azurestaticapps.net in a desktop browser and turn the sound on. The bar at the top has three steps, and a glowing Next phase button leads through them.
+- Demo: press Play to hear the 46-second recorded insert: the quiet 68th minute, the pattern, then the 71st-minute goal and the call-back. The row under the subtitle switches to any of the twelve commentators (nine languages, beginner or expert) at the same moment.
+- How does it work: a short guided tour, then the same insert with what arrives, what the system understands, the line's way through the pipeline with real times, and what you hear.
+- Generate run: the live server on Azure simulates a new scene of the same match (1-1, 88th minute) and commentates it as it happens, with real model calls and voice, in about a minute. Every language can be switched to during the run. One generated run per browser session.
 
 2. Run it locally without a key (Python 3.11+, Node 20+)
 git clone https://github.com/DevTRCO/match-voice && cd match-voice
 cd ui && npm ci && npm run build:static
 cd dist-static && python3 -m http.server 8080
-Open http://localhost:8080. This is the same page as the public demo.
+Open http://localhost:8080. This is the demo page; Generate run calls the public server.
 
 Backend and tests, still no key, from the repository root:
 python3 -m venv .venv && source .venv/bin/activate
@@ -120,18 +121,18 @@ pip install -e ".[dev]"
 python -m pytest -q
 python -m matchvoice.evaluation
 python -m matchvoice.pipeline play --match comeback-7 --speed 60 --channel de/expert
-The tests take about 5 minutes. The evaluation rewrites docs/EVAL.md from recorded data. The last command prints German expert commentary in the terminal.
+The tests take about 6 minutes. The evaluation rewrites docs/EVAL.md from recorded data. The last command prints German expert commentary in the terminal.
 
-3. Live, with an Anthropic API key
+3. Your own live server, with an Anthropic API key
 Put ANTHROPIC_API_KEY=... in a .env file at the repository root, build the server UI and give the server a call budget:
 cd ui && npm ci && npm run build && cd ..
-python -m matchvoice.server --port 8000 --live-calls 12
-Open http://localhost:8000 and choose Go live. The server simulates a new match and plays about a minute around a goal while the analyst writes. This page offers English, German and French. --world-calls N also runs the six world channels on the server; the live page does not show them yet. Every call goes through a disk cache and a hard call budget.
+python -m matchvoice.server --port 8000 --live-calls 12 --world-calls 12
+Every call goes through a disk cache and a hard call budget. docs/DEPLOY.md describes the Azure Container Apps setup.
 
 All data is synthetic.
 ```
 
-Characters: 2,144
+Characters: 2,099
 
 ## 6. Links
 
@@ -163,14 +164,15 @@ In a quiet 68th minute the spotter, plain code that has followed the whole half,
 The work runs on the Microsoft Agent Framework. Claude writes the analysis and every line in six of the languages, play-by-play in English, German and French comes from templates, plain code checks the names and numbers in every model line against the match data, and a director per channel times each line. It runs twelve channels in nine languages, each at beginner or expert level.
 
 Try the demo: https://happy-bush-012530710.5.azurestaticapps.net
+Generate run on the page commentates a new scene live, on Azure Container Apps.
 Code: https://github.com/DevTRCO/match-voice
 
-All clubs, players, commentators and match data are synthetic. The demo is a recording at match pace, with model lines from an earlier paid run.
+All clubs, players, commentators and match data are synthetic. The video shows the recorded insert, with model lines from an earlier paid run.
 
 #football #AI #MicrosoftAgentFramework
 ```
 
-Characters: 1,110
+Characters: 1,188
 
 ## 8. Cost per match
 
