@@ -18,14 +18,14 @@ Input: docs/live/UNDERSTAND.md (three read-only reports: backend, page, deploy).
   ball on a line. `seed=` only on a server that is not public. Whitelisted on the public server; no other match or window can be started
   there. Scene list in code so a second scene can be added.
 - Every public run is fresh: real model calls, no answer cache reads (`live_fresh`), so lines differ run to run and latencies are real.
-- Runner on the server runs like the recorded insert: `fast=True`, pattern detector on, booth state per run, world booth only when the
+- Runner on the server runs like the recorded insert: `fast=True`, pattern detector on, booth state per run, world booth on every run (page sends `world=1` whenever `today.world`, since 2026-10-27 night, about 12 extra calls a run, so all nine languages can be switched to; before: only when the
   viewer's commentator is a world channel (`world=1`), so an English viewer does not pay for six world languages.
 - Enriched rows (the board's motion source, today insert/micro.json) are streamed as a new additive message `row` at the time each row
   becomes known (no lookahead). Documented in docs/PROTOCOL.md.
 - Voice: ElevenLabs `eleven_flash_v2_5`, one voice per person (cast from backend/scripts/bake_story_audio.py CAST), all 9 languages;
   only lines of the viewer's channel are synthesised; browser voice fallback; the page says which voice is in use.
 - Limits (env, defaults):
-  - session token: HMAC-signed, issued by `GET /api/session`, kept in sessionStorage, sent on /ws and /api/tts; 3 runs per session.
+  - session token: HMAC-signed, issued by `GET /api/session`, kept in sessionStorage, sent on /ws and /api/tts; 1 run per session (env MATCHVOICE_SESSION_RUNS=1 since 2026-10-27 night, was 3).
   - per client IP: 10 runs per UTC day. The address is the rightmost X-Forwarded-For entry (MATCHVOICE_TRUSTED_HOPS=1, the one Envoy
     appends); FORWARDED_ALLOW_IPS=* was dropped after review (2026-10-27): uvicorn then trusts the leftmost, client-written entry.
   - concurrency: 3 live runs at once.

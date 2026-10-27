@@ -2432,7 +2432,8 @@ async function startLive(){
     const sc=await api("/api/scene?token="+encodeURIComponent(s.j.token||"")); if(!sc.ok) throw {code:"off"};
     LIVE.scene=sc.j; LIVE.runsCap=sc.j.session_runs; LIVE.runsLeft=sc.j.session_runs_left;
     const no=refusalOf(sc.j); if(no) throw {code:no};
-    const world=!CORE_LANGS.includes(com.lang); if(world && !(sc.j.today||{}).world) throw {code:"no_world"};
+    // every run brings the world booth when the server has calls for it, so all nine languages can be switched to; only a world viewer needs it
+    const world=!!(sc.j.today||{}).world; if(!CORE_LANGS.includes(com.lang) && !world) throw {code:"no_world"};
     steps("Connecting to the live server");
     await openLive(sc.j, world);
   }catch(e){
@@ -2443,7 +2444,7 @@ async function startLive(){
 }
 function openLive(sc, world){ return new Promise((resolve, reject)=>{
   const q=new URLSearchParams({match:sc.match, mode:"live", speed:"1", paced:"1", start:String(sc.start), until:String(sc.until), fast:"1", rows:"1", token:LIVE.token||""});
-  if(world) q.set("world","1");   // the six world languages cost a call per moment: only for a viewer of one of them
+  if(world) q.set("world","1");   // the six world languages: their own calls, only the chosen channel is voiced
   const seed=new URLSearchParams(location.search).get("seed"); if(seed!=null) q.set("seed",seed);   // a fixed play, for local checks only: the public server picks it and refuses a seed
   let ws; try{ ws=new WebSocket(LIVE_API.replace(/^http/,"ws")+"/ws?"+q) }catch(e){ return reject({code:"offline"}) }
   LIVE.ws=ws; let err=null, got=false;
