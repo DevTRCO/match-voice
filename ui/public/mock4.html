@@ -233,6 +233,8 @@ body:not(.paused):not(.idle):not(.how) .ctrl .booth.lure::after{content:"";posit
 .ctrl .sp{flex:1}
 .ctrl .lv{font-weight:400;font-size:var(--t2);color:var(--mute)}
 .ctrl .lv kbd{font-family:inherit;font-size:var(--t1);color:var(--mute);border:1px solid #ffffff40;border-radius:4px;padding:0 5px;margin-left:8px}
+#vol{width:76px;height:4px;accent-color:var(--gold-hi);cursor:pointer;margin-left:-8px}
+@media (max-width:560px){ #vol{display:none} }
 #pp .pa{display:none}
 .paused #pp .pa{display:block}.paused #pp .pl{display:none}
 .idle .ctrl,.strip-on .ctrl{opacity:0;pointer-events:none}
@@ -554,6 +556,7 @@ body:not(.paused):not(.idle):not(.how) .ctrl .booth.lure::after{content:"";posit
           <div class="row">
             <button id="pp" aria-label="Pause" title="Pause (Space)"><svg class="pl" viewBox="0 0 24 24"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><svg class="pa" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z"/></svg></button>
             <button id="snd" aria-label="Sound on" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4zM16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="#fff" stroke-width="1.8" fill="none"/><path d="M4 9h4l5-4v14l-5-4H4z"/></svg></button>
+            <input type="range" id="vol" min="0" max="1" step="0.05" value="1" aria-label="Volume" title="Volume">
             <span class="lv" id="tme">0:00 / 0:45</span>
             <button class="booth lure" id="booth" aria-haspopup="true" aria-expanded="false" aria-controls="strip"></button>
             <span class="sp"></span>
@@ -945,6 +948,8 @@ let AUDIO_MAN = {};
 function audioUrl(line, c){ const key=`${c.id}-${line.m}`, f=AUDIO_MAN[key]; return f && f.caption===line.l[c.id] ? `insert/story-audio/${key}.mp3` : null; }
 const BCP = {en:"en-GB", de:"de-DE", fr:"fr-FR", es:"es-ES", it:"it-IT", pt:"pt-PT", nl:"nl-NL", tr:"tr-TR", ja:"ja-JP"};
 let curAudio=null, voiceGen=0, roar=null;
+// master volume 0..1 from the slider next to the sound button (kept per browser); voice, crowd bed and roar all follow it
+let VOL=1; try{ const v=parseFloat(localStorage.getItem("mv_vol")); if(v>=0&&v<=1) VOL=v; }catch(e){}
 function stopVoice(){ voiceGen++; if(curAudio){ curAudio.pause(); curAudio=null; } try{ speechSynthesis.cancel() }catch(e){} }
 // the label in the control bar says which voice speaks the line on air: the ElevenLabs voice (a baked file, or one made for this live run) or the browser's own
 const expectedVoice = () => { if(!sound) return ""; const t=LIVE.health&&LIVE.health.tts; return t&&t.available&&!VOICE_OFF&&!VBLOCK.has(com.id) ? "el" : "browser"; };
@@ -958,19 +963,21 @@ function speak(line, c, off=0){
   const tts=()=>{ try{
       const u=new SpeechSynthesisUtterance(spokenForm(text, c.lang)); u.lang=BCP[c.lang]||c.lang; u.rate=line.lead&&line.kind!=="goal"?1.15:1.05;
       const v=speechSynthesis.getVoices().find(v=>v.lang===u.lang)||speechSynthesis.getVoices().find(v=>v.lang.startsWith(c.lang)); if(v) u.voice=v;
-      u.onend=fin; speechSynthesis.speak(u); setVoice("browser");
+      u.volume=VOL; u.onend=fin; speechSynthesis.speak(u); setVoice("browser");
     }catch(e){} };
   // an ended file is let go: a resume after a pause calls play() on curAudio, and play() on an ended file starts it again over the next line
-  const play=(u, o)=>{ const a=new Audio(u); curAudio=a; a.onended=()=>{ if(curAudio===a) curAudio=null; fin(); }; if(o>.05) a.addEventListener("loadedmetadata",()=>{ try{ a.currentTime=Math.min(o, Math.max(0,a.duration-.05)) }catch(e){} },{once:true});
+  const play=(u, o)=>{ const a=new Audio(u); a.volume=VOL; curAudio=a; a.onended=()=>{ if(curAudio===a) curAudio=null; fin(); }; if(o>.05) a.addEventListener("loadedmetadata",()=>{ try{ a.currentTime=Math.min(o, Math.max(0,a.duration-.05)) }catch(e){} },{once:true});
     let fell=false; const fall=()=>{ if(gen===voiceGen && !fell){ fell=true; if(curAudio===a) curAudio=null; a.pause(); tts(); } };   // an error and a refused play() can both fire: one fallback
     a.onerror=fall; a.play().then(()=>{ if(gen===voiceGen) setVoice("el") }).catch(fall); };
   if(live){
     if(line.skip && line.skip[c.id]){ talkUntil=0; return; }   // the director gave up on this line (it waited too long): shown, never spoken
     if(off >= (line.dur[c.id]||3)-.3){ talkUntil=0; return; }   // found late (a switch, a tab back from the background): not worth a request
     const p=VC.get(voiceKey(c.id,line.m)) || prefetch(c.id,line.m), asked=performance.now();
-    if(!p){ if(off<=.4) tts(); return; }
+    // no ElevenLabs voice for this line: the browser voice reads it while at least half of its slot is left (not only in its first 0.4 s)
+    const late = o => o > (line.dur[c.id]||3)*.5;
+    if(!p){ if(!late(off)) tts(); return; }
     p.then(r=>{ if(gen!==voiceGen || paused) return; const o=off+(performance.now()-asked)/1000;
-      if(r.url){ if(o < (line.dur[c.id]||3)-.3) play(r.url,o); } else if(o<=.4) tts(); });
+      if(r.url){ if(o < (line.dur[c.id]||3)-.3) play(r.url,o); } else if(!late(o)) tts(); });
     return;
   }
   if(off>.4 && !url) return;
@@ -980,7 +987,7 @@ function speak(line, c, off=0){
 function spokenForm(text, lang){ return lang==="de" ? text.replace(/\b(\d+):(\d+)\b/g, (m,a,b)=>`${a} zu ${b}`) : text; }
 
 // clip time w (seconds since Play); talkUntil is in clip time too, so a pause freezes it with everything else
-let flashW=null, t0=0, running=false, paused=false, pauseW=0, lastW=0, sound=true, done=new Set(), shown=null, talkUntil=0, actx, bedGain, P=null, RAWS=[], INTEL=[];
+let masterGain=null, flashW=null, t0=0, running=false, paused=false, pauseW=0, lastW=0, sound=true, done=new Set(), shown=null, talkUntil=0, actx, bedGain, P=null, RAWS=[], INTEL=[];
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function jsonHtml(o){ if(o===null) return `<span class="n">null</span>`; if(Array.isArray(o)) return "["+o.map(jsonHtml).join(", ")+"]";
   if(typeof o==="object") return "{ "+Object.entries(o).filter(([k])=>k!=="w").map(([k,v])=>`<span class="k">${k}</span>: `+jsonHtml(v)).join(", ")+" }";
@@ -1522,7 +1529,7 @@ function goal(line){
   const swing = beforeWp&&after ? Math.max(...after.wp.map((v,i)=>Math.abs(v-beforeWp.wp[i]))) : 0;
   WPP = swing>=WP_SHOW ? {w0:flashW, before:beforeWp, after} : {w0:flashW, before:null, after:null, quiet:true};
   if(WPP.quiet){ done.add("wp1"); done.add("wp2"); done.add("wp3"); }
-  if(actx && sound){ roar=new Audio("audio/stadium-roar.mp3"); roar.volume=D.isLive?.75:.3; roar.onended=()=>{ roar=null }; roar.play().catch(()=>{}); bedGain.gain.setTargetAtTime(D.isLive?.3:.15,actx.currentTime,.2); }
+  if(actx && sound){ roar=new Audio("audio/stadium-roar.mp3"); roar.base=D.isLive?.75:.3; roar.volume=roar.base*VOL; roar.onended=()=>{ roar=null }; roar.play().catch(()=>{}); bedGain.gain.setTargetAtTime(D.isLive?.3:.15,actx.currentTime,.2); }
 }
 
 // end: three commentators in three other languages, levels mixed, one with another script where there is one
@@ -2134,7 +2141,7 @@ function drawInsight(w, A, at){
 function start(fromW=0){
   if(!D) return;
   if(!actx){ try{ actx=new AudioContext(); bedGain=actx.createGain(); bedGain.gain.value=0;
-    const lp=actx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=900; lp.connect(bedGain).connect(actx.destination);
+    const lp=actx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=900; masterGain=actx.createGain(); masterGain.gain.value=VOL; lp.connect(bedGain).connect(masterGain).connect(actx.destination);
     fetch("audio/stadium-bed.mp3").then(r=>r.arrayBuffer()).then(b=>actx.decodeAudioData(b)).then(buf=>{ const s=actx.createBufferSource(); s.buffer=buf; s.loop=true; s.connect(lp); s.start(0,40) }).catch(()=>{}); }catch(e){ actx=null } }
   if(actx){ actx.resume().then(()=>{ if(paused||!running) actx.suspend(); }); bedGain.gain.cancelScheduledValues(actx.currentTime); bedGain.gain.setTargetAtTime(sound?.09:0,actx.currentTime,.6); }
   if(roar){ roar.pause(); roar=null; }
@@ -2292,8 +2299,13 @@ $("endnew").onclick=startLive;
 $("endrec").onclick=backToRecorded;
 $("pp").onclick=togglePlay;
 $("resume").onclick=resume;
-$("snd").onclick=()=>{ sound=!sound; $("snd").setAttribute("aria-pressed",sound); $("snd").setAttribute("aria-label",sound?"Sound on":"Sound off"); $("snd").style.opacity=sound?1:.4;
+$("snd").onclick=()=>{ sound=!sound; if(sound && VOL===0) setVol(.6);   // unmuting at zero volume brings it back to a usable level
+  $("snd").setAttribute("aria-pressed",sound); $("snd").setAttribute("aria-label",sound?"Sound on":"Sound off"); $("snd").style.opacity=sound?1:.4;
   if(actx) bedGain.gain.setTargetAtTime(sound&&running?.09:0,actx.currentTime,.2); if(!sound) stopVoice(); };
+function setVol(v){ VOL=Math.max(0,Math.min(1,v)); $("vol").value=VOL; try{ localStorage.setItem("mv_vol",String(VOL)) }catch(e){}
+  if(curAudio) curAudio.volume=VOL; if(roar) roar.volume=(roar.base??.3)*VOL; if(masterGain) masterGain.gain.setTargetAtTime(VOL,actx.currentTime,.05);
+  if(VOL===0 && sound) $("snd").click(); else if(VOL>0 && !sound) $("snd").click(); }
+$("vol").value=VOL; $("vol").addEventListener("input",e=>setVol(parseFloat(e.target.value)));
 const isSpace = e => e.key===" "||e.code==="Space";
 addEventListener("keydown",e=>{
   if(e.target.matches("input,textarea")||e.metaKey||e.ctrlKey||e.altKey) return;
@@ -2553,7 +2565,8 @@ const voiceKey = (ch,m) => `${LIVE.run}/${ch}/${m}`;
 function prefetch(ch, m){
   const k=voiceKey(ch,m); if(VC.has(k)) return VC.get(k);
   const tts=LIVE.health&&LIVE.health.tts;
-  if(LIVE.state!=="running" && LIVE.state!=="buffer" || !sound || VOICE_OFF || VBLOCK.has(ch) || !tts || !tts.available) return null;   // after the run: no new spend
+  // the run's lines stay on the server after it ends (RUNS_KEPT), so a switch after the end is still voiced; the session and daily credit caps bound the spend
+  if(!["running","buffer","done"].includes(LIVE.state) || !LIVE.run || !sound || VOICE_OFF || VBLOCK.has(ch) || !tts || !tts.available) return null;
   const p=fetchVoice(ch,m); VC.set(k,p); return p;
 }
 async function fetchVoice(ch, m){

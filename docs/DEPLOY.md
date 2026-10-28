@@ -111,7 +111,7 @@ az containerapp update -n $APP -g $RG -o none --set-env-vars \
   MATCHVOICE_LIVE_CALLS=4000 MATCHVOICE_DAILY_CALLS=600 MATCHVOICE_LIVE_RUNS_PER_DAY=150 MATCHVOICE_LIVE_MAX_SECONDS=75 \
   MATCHVOICE_SESSION_RUNS=1 MATCHVOICE_IP_RUNS=10 MATCHVOICE_LIVE_CONCURRENT=3 \
   MATCHVOICE_TTS_CREDITS=45000 MATCHVOICE_TTS_DAILY_CREDITS=3000 MATCHVOICE_SESSION_CREDITS=900 \
-  MATCHVOICE_IP_CREDITS=1500 MATCHVOICE_RUN_VOICE_CHANNELS=2 MATCHVOICE_WORLD_CALLS=0
+  MATCHVOICE_IP_CREDITS=1500 MATCHVOICE_RUN_VOICE_CHANNELS=0 MATCHVOICE_WORLD_CALLS=0
 az containerapp show -n $APP -g $RG --query properties.configuration.ingress.fqdn -o tsv
 ```
 
@@ -138,7 +138,7 @@ option. `az containerapp show` output carries no secret values.
 | `MATCHVOICE_TTS_DAILY_CREDITS` | [3000] | ElevenLabs credits per UTC day (the ledger rows of the day) |
 | `MATCHVOICE_SESSION_CREDITS` | [900] | ElevenLabs credits per browser session; past it the page uses the browser voice |
 | `MATCHVOICE_IP_CREDITS` | [1500] | ElevenLabs credits per client address per UTC day, so new sessions do not refill the voice |
-| `MATCHVOICE_RUN_VOICE_CHANNELS` | [2] | channels one live run may voice (the one watched plus one switch); the first lines asked for fix them |
+| `MATCHVOICE_RUN_VOICE_CHANNELS` | [2] (Azure demo: 0) | channels one live run may voice; 0 = any. The Azure demo sets 0 since 2026-10-28, so every language switch is voiced; the session, address and daily credit caps bound the spend |
 | `MATCHVOICE_WORLD_CALLS` | [0] | a separate budget for the world booth; at 0 a public server still offers the world channels on request (`world=1`), paid from the daily cap |
 | `MATCHVOICE_TRUSTED_HOPS` | `1` (image) [0] | proxies in front that append to `X-Forwarded-For`; the per-IP caps count the entry this many places from the right (never a client-written one). 0 counts the socket peer. A container with no proxy in front must set 0 |
 | `FORWARDED_ALLOW_IPS` | unset [127.0.0.1] | uvicorn's trusted proxies; never `*` (uvicorn then trusts the leftmost, client-written entry). The caps do not read it |
