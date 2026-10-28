@@ -1,16 +1,20 @@
 # encara
 
-encara is a real-time football commentary engine that clubs, leagues and streaming services can plug into their own
-apps. Commentary is usually produced in a few languages and at one level, because each extra booth needs its own
-commentators. encara turns a stream of match events into spoken commentary in nine languages, for beginners or experts.
-Before any line the model wrote goes out, a checker compares every name and number in it with the match data.
+encara is a real-time football commentary engine for clubs, leagues and streaming services. It runs behind their apps.
+Broadcasters produce commentary in a few languages and at one level, because every extra booth needs its own
+commentators. encara turns a live stream of match events into spoken commentary on twelve channels in nine languages,
+for beginners and experts. A verifier checks every name and number in a model-written line against the match data
+before the line goes out. In the evaluation it caught every injected scoreline and number error in English, German and
+French (see [Evidence](#evidence)).
 
 [![The encara demo](docs/img/demo.jpg)](https://happy-bush-012530710.5.azurestaticapps.net)
 
 - Demo (no key, no sign-in): https://happy-bush-012530710.5.azurestaticapps.net. Generate run on the same page
   commentates a new scene live on Azure Container Apps.
-- Demo video (under 2 minutes): https://www.youtube.com/watch?v=4TRUr6I2D6E. The video was recorded before the page got
-  its three steps at the top. The match, the commentators and the lines are the same.
+- Demo video (110 seconds): https://www.youtube.com/watch?v=zhjO5KfLils. It shows the same goal in Japanese, German,
+  Spanish and Turkish, the pattern spotted at 68', the goal and the call-back at 71', the five agents and the verifier,
+  expert and newcomer side by side, and all nine languages. The video shows an older top bar of the page. The match, the
+  commentators and the lines are the same.
 - Built for the Microsoft x Premier League "Inside the Game: Developer Hackathon", category Best Multi-Agent System.
   Solo entry by Vu Minh Tran.
 
@@ -34,9 +38,29 @@ About one minute, no key, no install.
 Demo and How does it work replay a recorded live run of the pipeline; Generate run is live (see
 [Limitations](#limitations)).
 
+## Challenge coverage
+
+One row per item of section 4.1 of the official rules. Gaps are marked "Not built".
+
+| Item | What encara does | Where |
+| --- | --- | --- |
+| (i)(a) Ingest | A match simulator emits passes, carries, shots, tackles, interceptions, pressure flags, fouls, cards, restarts and match metadata. The runner feeds them event by event at match pace; the spotter sees nothing ahead of the clock (tested). Not built: an endpoint for an outside event feed. | [`sim/engine.py`](backend/matchvoice/sim/engine.py), [`runner.py`](backend/matchvoice/pipeline/runner.py) |
+| (i)(b) Interpret | The fact engine keeps live team and player stats (possession, shots, xG, passes, pass accuracy, tackles, top speed, sprints), momentum, game rhythm and win probability. The spotter turns them into moments and finds team habits in quiet spells. | [`facts/engine.py`](backend/matchvoice/facts/engine.py), [`winprob.py`](backend/matchvoice/facts/winprob.py), [`moments.py`](backend/matchvoice/commentary/moments.py), [`patterns.py`](backend/matchvoice/commentary/patterns.py) |
+| (i)(c) Explain | The Analyst writes why a moment matters from its facts, for example the habit at 68' and the goal at 71' that breaks it. The Verifier rejects any line whose names, numbers or claims the data does not support. | [`newsroom.py`](backend/matchvoice/commentary/newsroom.py), [`analyst.py`](backend/matchvoice/commentary/analyst.py), [`verifier.py`](backend/matchvoice/commentary/verifier.py) |
+| (i)(d) Render | Overlay protocol v1: compact, timed JSON over WebSocket or SSE. Each line carries speaker, timing and the event ids behind it. The demo page draws the pitch, a name tag on the player on the ball, the "Pattern spotted" card and a win-probability card on big swings. | [docs/PROTOCOL.md](docs/PROTOCOL.md), [`protocol.py`](backend/matchvoice/pipeline/protocol.py), [`mock4.html`](ui/public/mock4.html) |
+| (i)(e) Personalize | Twelve channels: nine languages; English, German and French at two levels with different wording and depth (beginner without counts, expert with technique words). Not built: favourite club, favourite player, player-focus mode. | [`lang.py`](backend/matchvoice/commentary/lang.py), [`templates.py`](backend/matchvoice/commentary/templates.py) |
+| (ii) Player identification | Surname tag on the acting player. A sprint fact fires when a player reaches 30 km/h (at most once per player per 10 minutes) and becomes a line with name and speed. Player stats include top speed, sprints and carry distance (MCP `player_stats`). | [`facts/engine.py:272`](backend/matchvoice/facts/engine.py#L272), [`moments.py:415`](backend/matchvoice/commentary/moments.py#L415) |
+| (ii) Pass quality | Every pass carries length, a difficulty rating from 0 to 1 (length, pressure, depth) and ball speed; team pass accuracy is live. Passes of 35 m or more get a line with the length. Not built: difficulty is in the data but no line or overlay uses it yet. | [`sim/engine.py:294`](backend/matchvoice/sim/engine.py#L294), [`schema.py:52`](backend/matchvoice/schema.py#L52), [`moments.py:391`](backend/matchvoice/commentary/moments.py#L391) |
+| (ii) Speed metrics | Ball speed on every pass, shot speed on every shot, player speed on carries. Not built: ball and shot speed are not spoken or drawn yet. | [`schema.py:53`](backend/matchvoice/schema.py#L53), [`facts/engine.py:318`](backend/matchvoice/facts/engine.py#L318) |
+| (ii) Auto-eventing | Not built. Events come from the simulator; no model runs on video. | none |
+| (iii) Narrative generation | Set-up and call-back across minutes, goal analyses with the move that led to the goal, club and player stories for quiet spells (form, comebacks, appearance milestones), shot milestones, a "match so far" block in every prompt. The full-time and half-time lines are the score line only; no written match recap. MCP `match_summary` and `key_moments` return the state and the key moments at any second. | [`patterns.py`](backend/matchvoice/commentary/patterns.py), [`sim/dossier.py`](backend/matchvoice/sim/dossier.py), [docs/MCP.md](docs/MCP.md) |
+| (iv) Explainability | Momentum: a pressure phase when one side holds 75% of the attacking threat over five minutes. Rhythm: controlled, balanced or chaotic from turnovers per minute over the last three minutes. Win-probability swings of 10 points or more with before and after. "How does it work" shows each line's path from raw event to voice. Rhythm is computed and served over MCP, not spoken. | [`facts/engine.py:161`](backend/matchvoice/facts/engine.py#L161), [`insights.py`](backend/matchvoice/pipeline/insights.py) |
+| (v) Data innovation | A seeded simulator with player profiles, roles, traits, tactics and story arcs (comeback, red card, unlucky), plus an enrichment layer without tracking: receipts, implicit passes and carries, take-ons, pass type, height, technique, pressure and first-time flags. Each match ships a truth file that scores the spotter. | [`sim/`](backend/matchvoice/sim), [`sim/micro/enrich.py`](backend/matchvoice/sim/micro/enrich.py), [docs/DATA-MODEL.md](docs/DATA-MODEL.md) |
+| (vi) Multi-language | Nine languages: English, German, French, Spanish, Italian, Portuguese, Dutch, Turkish, Japanese. Each has its own broadcast register in the prompt, and the verifier checks the language and the number words in all nine. ElevenLabs voices for all twelve channels in the demo. No native speaker has checked any language; the evaluation covers English, German and French only. | [`world.py`](backend/matchvoice/commentary/world.py), [`verifier.py`](backend/matchvoice/commentary/verifier.py), [docs/VOICE-CAST.md](docs/VOICE-CAST.md) |
+
 ## What it does
 
-encara is built to sit behind someone else's app. A club, a league or a streaming service sends match events in and
+encara runs behind someone else's app. A club, a league or a streaming service sends match events in and
 gets commentary lines back per channel over WebSocket or SSE ([docs/PROTOCOL.md](docs/PROTOCOL.md)) or through an MCP
 server. Each line carries its speaker, its timing and the event ids behind it, so an editor can audit any line. In this
 build the events come from a built-in match simulator. An endpoint for an outside event feed is not written yet, and it
@@ -57,7 +81,7 @@ written by the model and passed the verifier before they were spoken.
 
 ## How it works
 
-encara uses five agents with separate jobs. Three of them run as one Microsoft Agent Framework workflow (`WorkflowBuilder`
+encara runs five agents, each with one job. Three of them run as one Microsoft Agent Framework workflow (`WorkflowBuilder`
 with conditional edges in [`newsroom.py`](backend/matchvoice/commentary/newsroom.py)).
 
 ```
@@ -106,21 +130,14 @@ This is how a line at 71 minutes can refer back to what the booth said at 68 min
 Play-by-play in English, German and French comes from templates filled with fact-engine values, so it is on screen in
 milliseconds.
 
-The rules ask for five stages. They map to the code like this:
-
-- Ingest: the match simulator (`sim/`).
-- Interpret: the fact engine and the spotter (`facts/`, `moments.py`, `patterns.py`).
-- Explain: the newsroom and the templates.
-- Render: the director, the runner and the overlay protocol.
-- Personalize: the twelve channels.
-
-Details, data flow and the wire format are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and
-[docs/PROTOCOL.md](docs/PROTOCOL.md).
+The five stages the rules ask for map to the code in [Challenge coverage](#challenge-coverage). Details, data flow and
+the wire format are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/PROTOCOL.md](docs/PROTOCOL.md).
 
 ## Evidence
 
 The evaluation numbers come from the generated reports. They cover English, German and French on three synthetic
-matches; the six world languages are not in the evaluation yet.
+matches; the six world languages are not in the evaluation yet. Numbers from live runs on Azure are in
+[docs/LIVE-MEASUREMENTS.md](docs/LIVE-MEASUREMENTS.md).
 
 | Check | Result | Source |
 | --- | --- | --- |
@@ -130,7 +147,7 @@ matches; the six world languages are not in the evaluation yet.
 | Time from a moment being queued to its analyst lines being released, evaluation recordings (made before the model's thinking was switched off) | median 6.2 s, p95 7.9 s | [EVAL.md](docs/EVAL.md) |
 | Share of spoken lines written by the model (core languages) | 8.6% at x30, the rest are templates | [EVAL.md](docs/EVAL.md) |
 | Commentary density over 3 full matches | 17.2 segments a minute, 70% speech coverage | [DENSITY.md](docs/DENSITY.md) |
-| Model call in the paid run that wrote the demo's answers, six world languages in one call | 1.1 to 2.6 s (median 1.3 s); captions 1.2 to 4.4 s behind the English booth | CLAUDE.md (project notes) |
+| Model call in the paid run that wrote the demo's answers, six world languages in one call | 1.1 to 2.6 s (median 1.3 s); captions 1.2 to 4.4 s behind the English booth | [LIVE-MEASUREMENTS.md](docs/LIVE-MEASUREMENTS.md), CLAUDE.md (project notes) |
 | Rejections in the recording | The story line overstated Wexmoor's record in Spanish ("ha ganado"), Portuguese ("virou") and Japanese ("逆転勝ち"). The record counts points after being behind, and wins are only part of that. The verifier rejected all three with that reason, and the one retry passed (a real call when it was recorded, a cache hit in the file). | `ui/public/insert/story.json`, verifier log steps |
 
 ## Microsoft and Azure technologies
@@ -151,7 +168,8 @@ The model is Claude by Anthropic, connected through the Agent Framework's Anthro
   run on real match data.
 - **Demo and How does it work replay a recording.** The pipeline ran at match speed with model answers from an earlier
   paid run, so model latency is not in that timing. Generate run is live: the server on Azure simulates a new scene and
-  makes real model and voice calls, within a small daily budget.
+  makes real model and voice calls, within a small daily budget. Its measured timings are in
+  [docs/LIVE-MEASUREMENTS.md](docs/LIVE-MEASUREMENTS.md).
 - **No language has been checked by a native speaker.** Some lines are known to be weak, for example the Spanish wording
   for a switch of play. Some build-up lines in the recording state a wrong detail that the verifier did not catch.
   Italian, Dutch and Japanese put Tavares on the left, and Turkish and Japanese say the first-time pass went to Tavares,

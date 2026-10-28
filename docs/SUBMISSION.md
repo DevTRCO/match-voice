@@ -3,7 +3,7 @@
 Everything for the hackathon form and YouTube, one block per field. Copy the text inside each box. The character count
 under each box counts the box content only (spaces and line breaks included). Every number comes from CLAUDE.md,
 docs/EVAL.md, docs/DENSITY.md, docs/DEPLOY.md, the code or a file in `data/` or `ui/public/insert/`; the source is named
-where the number appears. The video is on YouTube: https://www.youtube.com/watch?v=4TRUr6I2D6E
+where the number appears. The demo video (110 s) is on YouTube: https://youtu.be/zhjO5KfLils
 
 Checked on 2026-10-27: `python -m pytest -q` gives 899 passed, 1 xfailed (no key, about 6 minutes); the demo URL and the live server's /api/health answer 200.
 The verifier figures below follow docs/EVAL.md as regenerated on 2026-10-26 at 23:54 (895 lines at x30).
@@ -21,45 +21,45 @@ Characters: 6
 Tagline (max 80):
 
 ```text
-Real-time football commentary in nine languages, checked against match data
+Live football commentary in nine languages, checked against match data
 ```
 
-Characters: 75
+Characters: 70
 
 ## 2. Elevator pitch
 
 ```text
-A football match broadcast is usually made for one audience in one language. encara is a real-time commentary engine that clubs, leagues and streaming services can plug into their own apps. From a live stream of match events it writes and speaks commentary in nine languages, at beginner or expert level. Five agents split the work, three of them in one Microsoft Agent Framework workflow: a spotter tracks each team's habits over the half, an analyst (Claude) writes the analysis and every line in six of the languages, a verifier checks the names and numbers in every model line against the match data, a publisher releases what passes, and a director per channel decides when each line is spoken. Templates call the play-by-play in English, German and French. The live server runs on Azure Container Apps and the demo page on Azure Static Web Apps.
+A football broadcast speaks one language at one level, and an AI commentator that gets a scorer wrong loses the viewer. encara is a live commentary engine that clubs, leagues and streaming services plug into their apps. It turns a stream of match events into spoken commentary in nine languages, at beginner or expert level. Five agents split the work. A spotter tracks each team's habits over the half. An analyst (Claude Haiku 5.5) writes the analysis and all lines in six more languages. A verifier checks the names and numbers in every model line against the match data. A publisher releases what passes. A director per channel times each line. Analyst, verifier and publisher are one Microsoft Agent Framework workflow. Templates call the English, German and French play-by-play. On 895 lines with injected errors, the verifier caught 43 of 43 swapped scorelines, 203 of 203 changed numbers and 625 of 626 swapped players. On Azure a generated run starts talking 2.0 s after the click.
 ```
 
-Characters: 851
+Characters: 990
 
 ## 3. Full description
 
 ```text
 What it does
 
-encara turns a live stream of football match events into spoken commentary. Nine languages run on twelve channels, each with a fictional commentator at beginner or expert level. English, German and French have a two-person booth at both levels; Spanish, Italian, Portuguese, Dutch, Turkish and Japanese each have a solo commentator.
+encara turns a live stream of football match events into spoken commentary. Twelve channels cover nine languages, each with a fictional commentator at beginner or expert level. English, German and French have a two-person booth at both levels; Spanish, Italian, Portuguese, Dutch, Turkish and Japanese each have a solo commentator.
 
-Clubs, leagues and streaming services plug it in through one documented stream: captions, voice timing and evidence arrive as messages over WebSocket or server-sent events (docs/PROTOCOL.md), and an MCP server exposes the match data, the commentary and the verifier as 7 tools (docs/MCP.md).
+Clubs, leagues and streaming services integrate through one documented stream: captions, voice timing and evidence arrive as messages over WebSocket or server-sent events (docs/PROTOCOL.md). An MCP server exposes the match data, the commentary and the verifier as 7 tools (docs/MCP.md).
 
-The demo has three steps. Demo plays a recorded insert: in a quiet 68th minute the spotter finds a habit. Since half-time Wexmoor has won the ball 11 times in its own half, and every first pass after those wins was short. The commentator points it out. At 71' Wexmoor wins the ball, switches it about 50 m across and scores, and the commentator refers back to the earlier line. How does it work shows, line by line, what arrived, what the system understood, what was written, what the verifier checked and when it was spoken. Generate run plays a new scene of the same match, simulated and commentated live with real model calls: 1-1 in the 88th minute, a new attack each run and a late winner.
+The demo has three steps. Demo plays a recorded insert. In a quiet 68th minute the spotter finds a habit. Since half-time Wexmoor has won the ball 11 times in its own half, and every first pass after those wins was short. The commentator points it out. At 71' Wexmoor wins the ball, switches it about 50 m across and scores, and the commentator refers back to the earlier line. How does it work shows, line by line, what arrived, what the system understood, what was written, what the verifier checked and when it was spoken. Generate run plays a new scene of the same match, simulated and commentated live with real model calls: 1-1 in the 88th minute, a new attack each run and a late winner.
 
 The problem
 
-A match broadcast is usually made for one audience in one language. A language model can write a commentary line for each language and level. A line with a wrong number or the wrong scorer misleads viewers, and a live line has to arrive within a few seconds of the event.
+A match broadcast is made for one audience in one language. A language model can write a line for every language and level, but one wrong number or wrong scorer misleads the viewer. A live line also has to arrive within a few seconds of the event.
 
 How it works
 
-Ingest: the server streams synthetic events (passes, receipts, shots, tackles, pressure, possession, metadata) one by one, with no lookahead. Interpret: every pass carries its length, a difficulty rating from 0 to 1 and the ball speed; every shot its xG and speed. A fact engine keeps live statistics, momentum, win probability, a rhythm reading (controlled, balanced or chaotic) and the match so far. Explain: five agents, one of them calls a model, in two booths.
+Ingest: the server streams synthetic events (passes, receipts, shots, tackles, pressure, possession, metadata) one by one, with no lookahead. Interpret: every pass carries its length, a difficulty rating from 0 to 1 and the ball speed; every shot its xG and speed. A fact engine keeps live statistics, momentum, win probability, a rhythm reading (controlled, balanced or chaotic) and the match so far. Explain: five agents; only the analyst calls a model, in two booths.
 - Spotter (code): detects moments and keeps state over the half to find a team's habit and the goal that breaks it.
-- Analyst (Claude Haiku 5.5, two booths): gets the facts of one moment, the match so far and the lines the booth said before. The core booth writes the lines for the six English, German and French channels in one call, the world booth those for the six world-language channels in a second call.
+- Analyst (Claude Haiku 5.5, two booths): gets the facts of one moment, the match so far and the lines the booth said before. The core booth writes the lines for the six English, German and French channels in one call. The world booth writes the six world-language channels in a second call.
 - Verifier (code): checks the numbers, scorelines, player names, the match history, claims about habits and records, language and length of every model line against the match data.
 - Publisher (code): releases the lines that pass.
 - Directors (code, one per channel): decide what is said and when, and drop lines that come too late.
 Render: captions, voice and an animated pitch with the players' runs. Personalize: the viewer picks a language and a level, and can switch commentator mid-match; the same moment reads differently for a newcomer and an expert.
 
-Analyst, Verifier and Publisher form a Microsoft Agent Framework workflow with conditional edges. A rejected line goes back to the Analyst once with the reason. If it fails again, the core languages use a template line and the world languages say nothing for that moment.
+Analyst, verifier and publisher form one Microsoft Agent Framework workflow with conditional edges. A rejected line goes back to the Analyst once with the reason. If it fails again, the core languages use a template line and the world languages say nothing for that moment.
 
 Microsoft and Azure technologies used
 
@@ -87,30 +87,30 @@ The verifier checks names, numbers, scorelines, the match so far, some claims, l
 
 What's next
 
-Native-speaker review, an input endpoint for a licensed live event feed, one voice stream per channel shared by all its listeners, favourite-club and player modes, and more languages. Each new language needs a prompt section and word lists for the verifier.
+First, native-speaker review and an input endpoint for a licensed live event feed. Then one voice stream per channel shared by all its listeners, which pays the voice once per channel instead of once per listener. After that, favourite-club and player modes and more languages; each new language needs a prompt section and word lists for the verifier.
 ```
 
-Characters: 6,731
+Characters: 6,799
 
 ## 4. Category fit: Best Multi-Agent System
 
 ```text
-Roles: five agents. The spotter tracks team habits over the half. Only the analyst calls a model, in two booths: en, de and fr at two levels, and six more languages. The verifier checks names, numbers and match history, the publisher releases, twelve directors time each channel. Analyst, verifier and publisher form one Microsoft Agent Framework workflow.
+Roles: five agents. The spotter tracks team habits over the half. Only the analyst calls a model, in two booths: en, de and fr at two levels, and six more languages. The verifier checks names, numbers and match history. The publisher releases what passes. Twelve directors time each channel. Analyst, verifier and publisher run as one Microsoft Agent Framework workflow.
 
 Shared state and handoffs: every prompt carries the match so far and the booth's recent lines. The 68' habit reaches the analyst with the 71' goal, so the call-back recalls a line from three minutes earlier.
 
-Recovery: a rejected line goes back once with the reason; only the failing channels are rewritten. The recorded es, pt and ja rejections were claim_unsupported; the retry passed. A second failure, model error, timeout or spent budget gives a template or silence.
+Recovery: a rejected line goes back once with the reason; only failing channels are rewritten. The recorded es, pt and ja rejections were claim_unsupported; the retry passed. A second failure, model error, timeout or spent budget gives a template or silence.
 
-Outcome: twelve checked channels from one stream. The MCP server exposes the verifier as verify_sentence, so outside agents can check lines by the same rules.
+Outcome: twelve checked channels from one stream. The MCP server exposes the verifier as verify_sentence, so outside agents check lines by the same rules.
 ```
 
-Characters: 989
+Characters: 995
 
 ## 5. Testing instructions
 
 ```text
 1. Public demo, no setup, no key
-Open https://happy-bush-012530710.5.azurestaticapps.net in a desktop browser and turn the sound on. The bar at the top has three steps, and a glowing Next phase button leads through them.
+Open https://happy-bush-012530710.5.azurestaticapps.net in a desktop browser and turn the sound on. The bar at the top has three steps; a glowing Next button leads through them.
 - Demo: press Play to hear the 46-second recorded insert: the quiet 68th minute, the pattern, then the 71st-minute goal and the call-back. The row under the subtitle switches to any of the twelve commentators (nine languages, beginner or expert) at the same moment.
 - How does it work: a short guided tour, then the same insert with what arrives, what the system understands, the line's way through the pipeline with real times, and what you hear.
 - Generate run: the live server on Azure simulates a new scene of the same match (1-1, 88th minute) and commentates it as it happens, with real model calls and voice, in about a minute. Every language can be switched to during the run. One generated run per browser session.
@@ -139,47 +139,49 @@ Every call goes through a disk cache and a hard call budget. docs/DEPLOY.md desc
 All data is synthetic.
 ```
 
-Characters: 2,308
+Characters: 2,298
 
 ## 6. Links
 
 ```text
 Demo: https://happy-bush-012530710.5.azurestaticapps.net
 Code: https://github.com/DevTRCO/match-voice
-Video: https://www.youtube.com/watch?v=4TRUr6I2D6E
+Video: https://youtu.be/zhjO5KfLils
 ```
 
-Characters: 152
+Characters: 137
 
 ## 7. YouTube
 
 Title (max 70):
 
 ```text
-encara: real-time football commentary in nine languages, fact-checked
+encara: one football match, live commentary in nine languages
 ```
 
-Characters: 69
+Characters: 61
 
 Description:
 
 ```text
-encara is a real-time football commentary engine, built solo for the Microsoft x Premier League "Inside the Game" hackathon (Best Multi-Agent System).
+encara is a live football commentary engine for clubs, leagues and streaming services. Built solo for the Microsoft x Premier League "Inside the Game" hackathon, category Best Multi-Agent System.
 
-In a quiet 68th minute the spotter, plain code that has followed the whole half, finds a habit in one team's play, and the commentator points it out. At 71' the team wins the ball, switches it about 50 m across and scores, and the commentator refers back to the earlier line.
+The video opens with one goal called in Japanese, German, Spanish and Turkish. In a quiet 68th minute the spotter, which runs without a model and has followed the whole half, finds a habit: since half-time Wexmoor has won the ball 11 times in its own half and played every first pass short. The commentator points it out. At 71' Wexmoor wins the ball, switches it about 50 m across and scores, and the commentator calls back to the earlier line.
 
-Five agents split the work. The analyst, verifier and publisher run as one Microsoft Agent Framework workflow; the spotter and directors are plain code. Claude writes the analysis and every line in six of the languages, play-by-play in English, German and French comes from templates, the verifier checks the names and numbers in every model line against the match data, and a director per channel times each line. It runs twelve channels in nine languages, each at beginner or expert level.
+Five agents split the work. A spotter tracks each team's habits. An analyst (Claude Haiku 5.5) writes the analysis and every line in six of the languages. A verifier checks the names and numbers in every model line against the match data. A publisher releases what passes. A director per channel times each line. Analyst, verifier and publisher run as one Microsoft Agent Framework workflow. Templates call the play-by-play in English, German and French.
 
-Try the demo: https://happy-bush-012530710.5.azurestaticapps.net
+The same moment reads differently for an expert and a newcomer. All twelve channels in nine languages come from one match stream.
+
+Try the whole demo: https://happy-bush-012530710.5.azurestaticapps.net
 Generate run on the page commentates a new scene live, on Azure Container Apps.
 Code: https://github.com/DevTRCO/match-voice
 
-All clubs, players, commentators and match data are synthetic. The video shows the recorded insert, with model lines from an earlier paid run.
+All clubs, players, commentators and match data are synthetic. The video shows the recorded insert, with model lines from an earlier paid run. The page's top bar has changed since recording; the match, commentators and lines are the same.
 
 #football #AI #MicrosoftAgentFramework
 ```
 
-Characters: 1,295
+Characters: 1,706
 
 ## 8. Cost per match
 

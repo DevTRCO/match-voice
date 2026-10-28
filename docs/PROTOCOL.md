@@ -311,7 +311,7 @@ paced, for a browser session, under these caps (all counted in memory and reset 
 | --- | --- | --- |
 | scene whitelist: `match`, `start`, `until` exactly as `GET /api/scene` gives them; `speed=1`, paced, no `analyst_from`, no `seed` | | `bad_request` |
 | a valid session token (`token=`) | | `session_required` (`no_session_secret` when the server has no secret) |
-| live runs per session | 3 (`MATCHVOICE_SESSION_RUNS`) | `session_limit` |
+| live runs per session | 3 by default, 1 on the Azure demo (`MATCHVOICE_SESSION_RUNS`) | `session_limit` |
 | live runs per client address per UTC day (behind the proxy: the rightmost `X-Forwarded-For` entry, the one the ingress appends, `MATCHVOICE_TRUSTED_HOPS=1`; a client-written entry is never counted) | 10 (`MATCHVOICE_IP_RUNS`) | `ip_limit` |
 | live runs at once | 3 (`MATCHVOICE_LIVE_CONCURRENT`) | `busy` |
 | live runs per UTC day, all visitors | 150 (`MATCHVOICE_LIVE_RUNS_PER_DAY`) | `no_runs_today` |

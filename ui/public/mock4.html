@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>encara</title>
+<meta name="description" content="encara turns a live football data feed into spoken commentary in nine languages. A verifier checks every name and number before a line is said.">
+<meta property="og:title" content="encara">
+<meta property="og:description" content="encara turns a live football data feed into spoken commentary in nine languages. A verifier checks every name and number before a line is said.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://happy-bush-012530710.5.azurestaticapps.net/">
+<meta property="og:image" content="https://happy-bush-012530710.5.azurestaticapps.net/og.jpg">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
+<meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;700&family=Barlow+Condensed:wght@700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css">
 <!-- the guided tour of phase 2 (open source, pinned); without it phase 2 still plays, just without stops -->
@@ -334,6 +343,9 @@ body:not(.paused):not(.idle):not(.how) .ctrl .booth.lure::after{content:"";posit
 .end .row button{padding:9px 18px;border-radius:6px;font-weight:600;font-size:var(--t2);border:1px solid var(--line2);background:#160019cc;color:var(--mute);box-shadow:var(--edge)}
 .end .row button:hover{color:var(--text);border-color:#ffffff55}
 .end .recn{font-size:var(--t1);color:var(--mute);text-align:center;text-wrap:balance}
+.end .lk{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;font-size:var(--t1)}
+.end .lk a{color:var(--mute);text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:3px}
+.end .lk a:hover{color:var(--text);text-decoration-color:currentColor}
 .endon .lower,.endon .wpg,.endon .strip,.endon .ctrl{opacity:0!important;pointer-events:none}
 
 /* ---------- how it works ---------- */
@@ -568,6 +580,7 @@ body:not(.paused):not(.idle):not(.how) .ctrl .booth.lure::after{content:"";posit
           <div class="row"><button id="endre">Watch again</button><button id="endnew" hidden>New run</button><button id="endrec" hidden>Recorded run</button></div>
           <p class="recn" id="endn">Recorded from a real run of the engine. Every line the model wrote passed the verifier first. This page replays the run at match pace.</p>
           <p class="recn" id="endnr" hidden aria-live="polite"></p>
+          <p class="lk"><a href="https://youtu.be/zhjO5KfLils" target="_blank" rel="noopener">Watch the video</a><a href="https://github.com/DevTRCO/match-voice" target="_blank" rel="noopener">Code on GitHub</a></p>
         </div></div>
       </div></div>
 
@@ -2214,20 +2227,19 @@ const litEnd = l => { if(!l) return null; const st=stampsOf(l, com.id); if(!st) 
 const anaLine = () => D.LINES.find(l=>l.kind==="analyst"&&l.g.kind==="goal_analysis"&&l.ws[com.id]!=null) || D.LINES.find(l=>l.kind==="insight"&&l.ws[com.id]!=null);
 function anaText(l){
   const ins=l.ins||{}, lg=D.logs.filter(g=>g.m===l.m&&g.step==="analyst_wrote"&&g.d), lats=lg.map(g=>g.d.latency_s).filter(x=>x!=null), cached=lg.length&&lg.every(g=>g.d.cached), B=boothsOf(l.m);
-  const head = ins.kind==="payoff"&&ins.setup_clock ? `The goal breaks the pattern flagged at ${MIN(ins.setup_clock)}. ` : l.kind==="insight" ? "A habit found in the data, said in a quiet spell. " : "";
-  const wrote = lats.length ? `A model wrote these lines${cached?" live":""} in ${lats.map(r1).join(" and ")} s. ` : "A model wrote these lines. ";
-  const chk = B.acc!=null ? `The verifier checked every name and number in them: ${B.acc} of ${B.lines} lines passed. ` : "The verifier checked every name and number. ";
-  return head+wrote+chk+(cached?"This page replays them from the cache.":""); }
+  const wrote = lats.length ? `The analyst wrote these lines in ${lats.map(r1).join(" and ")} s` : "The analyst wrote these lines";
+  const chk = B.acc!=null ? `; the verifier checked every name and number, and ${B.acc} of ${B.lines} passed. ` : "; the verifier checked every name and number. ";
+  return wrote+chk+"Analyst, verifier and publisher are one Microsoft Agent Framework workflow; a rejected line goes back once with the reason."; }
 const TOUR_STOPS = [
   {at:()=>(D.rows.length?D.rows[0].w:0)+.7, el:()=>document.querySelector(".lane1"), room:"feed", side:"left",
    title:"What arrives", text:()=>"The raw match feed, one event at a time, as the engine receives it. Open { } to see the JSON of an event."},
   {at:()=>{ const c=INTEL[0]; return c ? c.ow+.5 : 2; }, el:()=>document.querySelector(".lane2"), room:"intel", side:"left",
-   title:"What it understands", text:()=>"Each row is something the engine noticed, the data behind it, and what it does next."},
+   title:"What it understands", text:()=>"The spotter reads each event without a model and without lookahead. Each row is a moment it flagged, the data behind it and what happens next."},
   // the first play-by-play line after the cut that is still the line on air when its last step lights (the band shows the line on air)
   {at:()=>{ const c=D.cuts[0], ch=com.id, L=D.LINES.filter(l=>l.ws[ch]!=null).sort((a,b)=>a.ws[ch]-b.ws[ch]);
      for(let i=0;i<L.length;i++){ const l=L[i]; if(!l.lead || l.ws[ch]<(c?c.b:0)) continue; const e=litEnd(l), nx=L[i+1]; if(e!=null && (!nx || e+.3<nx.ws[ch]-.05)) return e+.3; } return null; },
    el:()=>$("flow"), side:"bottom",
-   title:"This line", text:()=>"One line on its way from the data to your ear. Each step shows how long it took in this run."},
+   title:"This line", text:()=>"One line on its way from the data to your ear, with the time each step took in this run. Your channel's director decides when it is said and drops it if it comes too late."},
   {at:()=>{ const l=anaLine(); return l ? litEnd(l)+.4 : null; }, el:()=>{ const l=anaLine(); return (l&&document.querySelector(`.it[data-k="L${l.m}"]`)) || document.querySelector(".lane2"); }, room:"intel", side:"left",
    title:"The analyst and the verifier", text:()=>{ const l=anaLine(); return l ? anaText(l) : ""; }},
 ];
