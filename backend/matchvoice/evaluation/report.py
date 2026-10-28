@@ -50,7 +50,6 @@ def weaknesses(res: dict) -> list[str]:
     o, r = fast["overall"], real["overall"]
     items = [(mid, it) for mid, m in fast["per_match"].items() for it in m["detection"]["items"]]
     missed = [(mid, it) for mid, it in items if not it["detected"]]
-    missed_kinds = ", ".join(sorted({it["kind"].replace("_", " ") + "s" for _, it in missed}))
     unexplained = [(mid, it) for mid, it in items if it["detected"] and not it["analysis_spoken"]]
     out = [
         f"Most spoken lines are templates. The analyst wrote {pct(o['said_by_analyst_share'], 1)} of all spoken lines at "

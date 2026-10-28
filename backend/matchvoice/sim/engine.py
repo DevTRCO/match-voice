@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import math
 import random
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from ..schema import (
     PITCH_L, PITCH_W, Event, EventType, MatchMeta, Side, TeamMeta, TruthItem,

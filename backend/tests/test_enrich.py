@@ -5,7 +5,6 @@ import copy
 import hashlib
 import math
 import random
-from pathlib import Path
 
 import orjson
 import pytest
@@ -675,7 +674,6 @@ def test_receipt_facing_does_not_foretell_a_loss(runs):
 
 def test_header_into_a_header_is_a_head_touch(runs):
     for meta, events, res in runs.values():
-        by_eid = {r["eid"]: r for r in res.rows}
         heads = [r for r in res.rows if r["type"] == "shot" and r["body_part"] == "head" and r["first_time"] and r["assist_eid"]]
         for s in heads:
             rc = next((r for r in res.rows if r["type"] == "receipt" and r["pass_eid"] == s["assist_eid"]), None)

@@ -8,7 +8,6 @@ as such in the file and in the UI: the verdicts are the real verifier's, the wro
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 from ..config import ROOT
 from ..mcp_server import tools

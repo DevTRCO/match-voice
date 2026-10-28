@@ -209,7 +209,6 @@ def summarise(per_unit: list[dict[int, dict]], span: str) -> dict:
         per_unit_value = [v for v in per_unit_value if v is not None]
         every = [u[ch][metric] for u in per_unit for ch in channels if u[ch][metric] is not None]
         if span == "insert":  # every channel must pass: the gated value is the worst one (for a range, the one furthest out)
-            mid = statistics.median(every) if every else None
             if kind == "min":
                 worst = min(every, default=None)
             elif kind == "max":

@@ -7,7 +7,6 @@ from pathlib import Path
 
 import orjson
 
-from ..schema import EventType
 from .arcs import ARCS
 from .engine import Sim
 

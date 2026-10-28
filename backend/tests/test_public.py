@@ -25,7 +25,7 @@ from matchvoice.server.app import create_app
 from matchvoice.server.public import PublicGate
 from matchvoice.sim.micro.enrich import enrich
 from matchvoice.tts import MODEL, GuardedTTS, TTSBudgetExceeded, TTSDailyExceeded
-from matchvoice.tts.fake import FAKE_MP3, FakeSynth
+from matchvoice.tts.fake import FakeSynth
 from matchvoice.tts.voices import CAST, LANGUAGE_CODES, VOICES, voice_for
 from test_pipeline import fake_llm
 from test_server import ws_messages

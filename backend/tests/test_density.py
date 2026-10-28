@@ -1,7 +1,6 @@
 """The density report (docs/PLAN-DATA.md phase 3): metrics on synthetic messages, the 'before' column, the three spans, zero spend."""
 import hashlib
 import json
-from pathlib import Path
 
 import orjson
 import pytest

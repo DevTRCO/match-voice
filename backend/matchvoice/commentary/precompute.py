@@ -8,7 +8,6 @@ from __future__ import annotations
 import argparse
 import asyncio
 from dataclasses import asdict
-from pathlib import Path
 
 import orjson
 

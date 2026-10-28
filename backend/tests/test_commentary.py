@@ -6,7 +6,6 @@ from matchvoice.commentary.moments import MomentBuilder, render_variants
 from matchvoice.commentary.templates import T
 from matchvoice.commentary.verifier import Verifier, allowed_for
 from matchvoice.facts.engine import FactEngine
-from matchvoice.sim.arcs import ARCS
 from matchvoice.sim.engine import Sim
 
 

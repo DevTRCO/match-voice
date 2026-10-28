@@ -573,7 +573,6 @@ class Verifier:
         v: list[Violation] = []
         if not text.strip():
             return Verdict(False, [Violation("empty", "no text")])
-        low = text.lower()
 
         # scorelines first, so their digits are not judged as loose numbers
         masked = text

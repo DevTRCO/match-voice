@@ -1,7 +1,6 @@
 """Live captions are separate from the voice: a line is shown the moment it arrives, only the voice queues or skips."""
 import asyncio
 
-import pytest
 from starlette.testclient import TestClient
 
 from matchvoice.commentary.analyst import KEYS, CallBudget, GuardedLLM

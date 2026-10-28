@@ -6,7 +6,7 @@ so a commentary sentence can always be traced back to what happened on the pitch
 from __future__ import annotations
 
 from collections import deque
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from ..schema import PITCH_L, PITCH_W, Event, EventType, MatchMeta, Side
 from .models import Fact

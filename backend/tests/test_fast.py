@@ -23,7 +23,7 @@ from matchvoice.commentary.verifier import Verifier, allowed_for
 from matchvoice.facts.engine import FactEngine
 from matchvoice.pipeline.demo import demo_insert
 from matchvoice.pipeline.guided import pick_window
-from matchvoice.pipeline.library import Library, MatchBundle
+from matchvoice.pipeline.library import MatchBundle
 from matchvoice.pipeline.runner import LiveConfig, Runner
 from matchvoice.schema import EventType
 from matchvoice.sim.arcs import ARCS
@@ -929,7 +929,6 @@ def test_a_saved_shot_or_the_post_is_not_a_dead_ball_and_a_goal_gives_no_trivia_
     for eid, e in shots.items():
         if e.outcome in ("saved", "post"):
             assert eid not in windows
-    side = {p.id: s for s in ("H", "A") for p in meta.teams[s].players}
     surnames = {s: {p.name.split()[-1] for p in meta.teams[s].players} for s in ("H", "A")}
     goals = {eid: e for eid, e in shots.items() if e.outcome == "goal"}
     assert goals
@@ -1223,6 +1222,7 @@ def test_a_full_match_is_names_and_verbs_not_a_position_readout_and_no_near_iden
         assert k / n < 0.15, (key, top, k / n)  # no wording is a loop (was 12% for one line, 20% for one shape)
         assert not any(re.fullmatch(r"(Under control|Unter Kontrolle|Sous contrôle|The ball is received|Safely received)\.?", x.text) for x in mine), key
         run = best = 0
+        prev = None
         for sh in shapes:  # and no stretch of the commentary is one line repeated (a move passed on is "A to B", "B finds C", "C on the ball")
             run = run + 1 if run and sh == prev else 1
             prev = sh
@@ -1628,7 +1628,6 @@ def test_a_routine_kick_whose_kicker_was_just_named_is_not_called_with_his_name(
     meta, events, rows, ms = built(arc, seed)
     fast = sorted((m for m in ms if m.layer == "fast"), key=lambda m: (m.t, (m.id - FAST_BASE) // 8))
     said_at: dict[str, float] = {}
-    skipped = 0
     for m in fast:
         if m.kind == "pass_kind" and "pass_type" not in m.params:
             recent = m.t - said_at.get(m.params["player"], -1e9) < fl.NAME_GAP_S
